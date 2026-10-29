@@ -259,7 +259,8 @@ const ROUTES = [
       .run(user.id, `locale-choice:${id}`, JSON.stringify({ settingType: v.settingType || 'SupportedLocale', settingTargetId: +v.settingTargetId || 0 }));
     json(res, 200, {});
   }],
-  ['GET', /^gameinternationalization\.roblox\.com$/, /^\/v1\/supported-languages\/games\/\d+$/, (req, res) =>
+  // Also the in-experience language picker (ExperienceLanguageSwitcherInitializer reads data[].languageCode).
+  ['GET', /^gameinternationalization\.roblox\.com$/, /^\/v1\/supported-languages\/games\/\d+(\/in-experience-language-selection)?$/, (req, res) =>
     json(res, 200, { data: [{ name: 'English', type: 'Language', languageCodeType: 'Language', languageCode: 'en', isAutomaticTranslationEnabled: false }] })],
   ['GET', /^gameinternationalization\.roblox\.com$/, /^\/v1\/source-language\/games\/\d+$/, (req, res) => json(res, 200, { name: 'English', nativeName: 'English', languageCode: 'en' })],
 ];

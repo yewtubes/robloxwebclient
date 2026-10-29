@@ -20,6 +20,15 @@ to authenticated requests, so the default `ASSET_FALLBACK=public` gets 401
 `ASSET_FALLBACK=opencloud` with your own Open Cloud API key, or import the asset
 (`node tools/admin.js asset import 123480233606534 <file> --type 4`).
 
+## Wearables load on the server, but can't be checked from the client view yet
+
+Wearables (e.g. the Red Baseball Cap 1028606 and the Smile face 144075659,
+fetched through the public fallback) are loaded by the game server. On join it
+calls `LoadCharacter`, reads `/v2/avatar/avatar-fetch` (200) and loads the items
+from the asset store (`/v1/assets/batch`). The client can't yet frame the head:
+without client scripts there is no camera or control script, and the unanimated
+character falls over at spawn. See `screenshots/e2e-player1-r6-topbar.jpg`.
+
 ## Missing topbar in headless Chromium (test harness only)
 
 In `tools/run_headless.js` runs, the topbar (Roblox menu, chat button) doesn't
@@ -28,7 +37,8 @@ run for over N seconds", and page screenshots time out. Headless Chromium draws
 WebGL with SwiftShader on the CPU, sharing 4 cores with Studio's llvmpipe
 renderer. That starves the main thread and the CoreScripts that build the
 topbar. On a real browser with a GPU, the topbar and CoreGui load normally
-(confirmed on a hosted deployment). Treat headless screenshots as checks of
+(confirmed on a hosted deployment). Headless runs sometimes get there too, given
+time (`screenshots/e2e-player1-r6-topbar.jpg`, about 110 s). Treat headless screenshots as checks of
 loading and replication, not of the GUI.
 
 ## Studio editor services

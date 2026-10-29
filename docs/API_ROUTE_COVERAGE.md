@@ -90,7 +90,7 @@ unchanged); see "Limitations".
 | presence | `POST /v1/presence/register-app-presence`, `/v1/presence/last-online` | | | session / none | implemented |
 | gameinternationalization | `GET /v1/user-localization-settings/player-choice/{universeId}` | | `{userUniverseLocalizationSettingValue: {settingType, settingTargetId}}` stored per user | session | implemented |
 | gameinternationalization | `POST /v1/user-localization-settings/universe/{id}` | `{settingType, settingTargetId}` | `{}` | session | implemented |
-| gameinternationalization | `GET /v1/supported-languages/games/{id}`, `/v1/source-language/games/{id}` | | English only (experiences have no translations yet) | none | partial |
+| gameinternationalization | `GET /v1/supported-languages/games/{id}[/in-experience-language-selection]`, `/v1/source-language/games/{id}` | | English only (experiences have no translations yet) | none | partial |
 
 ## Assets
 
@@ -159,7 +159,6 @@ Assets seen that the platform can't serve yet (`asset misses`):
 | realtime-signalr | `GET /userhub/` (WebSocket) | Studio editor | real-time notifications in Studio; it reconnects every 30 s and logs 404 |
 | apis | `/access-management/v1/rcc-user-feature-access`, `/v2/rcc-user-feature-evaluation`, `/v1/feature-access` | game server, Studio | age-check / feature gates; contracts not confirmed. The game server treats a failure as "not verified" |
 | apis | `/user-profile-api/v1/user/profiles/rcc/settings` | game server | profile settings in experience; contract not confirmed |
-| gameinternationalization | `GET /v1/supported-languages/games/{id}/in-experience-language-selection` | in-game CoreScripts | language picker; contract not confirmed |
 | apis, develop, assetgame | Studio editor: `studio-user-data-api/*`, `studio-user-settings/plugin-permissions`, `creator-notifications`, `doc-site`, `studio-assistant`, `creator-home-api/groups`, `universes/v1/search`, `develop /v1/gametemplates`, `assetgame /my/settings/json` | Studio editor panels | start page, templates, assistant, notifications |
 | apis | `GET /modals-api/v1/prompts`, `/marketplace-widgets/v1/widgets/shop-widgets`, `POST /checkout/v1/offers` | in-game CoreScripts | commerce UI; there is no economy here. Response contracts not yet confirmed, so they stay 404 rather than guessed |
 
