@@ -1,0 +1,6 @@
+hit 1 [F4DF547B] chunk==Players.Player1.PlayerScripts.LocalScript {"n":0,"size":0,"hex":""}
+hit 2 [F4DF547B] chunk==Players.Player1.PlayerScripts.PlayerScriptsLoader {"n":0,"size":0,"hex":""}
+hit 3 [F4DF547B] chunk==Players.Player1.PlayerScripts.RbxCharacterSounds {"n":0,"size":0,"hex":""}
+hit 4 [F4DF547B] chunk==Lighting.Inject {"n":0,"size":0,"hex":""}
+hit 5 [F4DF547B] chunk==Players.Player1.PlayerGui.Freecam.FreecamScript {"n":0,"size":0,"hex":""}
+hit 6 [F4DF547B] chunk==Players.Player1.PlayerGui.SelectUI.Frame.LocalScript {"n":0,"size":0,"hex":""}

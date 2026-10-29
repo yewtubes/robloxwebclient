@@ -1,0 +1,8 @@
+[req]
+distinguished_name=dn
+[dn]
+[ext]
+basicConstraints=CA:FALSE
+keyUsage=digitalSignature,keyEncipherment
+extendedKeyUsage=serverAuth
+subjectAltName=DNS:*.sitetest1.robloxlabs.com,DNS:sitetest1.robloxlabs.com,DNS:*.api.sitetest1.robloxlabs.com

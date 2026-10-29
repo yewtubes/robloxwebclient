@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Roblox Web Client</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  html, body { margin: 0; height: 100%; background: #111; color: #ddd; font-family: system-ui, sans-serif; overflow: hidden; }
+  #canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; outline: none; }
+  #loading-overlay { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: #1b1d1f; pointer-events: none; }
+  #loading-overlay[hidden], #loading-overlay.loading-exiting { display: none; }
+  #loading-experience-title { font-size: 22px; font-weight: 600; }
+  #status { font-size: 14px; opacity: .8; }
+  .loading-error-panel { color: #ff8080; }
+  #debug { position: fixed; left: 8px; bottom: 8px; font: 11px monospace; opacity: .6; }
+  #input-container { position: fixed; left: -10000px; top: 0; }
+</style>
+</head>
+<body>
+<canvas id="canvas" tabindex="0" oncontextmenu="event.preventDefault()"></canvas>
+<div id="loading-overlay" aria-busy="true">
+  <img id="loading-background-image" alt="" hidden>
+  <div id="loading-icon-shell"><img id="loading-experience-icon" alt="" hidden></div>
+  <div id="loading-experience-title">Roblox</div>
+  <div id="loading-experience-creator"></div>
+  <span id="loading-verified-badge" hidden></span>
+  <div id="status"></div>
+  <div class="loading-error-panel" hidden>
+    <div id="loading-error-title"></div>
+    <div id="loading-error-message"></div>
+    <div id="loading-error-code"></div>
+    <button id="loading-error-leave">Leave</button>
+  </div>
+  <button id="loading-cancel" hidden>Cancel</button>
+</div>
+<div id="input-container">
+  <textarea id="input-textarea"></textarea>
+  <input id="input-input">
+</div>
+<div id="debug">server: <span id="server"></span> · proxy: <span id="proxyenabled"></span></div>
+<script src="/WasmLoader.js"></script>
+</body>
+</html>

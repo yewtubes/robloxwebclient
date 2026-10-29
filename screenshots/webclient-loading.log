@@ -1,0 +1,513 @@
+[0.1] error: Failed to load resource: the server responded with a status of 404 (Not Found)
+[0.2] log: [ClientSettings] user-channel enrollment: "production"
+[0.2] log: [ClientSettings] channel=production version=0.745.0.7451145 upload=version-75f1039cb4964863
+[0.2] log: [WasmLoader] Engine base https://setup.rbxcdn.com/webclient/version-75f1039cb4964863-RobloxWebClient (via proxy)
+[0.2] log: Loading WasmPlayer: Engine Base URL is http://localhost:8080/proxy/https://setup.rbxcdn.com/webclient/version-75f1039cb4964863-RobloxWebClient, channel 
+[0.2] log: Loading WasmPlayer: Page Base URL is http://localhost:8080
+[0.5] log: [WasmPlayer] Acquired tab mutex via navigator-locks
+[0.5] log: Available WebGL Extensions:
+[0.5] log: [EXT_clip_control, EXT_color_buffer_float, EXT_color_buffer_half_float, EXT_conservative_depth, EXT_depth_clamp, EXT_disjoint_timer_query_webgl2, EXT_float_blend, EXT_polygon_offset_clamp, EXT_texture_compression_bptc, EXT_texture_compression_rgtc, EXT_texture_filter_anisotropic, EXT_texture_mirror_clamp_to_edge, NV_shader_noperspective_interpolation, OES_draw_buffers_indexed, OES_sample_variables, OES_shader_multisample_interpolation, OES_texture_float_linear, OVR_multiview2, WEBGL_clip_cull_distance, WEBGL_compressed_texture_astc, WEBGL_compressed_texture_etc, WEBGL_compressed_texture_etc1, WEBGL_compressed_texture_s3tc, WEBGL_compressed_texture_s3tc_srgb, WEBGL_debug_renderer_info, WEBGL_debug_shaders, WEBGL_lose_context, WEBGL_multi_draw, WEBGL_polygon_mode, WEBGL_stencil_texturing]
+[0.5] log: - EXT_clip_control
+[0.5] log: - EXT_color_buffer_float
+[0.5] log: - EXT_color_buffer_half_float
+[0.5] log: - EXT_conservative_depth
+[0.5] log: - EXT_depth_clamp
+[0.5] log: - EXT_disjoint_timer_query_webgl2
+[0.5] log: - EXT_float_blend
+[0.5] log: - EXT_polygon_offset_clamp
+[0.5] log: - EXT_texture_compression_bptc
+[0.5] log: - EXT_texture_compression_rgtc
+[0.5] log: - EXT_texture_filter_anisotropic
+[0.5] log: - EXT_texture_mirror_clamp_to_edge
+[0.5] log: - NV_shader_noperspective_interpolation
+[0.5] log: - OES_draw_buffers_indexed
+[0.5] log: - OES_sample_variables
+[0.5] log: - OES_shader_multisample_interpolation
+[0.5] log: - OES_texture_float_linear
+[0.5] log: - OVR_multiview2
+[0.5] log: - WEBGL_clip_cull_distance
+[0.5] log: - WEBGL_compressed_texture_astc
+[0.5] log: - WEBGL_compressed_texture_etc
+[0.5] log: - WEBGL_compressed_texture_etc1
+[0.5] log: - WEBGL_compressed_texture_s3tc
+[0.5] log: - WEBGL_compressed_texture_s3tc_srgb
+[0.5] log: - WEBGL_debug_renderer_info
+[0.5] log: - WEBGL_debug_shaders
+[0.5] log: - WEBGL_lose_context
+[0.5] log: - WEBGL_multi_draw
+[0.5] log: - WEBGL_polygon_mode
+[0.5] log: - WEBGL_stencil_texturing
+[0.5] log: 1
+[0.5] log: WebClient.js http://localhost:8080/proxy/https://setup.rbxcdn.com/webclient/version-75f1039cb4964863-RobloxWebClient/WebClient.js
+[0.5] error: Failed to load resource: the server responded with a status of 404 (Not Found)
+[0.5] warning: [LoadingScreen] Failed to load experience details: Error: economy.roblox.com returned HTTP 404
+    at re.fetchJson (http://localhost:8080/proxy/https://setup.rbxcdn.com/webclient/version-75f1039cb4964863-RobloxWebClient/WasmPlayer.js:2:2558)
+    at async re.reportPresentationFailure (http://localhost:8080/proxy/https://setup.rbxcdn.com/webclient/version-75f1039cb4964863-RobloxWebClient/WasmPlayer.js:2:3572)
+    at async Promise.all (index 0)
+    at async re.loadExperienceData (http://localhost:8080/proxy/https://setup.rbxcdn.com/webclient/version-75f1039cb4964863-RobloxWebClient/WasmPlayer.js:2:2238)
+[0.5] error: Failed to load resource: the server responded with a status of 404 (Not Found)
+[0.5] warning: [LoadingScreen] Failed to load experience artwork: Error: apis.roblox.com returned HTTP 404
+    at re.fetchJson (http://localhost:8080/proxy/https://setup.rbxcdn.com/webclient/version-75f1039cb4964863-RobloxWebClient/WasmPlayer.js:2:2558)
+    at async re.reportPresentationFailure (http://localhost:8080/proxy/https://setup.rbxcdn.com/webclient/version-75f1039cb4964863-RobloxWebClient/WasmPlayer.js:2:3572)
+    at async Promise.all (index 1)
+    at async re.loadExperienceData (http://localhost:8080/proxy/https://setup.rbxcdn.com/webclient/version-75f1039cb4964863-RobloxWebClient/WasmPlayer.js:2:2238)
+[0.5] log: [Flags] Fetched 22795 preloaded flag(s) from clientsettingscdn.roblox.com (prod, production)
+[0.6] log: [CookiePool] Using user-supplied cookie (skipping pool)
+[0.6] log: WebClient.metadata.json http://localhost:8080/proxy/https://setup.rbxcdn.com/webclient/version-75f1039cb4964863-RobloxWebClient/WebClient.metadata.json
+[0.6] log: [Locale] Account locales loaded: Roblox=en_us, UGC=en_us
+[0.6] log: No prefetch: 2862 assets will be fetched on-demand
+[0.6] log: Wasm Memory Bytes = 2147483648 Pages = 32768
+[0.6] log: [WASM-TIMING] createWebClient starting at 601.9ms from page load
+[0.6] log: Redirecting WebWorker to primary script
+[0.6] log: WebClient.js http://localhost:8080/proxy/https://setup.rbxcdn.com/webclient/version-75f1039cb4964863-RobloxWebClient/WebClient.js
+[0.6] log: audio-processor-fast.js http://localhost:8080/proxy/https://setup.rbxcdn.com/webclient/version-75f1039cb4964863-RobloxWebClient/audio-processor-fast.js
+[0.6] log: [WASM-TIMING] preInit (before global ctors): +4.2ms
+[1.4] log: [WASM-TIMING] preRun (before main): +739.5ms
+[1.7] log: [WASM-TIMING] onRuntimeInitialized: +1120.0ms total, 1115.9ms since preInit (includes global ctors)
+[1.7] log: Registered 2862 asset metadata entries
+[1.7] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[1.7] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[1.7] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[1.7] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[1.7] log: [WasmPlayer] Engine channel set to "production"
+[1.7] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[1.7] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[1.7] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[1.7] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[1.7] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[1.7] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[1.7] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[1.7] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[1.7] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[1.7] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[1.8] log: [WASM-TIMING] main() entered: +1145.6ms from preInit
+[1.8] log: [WASM-TIMING] initialize() entered: +1146.2ms from preInit
+[1.9] log: [WASM-TIMING] RunDynamicInitializers: +1256.2ms from preInit, phase took 110.1ms
+[1.9] log: [WASM-TIMING] CrashReporter init: +1256.7ms from preInit, phase took 0.5ms
+[1.9] warning: [6] [FLog::Output] All use of Roblox services must comply with Roblox's Terms of Use, Privacy Policy, Community Standards, and applicable laws. Processing of User personal information is limited to the purposes expressly permitted therein.
+[1.9] warning: [6] [FLog::Output] All use of Roblox services must comply with Roblox's Terms of Use, Privacy Policy, Community Standards, and applicable laws. Processing of User personal information is limited to the purposes expressly permitted therein.
+[1.9] log: [WASM-TIMING] gameGlobalInit: +1285.0ms from preInit, phase took 28.2ms
+[2.0] log: [WASM-TIMING] LoadFlags: +1339.0ms from preInit, phase took 54.1ms
+[2.0] log: [WASM-TIMING] checkMimallocIntegration: +1341.5ms from preInit, phase took 2.5ms
+[2.0] log: Base URL: https://www.roblox.com/
+[2.0] log: 
+
+[2.0] log: Base Host: .roblox.com
+[2.0] log: 
+
+[2.0] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::ClientRunInfo] RobloxGitHash: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+[2.0] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::ClientRunInfo] The base url is https://www.roblox.com/
+[2.0] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::ClientRunInfo] The channel is production
+[2.0] log: [pthread] thread #1
+[2.0] log:  created
+
+[2.0] log: [pthread] thread #2
+[2.0] log:  created
+
+[2.0] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Info [DFLog::SystemDialogHandler] Platform handler was instanced.
+[2.0] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Info [DFLog::AppPlatformQoSEmergency] AppPlatformQoSEmergencyHandler was instanced.
+[2.0] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Critical [FLog::Output] Build system id: 1
+[2.0] log: [pthread] thread #3
+[2.0] log:  created
+
+[2.0] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Info [DFLog::RbxTransportWasmRna] Initialized WasmRna
+[2.0] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Info [FLog::AppMemUsageStatus] 923286370
+[2.0] log: [pthread] thread #4
+[2.0] log:  created
+
+[2.0] log: [pthread] thread #5
+[2.0] log:  created
+
+[2.0] warning: [wasm-cors] engine sent non-allowlisted request header: Connection
+[2.0] warning: [wasm-cors] engine sent non-allowlisted request header: rbx-public-caller-application-name
+[2.0] warning: [wasm-cors] engine sent non-allowlisted request header: PlayerCount
+[2.0] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Error [FLog::TombstoneCache] [FlagCache] Failed to open tombstone file for reading: /cache/cache/tombstone.dat
+[2.0] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Info [FLog::TombstoneCache] [FlagCache] Setting holdout experiment state to: false
+[2.0] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::LocalStorageHandler] Not available on the current platform.
+[2.1] log: [WASM-TIMING] AppBridge setup + StartupController::globalInit: +1440.3ms from preInit, phase took 98.8ms
+[2.1] log: [WASM-TIMING] OnAppStarted: +1442.0ms from preInit, phase took 1.8ms
+[2.1] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[2.1] log: Gamepad API isn't available on this browser
+
+[2.1] log: Canvas: 1280x720 CSS, 1280x720 backing (effective dpr=1.00, raw=1.00)
+
+[2.1] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[2.1] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[2.1] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[2.1] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[2.1] log: [WASM-TIMING] initPlatform: +1452.4ms from preInit, phase took 10.3ms
+[2.1] log: isTouchDevice = 0, isTouchScreenDevice = 0, isKeyboardDevice = 1, isMouseDevice = 1
+
+[2.1] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::SingleSurfaceApp] initializeWithAppStarter
+[2.1] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::SingleSurfaceApp] initializeSingleton
+[2.1] error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Critical [DFLog::RbxStorage] RbxStorage::init using wasm interface. user: UserGameSettings
+[2.1] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::Output] Evaluating deferred inferred crashes
+[2.1] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::SingleSurfaceApp] setStage: (stage:Native)
+[2.1] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::SingleSurfaceApp] setLocale
+[2.1] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::SingleSurfaceApp] instantiate controllers
+[2.1] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::SurfaceController] SurfaceController[_:1]::SurfaceController, count: 1
+[2.1] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::SingleSurfaceApp] instantiate experience coordinator
+[2.1] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Info [DFLog::CoordinatorMemoryPressure] Setting memory pressure threshold to none
+[2.1] log: [WASM-TIMING] initializeUniversalApp: +1503.7ms from preInit, phase took 51.4ms
+[2.1] log: [WASM-TIMING] initialize() total: 1504.6ms
+[2.1] log: initialize returned, code: 0
+[2.1] log: 
+
+[2.1] log: [DEBUG] touchOnly = 0, web_pretend_platform = 0
+
+[2.1] log: [DEBUG] Setting up main loop
+
+[2.1] log: [WASM-TIMING] createWebClient resolved: +1510.5ms total
+[2.1] log: launchUGCGame
+
+[2.1] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::SingleSurfaceApp] launchUGCGame: (stage:Native).
+[2.1] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::SingleSurfaceApp] launchUGCGameInternal
+[2.1] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::SingleSurfaceApp] applyLocale
+[2.1] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Info [FLog::UgcExperienceController] UgcExperienceController: initialize:
+[2.1] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::DataModelPatchConfigurer] [_InExperiencePatch] Load configs for user key: app:15710176852217642979
+[2.2] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::DataModelPatchConfigurer] [_InExperiencePatch] Retrieving patch
+[2.2] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::DataModelPatchConfigurer] getCachedPatch Local Patch DataModelPatchConfig : type=2, assetId=80471914653504, assetVersion=15919, maxAppVersion=745, localAssetURI=rbxasset://models/InExperience/InExperience.rbxm
+[2.2] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::DataModelPatchConfigurer] getCachedPatch: config: 80471914653504.15919
+[2.2] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::DataModelPatchConfigurer] getCachedPatch: numAttemptsRemaining: 1
+[2.2] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::DataModelPatchConfigurer] getCachedPatchFromConfig: contentId=rbxasset://models/InExperience/InExperience.rbxm
+[2.2] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::DataModelPatchConfigurer] getCachedPatch: get patch from content provider for Model
+[2.2] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [DFLog::RbxmFileManager] LocalStorageManager is not available.
+[2.3] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::DataModelPatchConfigurer] deserializeAndVerifyPatch with blake3
+[2.8] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::Output] Hello World CLI-226594
+[2.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::Output] Hello world, CLI-208683!
+[2.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::Output] Hello world, CLI-207485!
+[2.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::Output] Hello again, world 206748!
+[2.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::Output] Hello world CLI-206426!
+[2.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::Output] Hello world ...!
+[2.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::Output] Hello 198367!
+[2.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::Output] Hello World! **CLI-199819**
+[2.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::Output] Hello World! from CLI-206127
+[2.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::Output] Hello World! CLI210530
+[2.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::Output] Hello World CLI-212185!
+[2.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::Output] Hello World! CLI-222132
+[2.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::Output] Hello World <3 CLI-225598
+[2.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::Output] Hello World! CLI-226477
+[2.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::Output] Hello World! CLI-232246
+[2.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::Output] Hello World! CLI-231586
+[2.9] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Info [FLog::Audio] OutputDevice 0: Browser Audio [Unknown] 48000/2
+[2.9] log: [FMOD] DSP buffer size override OFF (android=no, bufferSize=4096)
+[2.9] log: [pthread] thread #6
+[2.9] log:  created
+
+[3.2] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Info [FLog::UgcExperienceController] UgcExperienceController: join: initialized dm 0x6b9ae70
+[3.2] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::SurfaceController] [_:1]::replaceDataModel: (stage:0, window = 0x0) [tid:0x16d2b60]
+[3.5] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[3.5] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[3.5] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[3.5] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[3.5] warning: [WASM-JSPI] Synchronous JavaScript allocator call occurred on the main thread
+[3.5] worker log: [LIFECYCLE] ugcGameLuaWillStart
+
+[3.5] log: [LIFECYCLE] ugcGameLuaWillStart
+
+[3.6] worker log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Info [FLog::UgcExperienceController] UgcExperienceController: submitStartGameTask: scrips are loaded 0x6b9ae70
+[3.6] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Info [FLog::UgcExperienceController] UgcExperienceController: submitStartGameTask: scrips are loaded 0x6b9ae70
+[3.7] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::SurfaceController] SurfaceController::disableVR
+[3.7] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6,Warning [FLog::SurfaceController] SurfaceController[_:1]::initialize
+[3.7] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::SurfaceController] SurfaceController[_:1]::start dataModel(0x6b9ae70)
+[3.7] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::SurfaceController] SurfaceController::RenderJob[_:1]::RenderJob
+[3.7] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::SurfaceController] SurfaceController[_:1]::run dataModel(0x6b9ae70)
+[3.7] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::SingleSurfaceApp] setStage: (stage:UGCGame)
+[3.8] worker log: [LIFECYCLE] joinGameSucceeded
+
+[3.8] log: [LIFECYCLE] joinGameSucceeded
+
+[3.8] worker warning: [7] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,7 [FLog::Network] NetworkClient:Create
+[3.8] warning: [7] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,7 [FLog::Network] NetworkClient:Create
+[3.8] worker warning: [10] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,10 [DFLog::KeyRing] Config is invalid json, can only use old config
+[3.8] warning: [10] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,10 [DFLog::KeyRing] Config is invalid json, can only use old config
+[3.9] worker warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6 [FLog::Output] ! Joining game '00000000-0000-0000-0000-000000000001' place 1818 at 127.0.0.1
+[3.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6 [FLog::Output] ! Joining game '00000000-0000-0000-0000-000000000001' place 1818 at 127.0.0.1
+[3.9] worker warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6 [FLog::GameJoinLoadTime] Report game_join_loadtime: clienttime:1793301299.7000000477, join_time:0.6511898040771484375, userid:1, referral_page:, universeid:1, placeid:1818, 
+[3.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6 [FLog::GameJoinLoadTime] Report game_join_loadtime: clienttime:1793301299.7000000477, join_time:0.6511898040771484375, userid:1, referral_page:, universeid:1, placeid:1818, 
+[3.9] worker log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Info [DFLog::NetworkClient] Transport selection: useRbxTransportEnabled=true, rbxTransportHasValidPort=true, rbxTransportHasValidAddress=true, rbxTransportHasValidPubKey=true, canUseRbxTransport=true, selectedTransport=RbxTransport, rccPort=37209, DatacenterId=0
+[3.9] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Info [DFLog::NetworkClient] Transport selection: useRbxTransportEnabled=true, rbxTransportHasValidPort=true, rbxTransportHasValidAddress=true, rbxTransportHasValidPubKey=true, canUseRbxTransport=true, selectedTransport=RbxTransport, rccPort=37209, DatacenterId=0
+[3.9] worker warning: [7] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,7 [FLog::Network] Server Address = 127.0.0.1, Port = 37209
+[3.9] warning: [7] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,7 [FLog::Network] Server Address = 127.0.0.1, Port = 37209
+[3.9] worker warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#3 0x33858b0) time:11.3ms (net:11.2ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:134 url:{ "https://apis.roblox.com/player-hydration-service/v1/players/signed" } ip: external:0 numberOfTimesRetried:0
+[3.9] warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#3 0x33858b0) time:11.3ms (net:11.2ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:134 url:{ "https://apis.roblox.com/player-hydration-service/v1/players/signed" } ip: external:0 numberOfTimesRetried:0
+[3.9] worker warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,6,Error [FLog::PlayerHydrationService] hydrating player 1 failed
+[3.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,6,Error [FLog::PlayerHydrationService] hydrating player 1 failed
+[3.9] worker warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#4 0xa37ca78) time:11.3ms (net:11.2ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:145 url:{ "https://apis.roblox.com/product-experimentation-platform/v1/projects/1/values" } ip: external:0 numberOfTimesRetried:0
+[3.9] warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#4 0xa37ca78) time:11.3ms (net:11.2ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:145 url:{ "https://apis.roblox.com/product-experimentation-platform/v1/projects/1/values" } ip: external:0 numberOfTimesRetried:0
+[3.9] worker warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#5 0xa37ab28) time:13.0ms (net:12.5ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:145 url:{ "https://apis.roblox.com/product-experimentation-platform/v1/projects/1/values" } ip: external:0 numberOfTimesRetried:0
+[3.9] warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#5 0xa37ab28) time:13.0ms (net:12.5ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:145 url:{ "https://apis.roblox.com/product-experimentation-platform/v1/projects/1/values" } ip: external:0 numberOfTimesRetried:0
+[3.9] worker warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6 [DFLog::RbxTransportIntegration] Opening channels for new Connection!
+[3.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6 [DFLog::RbxTransportIntegration] Opening channels for new Connection!
+[3.9] worker warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6 [FLog::SurfaceController] SurfaceController::RenderJob::stepDataModelJob: No DM yet. Continue...
+[3.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6 [FLog::SurfaceController] SurfaceController::RenderJob::stepDataModelJob: No DM yet. Continue...
+[3.9] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::SurfaceController] SurfaceController::RenderJob::scheduleRender: No data model. Bind workspace now...
+[3.9] worker log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,6,Info [DFLog::RbxTransportDummyClient] Connected to server at 127.0.0.1:37209
+[3.9] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,6,Info [DFLog::RbxTransportDummyClient] Connected to server at 127.0.0.1:37209
+[3.9] worker log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,6,Info [DFLog::RbxTransportDummyClient] Started ping thread (interval: 1000 ms, payload: 64 bytes)
+[3.9] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,6,Info [DFLog::RbxTransportDummyClient] Started ping thread (interval: 1000 ms, payload: 64 bytes)
+[3.9] worker log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,6,Info [DFLog::RbxTransportDummyClient] Started time sync thread (interval: 5000 ms, fast retry interval: 200 ms, max fast retries: 10)
+[3.9] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,6,Info [DFLog::RbxTransportDummyClient] Started time sync thread (interval: 5000 ms, fast retry interval: 200 ms, max fast retries: 10)
+[4.1] worker log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Info [DFLog::NetworkClient] Connection accepted from 127.0.0.1|37209
+[4.1] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Info [DFLog::NetworkClient] Connection accepted from 127.0.0.1|37209
+[4.2] worker warning: [7] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,7 [FLog::Network] serverId: 1.0.0.0|52238
+[4.2] warning: [7] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,7 [FLog::Network] serverId: 1.0.0.0|52238
+[4.2] worker warning: [7] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,7 [FLog::Network] Replicator created for player 1.0.0.0|52238
+[4.2] warning: [7] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,7 [FLog::Network] Replicator created for player 1.0.0.0|52238
+[4.2] worker warning: [7] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,7 [FLog::Network] Replicator created: 0x5ec6d888
+[4.2] warning: [7] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,7 [FLog::Network] Replicator created: 0x5ec6d888
+[4.2] worker log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Info [FLog::AppMemUsageStatus] 3748799858.1
+[4.2] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Info [FLog::AppMemUsageStatus] 3748799858.1
+[4.3] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[4.3] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[4.3] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[4.3] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[4.3] worker warning: [7] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,7 [FLog::Network] Time taken to initialize schema = 14.675140 ms
+[4.3] warning: [7] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,7 [FLog::Network] Time taken to initialize schema = 14.675140 ms
+[4.4] worker warning: [7] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,7 [FLog::Network] Assigned peer id = 6
+[4.4] warning: [7] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,7 [FLog::Network] Assigned peer id = 6
+[4.4] worker log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Info [FLog::TestServiceLog] [onServiceProvider] DebugUTPLauncherWebSocketUri='' wsOptIn=0
+[4.4] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Info [FLog::TestServiceLog] [onServiceProvider] DebugUTPLauncherWebSocketUri='' wsOptIn=0
+[4.4] worker log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Info [FLog::TestServiceLog] [onServiceProvider] this=0x104824c8 dm=0x3a0c2f0 wsOptIn=0 isStudio=0 isServer=0 isPlayClient=1 isNonNetworkEdit=0
+[4.4] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Info [FLog::TestServiceLog] [onServiceProvider] this=0x104824c8 dm=0x3a0c2f0 wsOptIn=0 isStudio=0 isServer=0 isPlayClient=1 isNonNetworkEdit=0
+[4.4] worker warning: [7] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,7 [FLog::Network] Join snapshot timer: 20.245075
+[4.4] warning: [7] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,7 [FLog::Network] Join snapshot timer: 20.245075
+[4.5] worker warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6 [FLog::DataModelPatchConfigurer] OTAPollingEnabled set to: false
+[4.5] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6 [FLog::DataModelPatchConfigurer] OTAPollingEnabled set to: false
+[4.7] warning: [wasm-cors] engine sent non-allowlisted request header: AssetDeliveryRequestType
+[4.7] worker warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,6 [FLog::Error] Asset (Image) "https://assetdelivery.roblox.com/v1/asset?hash=01fbb35a1b3f53173f68a2d02bb735d2" load failed: Asset not in local store
+[4.7] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,6 [FLog::Error] Asset (Image) "https://assetdelivery.roblox.com/v1/asset?hash=01fbb35a1b3f53173f68a2d02bb735d2" load failed: Asset not in local store
+[4.7] log: [pthread] thread #7
+[4.7] log:  created
+
+[4.8] worker error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,11338178,6,Error [DFLog::AssetProvider] AssetResolutionWorkflow to get assetid: https://assetdelivery.roblox.com/v1/asset?hash=01fbb35a1b3f53173f68a2d02bb735d2&contentRepresentationPriorityList=W3siZm9ybWF0IjoiUmVzaWR1YWwiLCJtYWpvclZlcnNpb24iOiIyIiwiZmlkZWxpdHkiOiJPcmlnaW5hbCJ9XQ%3D%3D&doNotFallbackToBaselineRepresentation=true failed!! adIndividualItemFailureReason: AssetDelivery404 adBatchHttpStatusCode: 0 adBatchHttpErrorCode: OK adIndividualItemCode: 404 contentRepresentationSpecifier:  wasModerated: true adResolutionErrorMessage: Asset not in local store adBatchJsonParsingError:  cdnHttpStatusCode: 0 cdnHttpErrorCode: OK cdnErrorMessage: 
+[4.8] error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,11338178,6,Error [DFLog::AssetProvider] AssetResolutionWorkflow to get assetid: https://assetdelivery.roblox.com/v1/asset?hash=01fbb35a1b3f53173f68a2d02bb735d2&contentRepresentationPriorityList=W3siZm9ybWF0IjoiUmVzaWR1YWwiLCJtYWpvclZlcnNpb24iOiIyIiwiZmlkZWxpdHkiOiJPcmlnaW5hbCJ9XQ%3D%3D&doNotFallbackToBaselineRepresentation=true failed!! adIndividualItemFailureReason: AssetDelivery404 adBatchHttpStatusCode: 0 adBatchHttpErrorCode: OK adIndividualItemCode: 404 contentRepresentationSpecifier:  wasModerated: true adResolutionErrorMessage: Asset not in local store adBatchJsonParsingError:  cdnHttpStatusCode: 0 cdnHttpErrorCode: OK cdnErrorMessage: 
+[4.8] worker warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#10 0x1155d450) time:5.6ms (net:5.5ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:137 url:{ "https://apis.roblox.com/player-policy-service/v1/player-policy-client" } ip: external:0 numberOfTimesRetried:0
+[4.8] warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#10 0x1155d450) time:5.6ms (net:5.5ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:137 url:{ "https://apis.roblox.com/player-policy-service/v1/player-policy-client" } ip: external:0 numberOfTimesRetried:0
+[5.3] worker error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Error [FLog::CreatorError] Error: Players.Player1.PlayerScripts.RbxCharacterSounds: bytecode corrupted
+[5.3] error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Error [FLog::CreatorError] Error: Players.Player1.PlayerScripts.RbxCharacterSounds: bytecode corrupted
+[5.3] worker error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Error [FLog::CreatorError] Error: Players.Player1.PlayerScripts.LocalScript: bytecode corrupted
+[5.3] error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Error [FLog::CreatorError] Error: Players.Player1.PlayerScripts.LocalScript: bytecode corrupted
+[5.3] worker error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Error [FLog::CreatorError] Error: Lighting.Inject: bytecode corrupted
+[5.3] error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Error [FLog::CreatorError] Error: Lighting.Inject: bytecode corrupted
+[5.3] worker log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Warning [DFLog::PeerMonotonicClock] PeerMonotonicClock::now called before initialized, returning 0
+[5.3] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Warning [DFLog::PeerMonotonicClock] PeerMonotonicClock::now called before initialized, returning 0
+[5.3] worker warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6 [FLog::Output] Server RobloxGitHash: d2664f400cfdcaac1737922bdc152abd0f363f90
+[5.3] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6 [FLog::Output] Server RobloxGitHash: d2664f400cfdcaac1737922bdc152abd0f363f90
+[5.3] worker warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6 [FLog::Output] Server Prefix: 0.745.0.7451137_20261029T190530Z_Studio_49617
+[5.3] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6 [FLog::Output] Server Prefix: 0.745.0.7451137_20261029T190530Z_Studio_49617
+[5.3] worker error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Error [FLog::CreatorError] Error: Players.Player1.PlayerGui.Freecam.FreecamScript: bytecode corrupted
+[5.3] error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Error [FLog::CreatorError] Error: Players.Player1.PlayerGui.Freecam.FreecamScript: bytecode corrupted
+[5.4] worker warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#12 0x11c36d70) time:8.8ms (net:8.7ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:117 url:{ "https://economy.roblox.com/v2/assets/1818/details" } ip: external:0 numberOfTimesRetried:0
+[5.4] warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#12 0x11c36d70) time:8.8ms (net:8.7ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:117 url:{ "https://economy.roblox.com/v2/assets/1818/details" } ip: external:0 numberOfTimesRetried:0
+[5.5] worker error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Error [FLog::CreatorError] Error: Players.Player1.PlayerScripts.PlayerModule: bytecode corrupted
+[5.5] error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Error [FLog::CreatorError] Error: Players.Player1.PlayerScripts.PlayerModule: bytecode corrupted
+[5.5] worker error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Error [FLog::CreatorError] Error: Requested module experienced an error while loading
+    Stack Begin
+    Script 'Players.Player1.PlayerScripts.PlayerScriptsLoader', Line 7
+    Stack End
+[5.5] error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Error [FLog::CreatorError] Error: Requested module experienced an error while loading
+    Stack Begin
+    Script 'Players.Player1.PlayerScripts.PlayerScriptsLoader', Line 7
+    Stack End
+[5.5] worker warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#13 0x9112168) time:16.0ms (net:9.7ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:157 url:{ "https://gameinternationalization.roblox.com/v1/user-localization-settings/player-choice/1" } ip: external:0 numberOfTimesRetried:0
+[5.5] warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#13 0x9112168) time:16.0ms (net:9.7ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:157 url:{ "https://gameinternationalization.roblox.com/v1/user-localization-settings/player-choice/1" } ip: external:0 numberOfTimesRetried:0
+[5.6] worker warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#16 0x13c16810) time:13.5ms (net:13.4ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:137 url:{ "https://apis.roblox.com/player-policy-service/v1/player-policy-client" } ip: external:0 numberOfTimesRetried:0
+[5.6] warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#16 0x13c16810) time:13.5ms (net:13.4ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:137 url:{ "https://apis.roblox.com/player-policy-service/v1/player-policy-client" } ip: external:0 numberOfTimesRetried:0
+[5.6] worker log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Info [FLog::CreatorOutput] LoadingScreen:GetGameProductInfo: %s MarketplaceService:getProductInfo() failed because HTTP 404 (Not Found)
+[5.6] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Info [FLog::CreatorOutput] LoadingScreen:GetGameProductInfo: %s MarketplaceService:getProductInfo() failed because HTTP 404 (Not Found)
+[5.7] warning: [wasm-cors] engine sent non-allowlisted request header: AssetType
+[5.7] warning: [wasm-cors] engine sent non-allowlisted request header: Roblox-Proxied-IP
+[5.8] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::Error] Asset (Image) "https://assetdelivery.roblox.com/v1/asset?hash=01fbb35a1b3f53173f68a2d02bb735d2" load failed: Invalid image or texture.
+[5.9] worker warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#24 0x13ff3270) time:17.9ms (net:14.7ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:101 url:{ "https://games.roblox.com/v1/games?universeIds=1" } ip: external:0 numberOfTimesRetried:0
+[5.9] warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#24 0x13ff3270) time:17.9ms (net:14.7ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:101 url:{ "https://games.roblox.com/v1/games?universeIds=1" } ip: external:0 numberOfTimesRetried:0
+[6.1] worker error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Error [FLog::CreatorError] Error: Players.Player1.PlayerGui.SelectUI.Frame.LocalScript: bytecode corrupted
+[6.1] error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Error [FLog::CreatorError] Error: Players.Player1.PlayerGui.SelectUI.Frame.LocalScript: bytecode corrupted
+[6.1] worker error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Error [FLog::CreatorError] Error: Workspace.Player1.Animate: bytecode corrupted
+[6.1] error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Error [FLog::CreatorError] Error: Workspace.Player1.Animate: bytecode corrupted
+[6.4] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[6.4] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[6.4] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[6.4] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[6.4] worker warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Warning [FLog::Output] Wrap-deformer fetching meshes resulted in error.  Skipping follow-on stages.
+[6.4] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Warning [FLog::Output] Wrap-deformer fetching meshes resulted in error.  Skipping follow-on stages.
+[6.4] worker warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Warning [FLog::CreatorWarning] Warning: [Roblox][CoreGui.RobloxGui.Modules.AvatarEditorPrompts.Thunks.GetGameName] Unable to get game name for Avatar Editor Prompts
+[6.4] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Warning [FLog::CreatorWarning] Warning: [Roblox][CoreGui.RobloxGui.Modules.AvatarEditorPrompts.Thunks.GetGameName] Unable to get game name for Avatar Editor Prompts
+[6.6] worker warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Warning [FLog::CreatorWarning] Warning: [Roblox][CorePackages.Packages._Index.Promise.Promise] Unhandled Promise rejection:
+
+nil
+
+CoreGui.RobloxGui.Modules.AvatarEditorPrompts.Thunks.GetGameName:25
+CorePackages.Packages._Index.Rodux.Rodux.makeThunkMiddleware:18
+CorePackages.Packages._Index.Rodux.Rodux.makeThunkMiddleware:17
+CorePackages.Packages._Index.Rodux.Rodux.Store:116
+CoreGui.RobloxGui.Modules.AvatarEditorPrompts:48 function new
+CoreGui.RobloxGui.Modules.AvatarEditorPrompts:82
+
+[6.6] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Warning [FLog::CreatorWarning] Warning: [Roblox][CorePackages.Packages._Index.Promise.Promise] Unhandled Promise rejection:
+
+nil
+
+CoreGui.RobloxGui.Modules.AvatarEditorPrompts.Thunks.GetGameName:25
+CorePackages.Packages._Index.Rodux.Rodux.makeThunkMiddleware:18
+CorePackages.Packages._Index.Rodux.Rodux.makeThunkMiddleware:17
+CorePackages.Packages._Index.Rodux.Rodux.Store:116
+CoreGui.RobloxGui.Modules.AvatarEditorPrompts:48 function new
+CoreGui.RobloxGui.Modules.AvatarEditorPrompts:82
+
+[6.7] worker warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#27 0x11472d40) time:6.9ms (net:6.9ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:137 url:{ "https://apis.roblox.com/player-policy-service/v1/player-policy-client" } ip: external:0 numberOfTimesRetried:0
+[6.7] warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#27 0x11472d40) time:6.9ms (net:6.9ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:137 url:{ "https://apis.roblox.com/player-policy-service/v1/player-policy-client" } ip: external:0 numberOfTimesRetried:0
+[6.7] worker log: [LIFECYCLE] defaultLoadingScreenRemoved placeId=1818
+
+[6.7] log: [LIFECYCLE] defaultLoadingScreenRemoved placeId=1818
+
+[7.0] worker error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,11338178,6,Error [DFLog::AssetProvider] AssetResolutionWorkflow to get assetid: https://assetdelivery.roblox.com/v1/asset/?id=123480233606534&contentRepresentationPriorityList=W3siZm9ybWF0IjoiZm1kIiwibWFqb3JWZXJzaW9uIjoiMS4wLjEiLCJmaWRlbGl0eSI6IkFMTCJ9XQ%3D%3D failed!! adIndividualItemFailureReason: AssetDelivery404 adBatchHttpStatusCode: 0 adBatchHttpErrorCode: OK adIndividualItemCode: 404 contentRepresentationSpecifier:  wasModerated: true adResolutionErrorMessage: Asset not in local store adBatchJsonParsingError:  cdnHttpStatusCode: 0 cdnHttpErrorCode: OK cdnErrorMessage: 
+[7.1] error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,11338178,6,Error [DFLog::AssetProvider] AssetResolutionWorkflow to get assetid: https://assetdelivery.roblox.com/v1/asset/?id=123480233606534&contentRepresentationPriorityList=W3siZm9ybWF0IjoiZm1kIiwibWFqb3JWZXJzaW9uIjoiMS4wLjEiLCJmaWRlbGl0eSI6IkFMTCJ9XQ%3D%3D failed!! adIndividualItemFailureReason: AssetDelivery404 adBatchHttpStatusCode: 0 adBatchHttpErrorCode: OK adIndividualItemCode: 404 contentRepresentationSpecifier:  wasModerated: true adResolutionErrorMessage: Asset not in local store adBatchJsonParsingError:  cdnHttpStatusCode: 0 cdnHttpErrorCode: OK cdnErrorMessage: 
+[7.1] worker error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,6,Error [FLog::CreatorError] Error: MeshContentProvider failed to process https://assetdelivery.roblox.com/v1/asset/?id=123480233606534 because 'could not fetch'
+[7.1] error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,6,Error [FLog::CreatorError] Error: MeshContentProvider failed to process https://assetdelivery.roblox.com/v1/asset/?id=123480233606534 because 'could not fetch'
+[7.3] worker warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,6 [FLog::Error] Asset (Image) "https://assetdelivery.roblox.com/v1/asset?id=3570695787" load failed in Players.Player1.PlayerGui.SelectUI.Frame.Image: Asset not in local store
+[7.3] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,6 [FLog::Error] Asset (Image) "https://assetdelivery.roblox.com/v1/asset?id=3570695787" load failed in Players.Player1.PlayerGui.SelectUI.Frame.Image: Asset not in local store
+[7.3] worker warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,6 [FLog::Error] Asset (Image) "https://assetdelivery.roblox.com/v1/asset?id=2790390993" load failed in Players.Player1.PlayerGui.SelectUI.Frame.JoinGame.Image: Asset not in local store
+[7.3] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,6 [FLog::Error] Asset (Image) "https://assetdelivery.roblox.com/v1/asset?id=2790390993" load failed in Players.Player1.PlayerGui.SelectUI.Frame.JoinGame.Image: Asset not in local store
+[7.3] worker warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,6 [FLog::Error] Asset (Image) "https://assetdelivery.roblox.com/v1/asset?id=9475422736" load failed: Asset not in local store
+[7.3] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,6 [FLog::Error] Asset (Image) "https://assetdelivery.roblox.com/v1/asset?id=9475422736" load failed: Asset not in local store
+[7.3] worker warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,6 [FLog::Error] Asset (Image) "https://assetdelivery.roblox.com/v1/asset?id=2790382281" load failed in Players.Player1.PlayerGui.SelectUI.Frame.KAH.Image: Asset not in local store
+[7.3] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,6 [FLog::Error] Asset (Image) "https://assetdelivery.roblox.com/v1/asset?id=2790382281" load failed in Players.Player1.PlayerGui.SelectUI.Frame.KAH.Image: Asset not in local store
+[7.3] worker error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,11338178,6,Error [DFLog::AssetProvider] AssetResolutionWorkflow to get assetid: https://assetdelivery.roblox.com/v1/asset?id=3570695787 failed!! adIndividualItemFailureReason: AssetDelivery404 adBatchHttpStatusCode: 0 adBatchHttpErrorCode: OK adIndividualItemCode: 404 contentRepresentationSpecifier:  wasModerated: true adResolutionErrorMessage: Asset not in local store adBatchJsonParsingError:  cdnHttpStatusCode: 0 cdnHttpErrorCode: OK cdnErrorMessage: 
+[7.3] error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,11338178,6,Error [DFLog::AssetProvider] AssetResolutionWorkflow to get assetid: https://assetdelivery.roblox.com/v1/asset?id=3570695787 failed!! adIndividualItemFailureReason: AssetDelivery404 adBatchHttpStatusCode: 0 adBatchHttpErrorCode: OK adIndividualItemCode: 404 contentRepresentationSpecifier:  wasModerated: true adResolutionErrorMessage: Asset not in local store adBatchJsonParsingError:  cdnHttpStatusCode: 0 cdnHttpErrorCode: OK cdnErrorMessage: 
+[7.3] worker error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,11338178,6,Error [DFLog::AssetProvider] AssetResolutionWorkflow to get assetid: https://assetdelivery.roblox.com/v1/asset?id=2790390993 failed!! adIndividualItemFailureReason: AssetDelivery404 adBatchHttpStatusCode: 0 adBatchHttpErrorCode: OK adIndividualItemCode: 404 contentRepresentationSpecifier:  wasModerated: true adResolutionErrorMessage: Asset not in local store adBatchJsonParsingError:  cdnHttpStatusCode: 0 cdnHttpErrorCode: OK cdnErrorMessage: 
+[7.3] error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,11338178,6,Error [DFLog::AssetProvider] AssetResolutionWorkflow to get assetid: https://assetdelivery.roblox.com/v1/asset?id=2790390993 failed!! adIndividualItemFailureReason: AssetDelivery404 adBatchHttpStatusCode: 0 adBatchHttpErrorCode: OK adIndividualItemCode: 404 contentRepresentationSpecifier:  wasModerated: true adResolutionErrorMessage: Asset not in local store adBatchJsonParsingError:  cdnHttpStatusCode: 0 cdnHttpErrorCode: OK cdnErrorMessage: 
+[7.3] worker error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,11338178,6,Error [DFLog::AssetProvider] AssetResolutionWorkflow to get assetid: https://assetdelivery.roblox.com/v1/asset?id=9475422736&contentRepresentationPriorityList=W3siZm9ybWF0Ijoia3R4MiIsIm1ham9yVmVyc2lvbiI6IjdyZG8iLCJmaWRlbGl0eSI6IklrQT0ifV0%3D&doNotFallbackToBaselineRepresentation=true failed!! adIndividualItemFailureReason: AssetDelivery404 adBatchHttpStatusCode: 0 adBatchHttpErrorCode: OK adIndividualItemCode: 404 contentRepresentationSpecifier:  wasModerated: true adResolutionErrorMessage: Asset not in local store adBatchJsonParsingError:  cdnHttpStatusCode: 0 cdnHttpErrorCode: OK cdnErrorMessage: 
+[7.3] error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,11338178,6,Error [DFLog::AssetProvider] AssetResolutionWorkflow to get assetid: https://assetdelivery.roblox.com/v1/asset?id=9475422736&contentRepresentationPriorityList=W3siZm9ybWF0Ijoia3R4MiIsIm1ham9yVmVyc2lvbiI6IjdyZG8iLCJmaWRlbGl0eSI6IklrQT0ifV0%3D&doNotFallbackToBaselineRepresentation=true failed!! adIndividualItemFailureReason: AssetDelivery404 adBatchHttpStatusCode: 0 adBatchHttpErrorCode: OK adIndividualItemCode: 404 contentRepresentationSpecifier:  wasModerated: true adResolutionErrorMessage: Asset not in local store adBatchJsonParsingError:  cdnHttpStatusCode: 0 cdnHttpErrorCode: OK cdnErrorMessage: 
+[7.3] worker error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,11338178,6,Error [DFLog::AssetProvider] AssetResolutionWorkflow to get assetid: https://assetdelivery.roblox.com/v1/asset?id=2790382281 failed!! adIndividualItemFailureReason: AssetDelivery404 adBatchHttpStatusCode: 0 adBatchHttpErrorCode: OK adIndividualItemCode: 404 contentRepresentationSpecifier:  wasModerated: true adResolutionErrorMessage: Asset not in local store adBatchJsonParsingError:  cdnHttpStatusCode: 0 cdnHttpErrorCode: OK cdnErrorMessage: 
+[7.3] error: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,11338178,6,Error [DFLog::AssetProvider] AssetResolutionWorkflow to get assetid: https://assetdelivery.roblox.com/v1/asset?id=2790382281 failed!! adIndividualItemFailureReason: AssetDelivery404 adBatchHttpStatusCode: 0 adBatchHttpErrorCode: OK adIndividualItemCode: 404 contentRepresentationSpecifier:  wasModerated: true adResolutionErrorMessage: Asset not in local store adBatchJsonParsingError:  cdnHttpStatusCode: 0 cdnHttpErrorCode: OK cdnErrorMessage: 
+[8.1] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::Error] Asset (Image) "https://assetdelivery.roblox.com/v1/asset?id=3570695787" load failed in Players.Player1.PlayerGui.SelectUI.Frame.Image: Invalid image or texture.
+[8.1] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::Error] Asset (Image) "https://assetdelivery.roblox.com/v1/asset?id=2790390993" load failed in Players.Player1.PlayerGui.SelectUI.Frame.JoinGame.Image: Invalid image or texture.
+[8.1] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::Error] Asset (Image) "https://assetdelivery.roblox.com/v1/asset?id=9475422736" load failed: Invalid image or texture.
+[8.1] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::Error] Asset (Image) "https://assetdelivery.roblox.com/v1/asset?id=2790382281" load failed in Players.Player1.PlayerGui.SelectUI.Frame.KAH.Image: Invalid image or texture.
+[9.4] worker warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#43 0x12bb4a48) time:16.4ms (net:15.0ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:137 url:{ "https://apis.roblox.com/player-policy-service/v1/player-policy-client" } ip: external:0 numberOfTimesRetried:0
+[9.4] warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#43 0x12bb4a48) time:16.4ms (net:15.0ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:137 url:{ "https://apis.roblox.com/player-policy-service/v1/player-policy-client" } ip: external:0 numberOfTimesRetried:0
+[9.5] worker warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#44 0x12ba2d10) time:11.8ms (net:11.7ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:145 url:{ "https://apis.roblox.com/product-experimentation-platform/v1/projects/1/values" } ip: external:0 numberOfTimesRetried:0
+[9.5] warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#44 0x12ba2d10) time:11.8ms (net:11.7ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:145 url:{ "https://apis.roblox.com/product-experimentation-platform/v1/projects/1/values" } ip: external:0 numberOfTimesRetried:0
+[9.5] worker warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#45 0x12ba1f58) time:18.3ms (net:18.2ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:145 url:{ "https://apis.roblox.com/product-experimentation-platform/v1/projects/1/values" } ip: external:0 numberOfTimesRetried:0
+[9.5] warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#45 0x12ba1f58) time:18.3ms (net:18.2ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:145 url:{ "https://apis.roblox.com/product-experimentation-platform/v1/projects/1/values" } ip: external:0 numberOfTimesRetried:0
+[9.6] worker warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#53 0x12bd9ef8) time:17.0ms (net:16.8ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:117 url:{ "https://groups.roblox.com/v2/groups/4358041/users?userIds=1" } ip: external:0 numberOfTimesRetried:0
+[9.6] warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#53 0x12bd9ef8) time:17.0ms (net:16.8ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:117 url:{ "https://groups.roblox.com/v2/groups/4358041/users?userIds=1" } ip: external:0 numberOfTimesRetried:0
+[9.6] worker warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#55 0x14aeec60) time:6.6ms (net:6.5ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:135 url:{ "https://apis.roblox.com/marketplace-widgets/v1/widgets/shop-widgets?universeId=1&requestId=17f6500a-7c78-403f-8b08-67e59175f950" } ip: external:0 numberOfTimesRetried:0
+[9.6] warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#55 0x14aeec60) time:6.6ms (net:6.5ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:135 url:{ "https://apis.roblox.com/marketplace-widgets/v1/widgets/shop-widgets?universeId=1&requestId=17f6500a-7c78-403f-8b08-67e59175f950" } ip: external:0 numberOfTimesRetried:0
+[9.6] worker warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#56 0x14af58b8) time:11.6ms (net:11.1ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:110 url:{ "https://apis.roblox.com/checkout/v1/offers?featureKeys=ROBLOX_SHOP,DEVELOPER_SHOP" } ip: external:0 numberOfTimesRetried:0
+[9.6] warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#56 0x14af58b8) time:11.6ms (net:11.1ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:110 url:{ "https://apis.roblox.com/checkout/v1/offers?featureKeys=ROBLOX_SHOP,DEVELOPER_SHOP" } ip: external:0 numberOfTimesRetried:0
+[9.6] worker warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Warning [FLog::CreatorWarning] Warning: [Roblox][CoreGui.RobloxGui.Modules.TopBar.Thunks.GetGameName] Unable to get game name for Gamepad Menu
+[9.6] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Warning [FLog::CreatorWarning] Warning: [Roblox][CoreGui.RobloxGui.Modules.TopBar.Thunks.GetGameName] Unable to get game name for Gamepad Menu
+[9.7] worker log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Info [DFLog::TrackerAnimationStreamSourceTrace] open
+[9.7] log: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Info [DFLog::TrackerAnimationStreamSourceTrace] open
+[9.7] worker warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Warning [FLog::CreatorWarning] Warning: [Roblox][CoreGui.RobloxGui.Modules.Settings.Pages.GameSettings] Player:IsInGroup failed because HTTP 404 (Not Found)
+[9.7] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Warning [FLog::CreatorWarning] Warning: [Roblox][CoreGui.RobloxGui.Modules.Settings.Pages.GameSettings] Player:IsInGroup failed because HTTP 404 (Not Found)
+[9.7] worker warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#59 0x14f19b48) time:6.8ms (net:4.8ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:104 url:{ "https://voice.roblox.com/v1/settings" } ip: external:0 numberOfTimesRetried:0
+[9.7] warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#59 0x14f19b48) time:6.8ms (net:4.8ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:104 url:{ "https://voice.roblox.com/v1/settings" } ip: external:0 numberOfTimesRetried:0
+[9.8] worker warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#60 0x14f7aeb0) time:12.7ms (net:12.6ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:113 url:{ "https://apis.roblox.com/modals-api/v1/prompts?promptStyle=Tooltip&entryPoint=InExperienceChatWindowOpen" } ip: external:0 numberOfTimesRetried:0
+[9.8] warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#60 0x14f7aeb0) time:12.7ms (net:12.6ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:113 url:{ "https://apis.roblox.com/modals-api/v1/prompts?promptStyle=Tooltip&entryPoint=InExperienceChatWindowOpen" } ip: external:0 numberOfTimesRetried:0
+[9.8] worker warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#61 0x150a8890) time:5.5ms (net:5.4ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:104 url:{ "https://voice.roblox.com/v1/settings" } ip: external:0 numberOfTimesRetried:0
+[9.8] warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#61 0x150a8890) time:5.5ms (net:5.4ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:104 url:{ "https://voice.roblox.com/v1/settings" } ip: external:0 numberOfTimesRetried:0
+[9.8] worker warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Warning [FLog::CreatorWarning] Warning: [Roblox][CorePackages.Packages._Index.Promise.Promise] Unhandled Promise rejection:
+
+nil
+
+CoreGui.RobloxGui.Modules.TopBar.Thunks.GetGameName:33
+CorePackages.Packages._Index.Rodux.Rodux.makeThunkMiddleware:18
+CorePackages.Packages._Index.Rodux.Rodux.makeThunkMiddleware:17
+CorePackages.Packages._Index.Rodux.Rodux.Store:116
+CoreGui.RobloxGui.Modules.TopBar:206 function new
+CoreGui.RobloxGui.Modules.TopBar:376
+
+[9.8] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Warning [FLog::CreatorWarning] Warning: [Roblox][CorePackages.Packages._Index.Promise.Promise] Unhandled Promise rejection:
+
+nil
+
+CoreGui.RobloxGui.Modules.TopBar.Thunks.GetGameName:33
+CorePackages.Packages._Index.Rodux.Rodux.makeThunkMiddleware:18
+CorePackages.Packages._Index.Rodux.Rodux.makeThunkMiddleware:17
+CorePackages.Packages._Index.Rodux.Rodux.Store:116
+CoreGui.RobloxGui.Modules.TopBar:206 function new
+CoreGui.RobloxGui.Modules.TopBar:376
+
+[10.3] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::Error] Asset (Image) "icons/status/alert" load failed: Unexpected URL
+[10.3] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,16d2b60,6 [FLog::Error] Asset (Image) "icons/status/alert" load failed: Invalid image or texture.
+[10.4] worker warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#64 0x159ac230) time:10.5ms (net:9.3ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:138 url:{ "https://apis.roblox.com/universes/v1/universes/1/is-private-playtester" } ip: external:0 numberOfTimesRetried:0
+[10.4] warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#64 0x159ac230) time:10.5ms (net:9.3ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:138 url:{ "https://apis.roblox.com/universes/v1/universes/1/is-private-playtester" } ip: external:0 numberOfTimesRetried:0
+[10.4] worker warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#65 0x15385ae0) time:13.3ms (net:11.1ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:109 url:{ "https://develop.roblox.com/v1/universes/1" } ip: external:0 numberOfTimesRetried:0
+[10.4] warning: [12] 2083-08-27T14:29:05.000Z,1793301248.000000,2f95398,12 [DFLog::HttpTraceError] HttpResponse(#65 0x15385ae0) time:13.3ms (net:11.1ms timeInRetryQueue:0.0ms)status:404 Not Found bodySize:109 url:{ "https://develop.roblox.com/v1/universes/1" } ip: external:0 numberOfTimesRetried:0
+[10.5] worker warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Warning [FLog::CreatorWarning] Warning: Multiple StyleLinks under CoreGui may result in undefined behavior
+[10.5] warning: [6] 2083-08-27T14:29:05.000Z,1793301248.000000,2d90790,6,Warning [FLog::CreatorWarning] Warning: Multiple StyleLinks under CoreGui may result in undefined behavior
+[10.6] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[10.6] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[10.7] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[10.7] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[10.7] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[10.7] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[10.7] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[10.7] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[10.7] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[10.7] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[10.8] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[10.8] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[10.8] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[10.8] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.1] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.1] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.1] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.1] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.1] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.1] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.2] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.2] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.2] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.2] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.2] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.2] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.2] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.2] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.2] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.2] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.2] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.2] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.3] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.3] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.3] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.3] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.3] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.3] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.3] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.3] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.3] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.3] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.3] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.3] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.4] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.4] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.4] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.4] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.4] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[11.4] warning: WebGL: INVALID_OPERATION: texParameter: no texture bound to target
+[14.0] log: Tick 47280 took 8 ms (input drops total: 0)
+
+[14.6] log: Tick 50640 took 248 ms (input drops total: 0)
+
+[18.0] log: Tick 54480 took 4 ms (input drops total: 0)
+
+[20.8] worker warning: [6] 2083-08-27T14:31:13.000Z,1793301376.000000,2d90790,6 [FLog::DataModelPatchConfigurer] [_UniversalAppPatch] Load configs for user key: app:15710176852217642979
+[20.8] warning: [6] 2083-08-27T14:31:13.000Z,1793301376.000000,2d90790,6 [FLog::DataModelPatchConfigurer] [_UniversalAppPatch] Load configs for user key: app:15710176852217642979
+[20.8] worker warning: [6] 2083-08-27T14:31:13.000Z,1793301376.000000,2d90790,6 [FLog::DataModelPatchConfigurer] [_UniversalAppPatch] Update OTA config
+[20.8] warning: [6] 2083-08-27T14:31:13.000Z,1793301376.000000,2d90790,6 [FLog::DataModelPatchConfigurer] [_UniversalAppPatch] Update OTA config
+[20.8] worker warning: [6] 2083-08-27T14:31:13.000Z,1793301376.000000,2d90790,6 [FLog::DataModelPatchConfigurer] [_InExperiencePatch] Update OTA config
+[20.8] warning: [6] 2083-08-27T14:31:13.000Z,1793301376.000000,2d90790,6 [FLog::DataModelPatchConfigurer] [_InExperiencePatch] Update OTA config
+[52.3] log: Tick 68760 took 1886 ms (input drops total: 0)
+
+[52.4] log: Tick 69720 took 2 ms (input drops total: 0)
+
+[53.6] log: Tick 74880 took 6 ms (input drops total: 0)
+
+[65.3] log: Tick 105720 took 1 ms (input drops total: 0)
+
+[77.9] log: Tick 139560 took 2 ms (input drops total: 0)
+

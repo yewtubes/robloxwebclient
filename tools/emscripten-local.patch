@@ -1,0 +1,42 @@
+diff --git a/tools/emscripten.py b/tools/emscripten.py
+index 013f7d0..7e58180 100644
+--- a/tools/emscripten.py
++++ b/tools/emscripten.py
+@@ -127,6 +127,10 @@ def update_settings_glue(wasm_file, metadata, base_metadata):
+ 
+   # start with the MVP features, and add any detected features.
+   building.binaryen_features = ['--mvp-features', *metadata.features]
++  if not metadata.features:  # local patch: target_features section was stripped
++    building.binaryen_features += ['--enable-threads', '--enable-bulk-memory', '--enable-mutable-globals',
++                                   '--enable-sign-ext', '--enable-nontrapping-float-to-int', '--enable-simd',
++                                   '--enable-exception-handling', '--enable-reference-types', '--enable-multivalue']
+   if settings.ASYNCIFY == 2:
+     building.binaryen_features += ['--enable-reference-types']
+ 
+@@ -385,6 +389,12 @@ def emscript(in_wasm, out_wasm, outfile_js, js_syms, finalize=True, base_metadat
+       shutil.copy(in_wasm, out_wasm)
+     metadata = get_metadata(in_wasm, out_wasm, False, [])
+ 
++  # local patch: inject reconstructed EM_ASM bodies (stripped from the input wasm)
++  if os.environ.get('RBX_EM_ASM_JSON'):
++    import json
++    for k, v in json.load(open(os.environ['RBX_EM_ASM_JSON'])).items():
++      metadata.em_asm_consts[int(k)] = v
++
+   # If the binary has already been finalized the settings have already been
+   # updated and we can skip updating them.
+   if finalize:
+diff --git a/tools/link.py b/tools/link.py
+index 838e811..c8d2b74 100644
+--- a/tools/link.py
++++ b/tools/link.py
+@@ -2741,7 +2741,8 @@ def process_libraries(flags):
+     # For example we map `-lc` to `-lc-mt` if we are building with threading support.
+     if 'lib' + lib in system_libs_map:
+       lib_obj = system_libs_map['lib' + lib]
+-      lib_obj.build()
++      if not options.post_link:  # local patch: post-link needs no native libs
++        lib_obj.build()
+       new_flags.append(lib_obj.get_link_flag())
+       continue
+ 

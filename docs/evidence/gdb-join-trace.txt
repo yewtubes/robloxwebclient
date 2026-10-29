@@ -1,0 +1,75 @@
+[New LWP 20808]
+[New LWP 20456]
+[New LWP 20455]
+[New LWP 20454]
+[New LWP 20453]
+[New LWP 20450]
+[New LWP 20449]
+[New LWP 20338]
+[New LWP 20337]
+[New LWP 20335]
+[New LWP 20334]
+[New LWP 20333]
+[New LWP 20332]
+[New LWP 20331]
+[New LWP 20330]
+[New LWP 20329]
+[New LWP 20307]
+[New LWP 20306]
+[New LWP 20305]
+[New LWP 20304]
+[New LWP 20303]
+[New LWP 20302]
+[New LWP 20301]
+[New LWP 20300]
+[New LWP 20299]
+[New LWP 20298]
+[New LWP 20297]
+[New LWP 20296]
+[New LWP 20295]
+[New LWP 20294]
+[New LWP 20293]
+[New LWP 20292]
+[New LWP 20291]
+[New LWP 20290]
+[New LWP 20289]
+[New LWP 20288]
+[New LWP 20287]
+[New LWP 20286]
+[New LWP 20285]
+[New LWP 20284]
+[New LWP 20283]
+[New LWP 20281]
+[New LWP 20280]
+[New LWP 20279]
+[New LWP 20278]
+[New LWP 20277]
+[New LWP 20276]
+[New LWP 20274]
+[New LWP 20273]
+[New LWP 20272]
+[New LWP 20271]
+[New LWP 20267]
+[New LWP 20258]
+[New LWP 20257]
+[New LWP 20256]
+[New LWP 20252]
+[New LWP 20251]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+0x00006fffffcad35d in ?? ()
+Breakpoint 1 at 0x14604e1b0
+Breakpoint 2 at 0x14604e242
+Breakpoint 3 at 0x1460b5830
+register
+register
+register
+register
+register
+register
+register
+register
+register
+register
+register
+register
+[Inferior 1 (process 20181) detached]

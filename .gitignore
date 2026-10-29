@@ -1,0 +1,14 @@
+webclient/files/
+webclient/overlay/
+webclient/assets/*
+!webclient/assets/.gitkeep
+.pkgcache/
+screenshots/latest*
+screenshots/*.webm
+webclient/WebClient.patched.wasm
+tools/luauc/luauc
+backend-tls/*.key
+backend-tls/*.log
+backend-tls/*.srl
+webclient/live/
+webclient/site/
