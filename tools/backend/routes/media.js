@@ -169,6 +169,8 @@ const worker = (fn) => (req, res, ...rest) =>
     ? fn(req, res, ...rest) : error(res, 403, 'Render worker calls need X-Admin-Key (or a loopback caller when ADMIN_KEY is unset).', 0));
 
 const ROUTES = [
+  // Player.CharacterAppearance URL (RCC render scripts, LoadCharacter): same document.
+  ['GET', /^(avatar|api|www)\.roblox\.com$/, /^\/(v1\.1\/avatar-fetch|v2\/avatar\/avatar-fetch)\/?$/, (req, res, u) => (M.user(userIdOf(u)) ? json(res, 200, avatarFetch(userIdOf(u))) : error(res, 400, 'The user id is invalid.', 1))],
   ['GET', /^avatar\.roblox\.com$/, /^\/v1\/avatar-fetch$/, (req, res, u) => (M.user(userIdOf(u)) ? json(res, 200, avatarFetch(userIdOf(u))) : error(res, 400, 'The user id is invalid.', 1))],
   ['GET', /^avatar\.roblox\.com$/, /^\/v1\/users\/\d+\/avatar$/, (req, res, u) => (M.user(userIdOf(u)) ? json(res, 200, avatarV1(userIdOf(u))) : error(res, 400, 'The user id is invalid.', 1))],
   ['GET', /^avatar\.roblox\.com$/, /^\/v2\/avatar\/users\/\d+\/avatar$/, (req, res, u) => (M.user(userIdOf(u)) ? json(res, 200, avatarV2(userIdOf(u))) : error(res, 400, 'The user id is invalid.', 1))],
@@ -205,11 +207,12 @@ const ROUTES = [
     json(res, 200, { success: true });
   })],
   // Wearing: only assets that exist in this platform's store.
-  ['POST', /^avatar\.roblox\.com$/, /^\/v[12]\/avatar\/set-wearing-assets$/, authed((req, res, u, body, { user }) => {
+  // Assets not in the store yet are fetched through the configured fallback (logged
+  // in data/logs/asset-fallback.log) and accepted only if they are a wearable type.
+  ['POST', /^avatar\.roblox\.com$/, /^\/v[12]\/avatar\/set-wearing-assets$/, authed(async (req, res, u, body, { user }) => {
     const p = parseJson(body);
     const list = (p.assetIds || (p.assets || []).map((a) => a.id) || []).map(Number);
-    const ok = [], invalid = [];
-    for (const id of list) { const a = S.getAsset(id); (a ? ok : invalid).push(a ? { id, assetTypeId: a.asset_type_id } : id); }
+    const { ok, invalid } = await M.wearable(list);
     M.saveAvatar(user.id, { assets: ok });
     json(res, 200, { invalidAssets: [], invalidAssetIds: invalid, success: invalid.length === 0 });
   })],

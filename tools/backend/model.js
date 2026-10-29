@@ -129,6 +129,24 @@ function avatarOf(userId) {
     emotes: a ? JSON.parse(a.emotes) : [],
   };
 }
+// Asset types a character can wear: classic clothing and faces, heads and body
+// parts, accessories, animations, emotes, layered clothing, dynamic head parts.
+const WEARABLE_TYPES = new Set([2, 8, 11, 12, 17, 18, 19, 27, 28, 29, 30, 31, 41, 42, 43, 44, 45, 46, 47,
+  48, 49, 50, 51, 52, 53, 54, 55, 56, 61, 64, 65, 66, 67, 68, 69, 70, 71, 72, 76, 77, 78, 79]);
+// Splits asset ids into wearable {id, assetTypeId} entries and invalid ids, fetching
+// unknown ones into the store first (assets.ensure, per ASSET_FALLBACK).
+async function wearable(ids) {
+  const S = require('./assets.js');
+  const ok = [], invalid = [];
+  for (const id of ids) {
+    if (!S.getAsset(id)) await S.ensure(id);
+    const a = S.getAsset(id);
+    if (a && WEARABLE_TYPES.has(a.asset_type_id)) ok.push({ id, assetTypeId: a.asset_type_id });
+    else invalid.push(id);
+  }
+  return { ok, invalid };
+}
+
 function saveAvatar(userId, patch) {
   const cur = { ...avatarOf(userId), ...patch };
   open().prepare(`INSERT INTO avatars (user_id, avatar_type, body_colors, scales, assets, emotes, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -138,7 +156,7 @@ function saveAvatar(userId, patch) {
   return cur;
 }
 
-module.exports = {
+module.exports = { wearable, WEARABLE_TYPES,
   place, universe, universeOfPlace, user, creatorName, playingCount, serverPlayers,
   upsertServer, heartbeatServer, closeServer, activeServers, pickServer,
   joinSession, touch, setPresence, presenceOf, avatarOf, saveAvatar, BRICK, ACTIVE_MS,

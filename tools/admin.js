@@ -3,12 +3,18 @@
 //   node tools/admin.js user create <name> <password> [--birthdate YYYY-MM-DD] [--display <name>]
 //   node tools/admin.js user list | user password <name> <pw> | user ban <name> | user unban <name>
 //   node tools/admin.js friend <name> <name>                      make two users friends
+//   node tools/admin.js block <name> <name> | unblock <name> <name>  first user blocks/unblocks the second
 //   node tools/admin.js universe create <id> <name> --creator <userId> [--max 10]
 //   node tools/admin.js place add <placeId> <universeId> <file> [--name <n>] [--root]
 //   node tools/admin.js universe icon <universeId> <imageAssetId> | universe thumbnail <universeId> <imageAssetId>
 //   node tools/admin.js asset import <assetId> <file> [--type <assetTypeId>] [--name <n>]
 //   node tools/admin.js asset import-legacy                       webclient/assets/* into the store
 //   node tools/admin.js asset misses                              what the store could not serve, and why
+//   node tools/admin.js asset fetch <assetId>...                  pull assets in through ASSET_FALLBACK (logged)
+//   node tools/admin.js avatar show <name>                        the account's avatar (as avatar-fetch serves it)
+//   node tools/admin.js avatar wear <name> <assetId>...           set what the account wears (fetched if missing)
+//   node tools/admin.js avatar type <name> R6|R15
+//   node tools/admin.js avatar colors <name> <head> <torso> <leftArm> <rightArm> <leftLeg> <rightLeg>   BrickColor ids
 //   node tools/admin.js server register <placeId> <host> <port> [transportPort] [--job <id>] [--cert <hex>]
 //   node tools/admin.js server heartbeat <jobId> | server close <jobId> | server list
 //   node tools/admin.js render list
@@ -50,6 +56,14 @@ switch (`${cmd} ${sub}`) {
     const x = userArg(sub), y = userArg(a[0]);
     for (const [p, q] of [[x, y], [y, x]]) db.prepare('INSERT OR IGNORE INTO friendships (user_id, friend_id, created_at) VALUES (?, ?, ?)').run(p.id, q.id, now());
     console.log(`${x.name} <-> ${y.name}`);
+    break;
+  }
+  case `block ${sub}`:
+  case `unblock ${sub}`: {
+    const x = userArg(sub), y = userArg(a[0]);
+    if (cmd.startsWith('block')) db.prepare('INSERT OR IGNORE INTO user_blocks (user_id, blocked_id, created_at) VALUES (?, ?, ?)').run(x.id, y.id, now());
+    else db.prepare('DELETE FROM user_blocks WHERE user_id = ? AND blocked_id = ?').run(x.id, y.id);
+    console.log(`${x.name} ${cmd.startsWith('block') ? 'blocks' : 'unblocked'} ${y.name}`);
     break;
   }
   case 'universe create':
@@ -97,6 +111,34 @@ switch (`${cmd} ${sub}`) {
   case 'server list':
     for (const s of M.activeServers ? db.prepare(`SELECT * FROM game_servers WHERE status = 'active'`).all() : []) console.log({ ...s, players: M.serverPlayers(s.job_id) });
     break;
+  case 'asset fetch':
+    (async () => {
+      for (const id of a.map(Number)) {
+        const r = await S.ensure(id), x = S.getAsset(id);
+        console.log(r ? `${id}: type ${x.asset_type_id} ${JSON.stringify(x.name)} (${x.source})` : `${id}: not available (see asset misses)`);
+      }
+    })();
+    break;
+  case `avatar ${sub}`: {
+    const u = userArg(a[0]);
+    if (sub === 'wear') {
+      M.wearable(a.slice(1).map(Number)).then(({ ok, invalid }) => {
+        M.saveAvatar(u.id, { assets: ok });
+        console.log(`${u.name} wears ${ok.map((x) => `${x.id} (type ${x.assetTypeId})`).join(', ') || 'nothing'}${invalid.length ? `; not wearable or unavailable: ${invalid.join(', ')}` : ''}`);
+      });
+      break;
+    }
+    if (sub === 'type') {
+      if (!/^R(6|15)$/.test(a[1] || '')) die('avatar type <name> R6|R15');
+      M.saveAvatar(u.id, { avatarType: a[1] });
+    } else if (sub === 'colors') {
+      const keys = ['head', 'torso', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'], v = a.slice(1).map(Number);
+      if (v.length !== 6 || v.some((c) => !M.BRICK[c])) die('avatar colors <name> <6 BrickColor ids>');
+      M.saveAvatar(u.id, { colors: Object.fromEntries(keys.map((k, i) => [k, v[i]])) });
+    } else if (sub !== 'show') die('avatar show|wear|type|colors');
+    console.log(M.avatarOf(u.id));
+    break;
+  }
   case 'render list':
     for (const r of db.prepare('SELECT key, state, attempts, error, requested_at, completed_at FROM thumbnails ORDER BY requested_at DESC LIMIT 50').all()) console.log(r);
     break;

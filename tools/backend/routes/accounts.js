@@ -221,7 +221,12 @@ const ROUTES = [
     const d = user.birthdate ? new Date(user.birthdate) : null;
     json(res, 200, d ? { birthMonth: d.getUTCMonth() + 1, birthDay: d.getUTCDate(), birthYear: d.getUTCFullYear() } : {});
   })],
-  ['GET', /^accountinformation\.roblox\.com$/, /^\/v1\/description$/, requireUser((req, res, u, b, { user }) => json(res, 200, { description: user.description }))],
+  ['GET', /^(accountinformation|users)\.roblox\.com$/, /^\/v1\/description$/, requireUser((req, res, u, b, { user }) => json(res, 200, { description: user.description }))],
+  ['POST', /^(accountinformation|users)\.roblox\.com$/, /^\/v1\/description$/, requireUser((req, res, u, body, { user }) => {
+    const description = String(formOrJson(body).description ?? '').slice(0, 1000);
+    open().prepare('UPDATE users SET description = ? WHERE id = ?').run(description, user.id);
+    json(res, 200, { description });
+  })],
   ['GET', /^accountsettings\.roblox\.com$/, /^\/v1\/email$/, requireUser((req, res) => json(res, 200, { emailAddress: null, verified: false }))],
 
   // Moderation state from the account: banned accounts get a ban record.

@@ -123,9 +123,10 @@ Assets seen that the platform can't serve yet (`asset misses`):
 | Host | Method, path | Response | Auth | Status |
 |---|---|---|---|---|
 | avatar | `GET /v1/avatar-fetch?userId&placeId` | `{resolvedAvatarType, bodyColors, bodyColor3s, scales, assetAndAssetTypeIds, animationAssetIds, emotes, …}` from `avatars` | none | implemented |
+| avatar, api, www | `GET /v1.1/avatar-fetch/?userId&placeId`, `GET /v2/avatar/avatar-fetch/?userId&placeId` | the same document: `Player.CharacterAppearance` (RCC render scripts) and `Players:GetHumanoidDescriptionFromUserId` | none | implemented |
 | avatar | `GET /v1/users/{id}/avatar`, `/v2/avatar/users/{id}/avatar`, `/v1/users/{id}/currently-wearing`, `/v1/avatar`, `/v2/avatar/avatar`, `/v1/avatar-rules` | | none / session | implemented |
-| avatar | `POST /v1/avatar/set-body-colors`, `set-player-avatar-type`, `set-scales`, `/v1|v2/avatar/set-wearing-assets` | saved to `avatars` (wearing only assets in the store) | session | implemented |
-| thumbnails | `POST /v1/batch`, `GET /v1/games/icons`, `/v1/games/multiget/thumbnails`, `/v1/places/gameicons`, `/v1/users/avatar-headshot|avatar-bust|avatar`, `/v1/assets` | `{data: [{targetId, state, imageUrl, version}]}`; images that exist come back `Completed`; renders are queued and return `Pending` until rendered | none | partial: the Studio render worker is not written yet, so renders stay `Pending` |
+| avatar | `POST /v1/avatar/set-body-colors`, `set-player-avatar-type`, `set-scales`, `/v1|v2/avatar/set-wearing-assets` | saved to `avatars`. Wearing: assets missing from the store are fetched through `ASSET_FALLBACK` (logged) and accepted only if they are a wearable type (clothing, faces, heads, body parts, accessories, animations, emotes, layered clothing) | session | implemented |
+| thumbnails | `POST /v1/batch`, `GET /v1/games/icons`, `/v1/games/multiget/thumbnails`, `/v1/places/gameicons`, `/v1/users/avatar-headshot|avatar-bust|avatar`, `/v1/assets` | `{data: [{targetId, state, imageUrl, version}]}`; images that exist come back `Completed`; renders are queued and return `Pending` until the Studio render worker (`tools/render/worker.js`) completes them | none | partial: the worker is preliminary (see docs/KNOWN_ISSUES.md) |
 | local | `POST /api/local/render/claim`, `POST /api/local/render/jobs/{key}/result`, `GET /api/local/render/jobs` | render-job queue for the Studio render worker (avatars, places, non-image assets), as RCC renders for Roblox | loopback/admin | implemented (queue) |
 
 ## Configuration, policy and platform services
@@ -144,6 +145,10 @@ Assets seen that the platform can't serve yet (`asset misses`):
 | voice | `GET /v1/settings` | voice disabled and opted out (no voice service) | partial |
 | friends | `GET /v1/users/{id}/friends[/online|/count|/statuses]`, `GET /v1/my/friends/requests`, `GET /v1/user/friend-requests/count`, `POST /v1/users/{id}/request-friendship|accept-friend-request|unfriend|decline-friend-request` | from `friendships` (mutual rows are friends, one row is a request) | implemented |
 | groups | `GET /v1|v2/users/{id}/groups/roles`, `/v2/groups/{id}/users`, `/v1/groups/{id}`, `/v2/groups` | empty / 400 not found: the platform has no groups yet | partial |
+| apis | `POST /user-blocking-api/v1/users/rcc/get-user-blocking-data` `{userId}` | `{blockedUsersListIsComplete, blockedByUsersListIsComplete, reciprocalUserData: [{userId, isBlocked, isBlockingViewer}]}` from `user_blocks`. The game server's text chat drops a player's messages while this is missing | implemented |
+| apis | `POST /user-blocking-api/v1/users/rcc/batch-check-reciprocal-block` `{userId, otherUserIds}` | `{otherUsers: [{userId, isBlocked, isBlockingViewer}]}` | implemented |
+| apis | `GET /universe-chat-api/v1/universe-chat-settings` | `{globalChatEnabled: false, presetChatStatus: "Enabled"}`: no universe-wide chat (universe-chat-messaging-api isn't run here) | implemented |
+| users, accountinformation | `GET|POST /v1/description` | the account's `description` | implemented |
 | ephemeralcounters.api, ecsv2, lms, metrics, tracing, client-telemetry, `*/experience-signals-ingest/*`, `*/pbe`, `*.rbxinfra.com` | telemetry, counters and crash reports: accepted (`200 {}`), recorded in the request log, not forwarded | implemented (sink) |
 
 ## Called but not implemented
@@ -151,6 +156,11 @@ Assets seen that the platform can't serve yet (`asset misses`):
 | Host | Method, path | Caller | What degrades |
 |---|---|---|---|
 | apis | `GET /player-hydration-service/v1/players/signed` | engine, on join | Player attributes for creator experimentation must be signed with the key in the flag `PlayerHydrationServicePublicKey`. **external** until this platform has its own signing key and sets that flag; the engine logs "hydrating player failed" and continues |
+| realtime-signalr | `GET /userhub/` (WebSocket) | Studio editor | real-time notifications in Studio; it reconnects every 30 s and logs 404 |
+| apis | `/access-management/v1/rcc-user-feature-access`, `/v2/rcc-user-feature-evaluation`, `/v1/feature-access` | game server, Studio | age-check / feature gates; contracts not confirmed. The game server treats a failure as "not verified" |
+| apis | `/user-profile-api/v1/user/profiles/rcc/settings` | game server | profile settings in experience; contract not confirmed |
+| gameinternationalization | `GET /v1/supported-languages/games/{id}/in-experience-language-selection` | in-game CoreScripts | language picker; contract not confirmed |
+| apis, develop, assetgame | Studio editor: `studio-user-data-api/*`, `studio-user-settings/plugin-permissions`, `creator-notifications`, `doc-site`, `studio-assistant`, `creator-home-api/groups`, `universes/v1/search`, `develop /v1/gametemplates`, `assetgame /my/settings/json` | Studio editor panels | start page, templates, assistant, notifications |
 | apis | `GET /modals-api/v1/prompts`, `/marketplace-widgets/v1/widgets/shop-widgets`, `POST /checkout/v1/offers` | in-game CoreScripts | commerce UI; there is no economy here. Response contracts not yet confirmed, so they stay 404 rather than guessed |
 
 ## Limitations
@@ -159,6 +169,12 @@ Assets seen that the platform can't serve yet (`asset misses`):
   the shim has to run inside them. It is prepended to WebClient.js when served;
   the original file stays byte-for-byte unchanged on disk. `ROUTING=sw` is
   reserved for serving it unmodified behind a service worker (not finished).
+- **Default R15 head.** The default dynamic head (`content/avatar/characterR15DynamicHeadV2.rbxm`)
+  uses mesh asset 123480233606534, which Roblox only serves to authenticated
+  requests (anonymous asset delivery: 401). With `ASSET_FALLBACK=public` R15
+  characters have no head, in game and in renders. Use `ASSET_FALLBACK=opencloud`
+  with your own Open Cloud key, or import the asset into the store
+  (`tools/admin.js asset import`). Avatars set to R6 don't need it.
 - **Script bytecode.** Game scripts fail with `bytecode corrupted`: the 2026
   client requires Roblox's integrity footer on bytecode (see
   `docs/STUDIO_SERVER_JOIN.md`). API redirection does not affect this.

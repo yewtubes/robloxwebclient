@@ -54,6 +54,16 @@ function policyFor(user) {
   };
 }
 
+// ---- blocks (user_blocks) -----------------------------------------------------------
+const blocks = (a, b) => !!open().prepare('SELECT 1 FROM user_blocks WHERE user_id = ? AND blocked_id = ?').get(a, b);
+// One entry per account the user blocks or is blocked by, as the game server's
+// SocialCounterpartyManager reads it: isBlocked (user blocks them), isBlockingViewer (they block user).
+function blockingData(userId) {
+  const rows = open().prepare(`SELECT blocked_id other FROM user_blocks WHERE user_id = ? UNION SELECT user_id FROM user_blocks WHERE blocked_id = ?`).all(userId, userId);
+  return { blockedUsersListIsComplete: true, blockedByUsersListIsComplete: true,
+    reciprocalUserData: rows.map(({ other }) => ({ userId: other, isBlocked: blocks(userId, other), isBlockingViewer: blocks(other, userId) })) };
+}
+
 // ---- friends (mutual rows = friends; a single row = a pending request) ------------
 const isFriend = (a, b) => !!open().prepare(`SELECT 1 FROM friendships f JOIN friendships g ON g.user_id = f.friend_id AND g.friend_id = f.user_id WHERE f.user_id = ? AND f.friend_id = ?`).get(a, b);
 function friendsOf(id) {
@@ -102,12 +112,30 @@ const ROUTES = [
     const id = +(u.searchParams.get('userId') || parseJson(body).userId);
     json(res, 200, policyFor(M.user(id)));
   }],
+  // Game server (RCC) social checks. Text chat drops a player's messages while
+  // their blocking data is missing, so this has to answer.
+  ['POST', /^apis\.roblox\.com$/, /^\/user-blocking-api\/v1\/users\/rcc\/get-user-blocking-data$/, (req, res, u, body) => {
+    const id = +(parseJson(body).userId || u.searchParams.get('userId'));
+    if (!M.user(id)) return badRequest(res, 'Invalid userId');
+    json(res, 200, blockingData(id));
+  }],
+  ['POST', /^apis\.roblox\.com$/, /^\/user-blocking-api\/v1\/users\/rcc\/batch-check-reciprocal-block$/, (req, res, u, body) => {
+    const b = parseJson(body), id = +b.userId;
+    json(res, 200, { otherUsers: (b.otherUserIds || []).map(Number).map((other) => ({ userId: other, isBlocked: blocks(id, other), isBlockingViewer: blocks(other, id) })) });
+  }],
+  // Universe-wide chat needs universe-chat-messaging-api, which this platform doesn't run.
+  ['GET', /^apis\.roblox\.com$/, /^\/universe-chat-api\/v1\/universe-chat-settings$/, (req, res) => json(res, 200, { globalChatEnabled: false, presetChatStatus: 'Enabled' })],
   // Experimentation (IXP): this platform runs no experiments, so every requested
   // layer is unassigned and has no parameter overrides; clients use their defaults.
-  ['POST', /^apis\.roblox\.com$/, /^\/product-experimentation-platform\/v1\/projects\/\d+\/values$/, (req, res, u, body) => {
-    const layers = Object.keys(parseJson(body).layers || {});
-    json(res, 200, { layers: Object.fromEntries(layers.map((l) => [l, { experimentName: null, isAudienceSpecified: false, isAudienceMember: null,
-      parameters: {}, holdoutGroupExperimentName: null }])) });
+  ['POST', /^apis\.roblox\.com$/, /^\/product-experimentation-platform\/v1\/projects\/\d+\/values$/, (req, res, u, body, { user }) => {
+    const projectId = +/projects\/(\d+)/.exec(u.pathname)[1];
+    const layers = Object.entries(parseJson(body).layers || {});
+    json(res, 200, { layers: Object.fromEntries(layers.map(([name, unit]) => {
+      const [primaryUnit, primaryUnitValue] = Object.entries(unit || {})[0] || ['UserId', user ? String(user.id) : ''];
+      return [name, { experimentName: null, isAudienceSpecified: false, isAudienceMember: null, segment: null, experimentVariant: null,
+        parameters: {}, primaryUnit, primaryUnitValue: String(primaryUnitValue), holdoutGroupExperimentName: null, projectId,
+        version: null, platformType: null, userAgent: null }];
+    })) });
   }],
   ['GET', /^apis\.roblox\.com$/, /^\/maintenance-status/, (req, res) => json(res, 200, { isAlertVisible: false })],
   ['*', /^apis\.roblox\.com$/, /guac|universal-app-configuration|app-policy/, (req, res) => json(res, 200, {})],

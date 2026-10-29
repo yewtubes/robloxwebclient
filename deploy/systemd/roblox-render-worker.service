@@ -1,0 +1,17 @@
+# Studio render worker: completes avatar and place thumbnail jobs with Roblox Studio
+# under Wine on its own virtual display (:79), separate from the game server's.
+[Unit]
+Description=Self-hosted Roblox thumbnail renderer (tools/render/worker.js)
+After=roblox-gateway.service roblox-studio-api.service
+
+[Service]
+User=roblox
+WorkingDirectory=/opt/robloxwebclient
+Environment=STUDIO_DIR=/opt/studio RENDER_API=http://127.0.0.1:8080 RENDER_DISPLAY=:79 STUDIO_CPUS=0,1
+EnvironmentFile=-/etc/roblox-platform.env
+ExecStart=/usr/bin/node tools/render/worker.js
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -6,6 +6,7 @@ The platform is four processes on one machine (or split across machines):
 |---|---|---|
 | `node tools/server.js` | web gateway: Roblox's play page and the original web client files, `/proxy/` to the API, `/api/local/` (accounts, servers, render jobs), `/login` | `http://0.0.0.0:8080` |
 | `node tools/studio_backend.js` | the same API over HTTPS on `*.sitetest1.robloxlabs.com`, for Studio | `:443` |
+| `node tools/render/worker.js` | thumbnail renderer: avatars and places rendered by Studio (own Studio instance and display) | display `:79` |
 | `tools/studio/run_server.sh <placeId>` | Roblox Studio under Wine as the game server; registers itself in the database | UDP `53640` + an RbxTransport (QUIC) port Studio picks |
 | browser | the original WebClient | Chrome/Edge (JSPI, WebGL2, WebTransport) |
 
@@ -59,7 +60,19 @@ node tools/admin.js place add 3000 3 places/MyGame.rbxl --root
 node tools/admin.js asset import 6372755229 ./grid.png --type 1 --name "Baseplate grid"
 node tools/admin.js universe icon 3 <imageAssetId>
 node tools/admin.js asset misses         # what the store couldn't serve
+node tools/admin.js asset fetch 1028606 144075659        # pull public catalog items in via ASSET_FALLBACK
+node tools/admin.js avatar wear Alice 1028606 144075659  # hat + face (fetched if missing)
+node tools/admin.js avatar type Alice R6
+node tools/admin.js avatar colors Alice 24 23 24 24 119 119
 ```
+
+Wearables come from the store. Items not in it are fetched through
+`ASSET_FALLBACK` when someone wears them, by `set-wearing-assets` or
+`avatar wear`. Their meshes and textures follow on demand when a game server
+or client loads them. Each fetch is logged in `data/logs/asset-fallback.log`.
+With `public`, only items Roblox serves anonymously come through. Others are
+logged as `fallback-denied` and need `opencloud` with your own key, or an
+import.
 
 Back up `data/` (database + `data/content/` blobs). Players also sign up
 themselves at `/signup`.
@@ -80,6 +93,10 @@ themselves at `/signup`.
 | `STUDIO_DIR` | `/home/user/studio` | Studio install and Wine prefix |
 | `STUDIO_CPUS` | `0,1` | cores Studio is pinned to (keep the browser on others when both run on one machine) |
 | `LOCAL_RCC` | | `1` loads `local_rcc_modern` into the Studio server |
+| `RENDER_API` | `http://127.0.0.1:8080` | gateway the render worker claims jobs from |
+| `RENDER_DISPLAY` | `:79` | virtual display for the render Studio (keep it apart from the server's) |
+| `RENDER_KINDS` | `avatar,avatar-headshot,avatar-bust,place` | job kinds this worker takes |
+| `RENDER_TIMEOUT_MS` | 150000 | per job |
 | `PRESENCE_TIMEOUT_MS`, `SERVER_TIMEOUT_MS` | 120000, 180000 | when players/servers count as gone |
 
 ## 5. HTTPS
@@ -145,7 +162,27 @@ same base URL Studio is started with (`install_studio.sh` writes
 `https://www.sitetest1.robloxlabs.com`). Then the waiting Studio exchanges the
 code at `/oauth/v1/token` and shows "Welcome, Builder".
 
-## 7. Run
+## 7. Thumbnails (Studio render worker; preliminary, see docs/KNOWN_ISSUES.md)
+
+```bash
+node tools/render/worker.js          # keeps claiming jobs; --once for a single job
+```
+
+Thumbnail requests (`thumbnails.roblox.com/v1/users/avatar-headshot`, game icons
+without an uploaded image, …) queue a job and answer `Pending`. For each job the
+worker opens a place in a separate Studio (an empty place for avatars, a copy
+of the place file for place thumbnails), with `tools/render/RenderPlugin.lua`
+installed for that job only. The plugin builds the scene with the engine:
+avatars come from the backend's avatar-fetch, as RCC's render scripts load them.
+It then frames the camera and marks the viewport. The worker captures the
+rendered viewport, keys out the backdrop, sizes the image and posts it to
+`/api/local/render/jobs/{key}/result`. The images go into the content store,
+and the thumbnail APIs return them as `Completed`. A render takes about a
+minute (Studio start-up). Results are cached per input, so a new render happens
+only when an avatar or place changes. Failed jobs are retried 3 times and then
+marked `Error`. `node tools/admin.js render list` shows the queue.
+
+## 8. Run
 
 Development (one machine):
 
@@ -163,5 +200,7 @@ ACCOUNT=Player1 taskset -c 2,3 node tools/run_headless.js 75 'games/start?placeI
 PORT=8081 ACCOUNT=Player2 taskset -c 2,3 node tools/run_headless.js 75 'games/start?placeId=1818' screenshots/join2.png
 ```
 
-Production: run the three services under systemd (`deploy/systemd/`), behind the
-TLS proxy above.
+Production: run the services under systemd (`deploy/systemd/`, including
+`roblox-render-worker.service`), behind the TLS proxy above.
+
+Known issues (player controls, R15 head, headless GUI): `docs/KNOWN_ISSUES.md`.

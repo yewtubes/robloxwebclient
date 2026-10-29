@@ -173,7 +173,13 @@ async function storeFromLocations(id, meta, mode) {
     return false;
   }
   const data = await curl(['-L', loc]);
-  putAsset(id, data, { assetTypeId: meta.assetTypeId || 0, source: `fallback:${mode}` });
+  // Name and description from Roblox's public product info (anonymous; the
+  // asset's original creator isn't an account here, so it isn't copied).
+  let info = {};
+  if (mode !== 'mirror') {
+    try { info = JSON.parse((await curl([`https://economy.roblox.com/v2/assets/${id}/details`])).toString()); } catch {}
+  }
+  putAsset(id, data, { assetTypeId: meta.assetTypeId || info.AssetTypeId || 0, name: info.Name || '', description: info.Description || '', source: `fallback:${mode}` });
   logMiss(`id:${id}`, 'fallback-ok', `${mode}: type ${meta.assetTypeId}, ${data.length} bytes`);
   console.log(`assets: ${id} from ${mode} fallback (type ${meta.assetTypeId}, ${data.length} bytes)`);
   return true;
