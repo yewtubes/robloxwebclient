@@ -17,6 +17,19 @@ record that survives context loss.
 | Studio sends compiled script bytecode (`LOCAL_RCC=1`, `local_rcc_modern/`) | works |
 | Game client scripts run (LocalScripts, Animate, PlayerModule) | **blocked: the client rejects the bytecode in `luau_load` ("bytecode corrupted", integrity footer)** |
 
+## The join page is Roblox's own
+
+`webclient/site/` holds Roblox's actual play page (`play.roblox.com/games/start`):
+the Next.js HTML, its JS/CSS chunks, fonts, and `WasmLoader.js`/`stub.js`,
+fetched anonymously by `tools/fetch_webclient.sh` and committed unmodified. It is
+served at `http://localhost:8080/games/start?placeId=<id>` (use this URL, not
+`/`, which is still the older hand-written `webclient/WebClient.html`).
+`tools/server.js` only injects `<script src="/site-shim.js">` into the served
+HTML (the file on disk is unchanged); that shim points the page's roblox.com
+requests at the local backend. The large engine files (`WebClient.js`,
+`WebClient.wasm`, `WasmPlayer.js`, 2862 content files) are not committed; run
+`tools/fetch_webclient.sh` once to download them into `webclient/live/`.
+
 ## How to reproduce the working connection
 
 ```bash
