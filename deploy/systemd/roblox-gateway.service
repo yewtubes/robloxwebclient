@@ -9,7 +9,6 @@ After=network-online.target
 User=roblox
 WorkingDirectory=/opt/robloxwebclient
 Environment=PORT=8080 DATA_DIR=/var/lib/roblox-platform
-Environment=RCC_HOST=203.0.113.10
 EnvironmentFile=-/etc/roblox-platform.env
 ExecStart=/usr/bin/node tools/server.js
 Restart=on-failure

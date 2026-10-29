@@ -106,7 +106,7 @@ Store and fallback (`tools/backend/assets.js`): content-addressed blobs in
 fallback chosen by `ASSET_FALLBACK`: `public` (Roblox's anonymous asset delivery,
 only assets Roblox serves without sign-in; default), `opencloud`
 (`ROBLOX_OPEN_CLOUD_API_KEY`, an API key you created), `mirror`
-(`ASSET_MIRROR_URL` with `{id}`, a mirror you are permitted to use) or `none`.
+(`ASSET_MIRROR_URL`: one or more templates with `{id}`, tried in order; mirrors you are permitted to use) or `none`.
 Fetched bytes are stored unchanged with `source='fallback:<mode>'`. Every miss
 and every fallback result is recorded in `asset_misses` and
 `data/logs/asset-fallback.log`; `node tools/admin.js asset misses` lists them.

@@ -15,4 +15,6 @@ const server = https.createServer({ key: fs.readFileSync(path.join(TLS, 'server.
   req.headers['x-original-host'] = host;
   backend.handle(req, res, `https://${mapped}${req.url}`);
 });
-server.listen(PORT, () => console.log(`studio backend on https://*.sitetest1.robloxlabs.com:${PORT}`));
+// LISTEN_HOST=127.0.0.1 on a server whose public :443 belongs to a TLS proxy (Studio
+// reaches this through /etc/hosts, so loopback is enough).
+server.listen(PORT, process.env.LISTEN_HOST || undefined, () => console.log(`studio backend on https://*.sitetest1.robloxlabs.com:${PORT}`));

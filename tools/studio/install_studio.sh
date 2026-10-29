@@ -2,7 +2,7 @@
 # Installs Roblox Studio for Windows under Wine, as the local game server.
 #   install_studio.sh [version-upload]   (default: version-7062aec9dbe74b14 = 0.745.0.7451137,
 #                                         the build local_rcc_modern has a profile for)
-# Result: /home/user/studio/{app,prefix}. Needs wine (tested with winehq-staging 11.20),
+# Result: $STUDIO_DIR/{app,prefix} (default /home/user/studio). Needs wine (tested with winehq-staging 11.20),
 # Xvfb, unzip and curl. Packages come from Roblox's public setup CDN, once.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"

@@ -1,6 +1,6 @@
 # Studio game server under Wine for one place: systemctl enable --now roblox-studio-server@1818
 [Unit]
-Description=Roblox Studio game server for place %i
+Description=Roblox Studio game server for place %i (instance: <placeId> or <placeId>:<udpPort>, default port 53640)
 After=roblox-xvfb.service roblox-studio-api.service
 Requires=roblox-xvfb.service
 
@@ -8,9 +8,8 @@ Requires=roblox-xvfb.service
 User=roblox
 WorkingDirectory=/opt/robloxwebclient
 Environment=DISPLAY_NUM=:78 STUDIO_DIR=/opt/studio DATA_DIR=/var/lib/roblox-platform LOCAL_RCC=1 STUDIO_CPUS=0,1
-Environment=RCC_HOST=203.0.113.10
 EnvironmentFile=-/etc/roblox-platform.env
-ExecStart=/opt/robloxwebclient/tools/studio/run_server.sh %i 53640
+ExecStart=/opt/robloxwebclient/tools/studio/run_server.sh %i
 Restart=on-failure
 RestartSec=10
 

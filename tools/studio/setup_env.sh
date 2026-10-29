@@ -5,6 +5,7 @@
 # <service>.sitetest1.robloxlabs.com name it uses must resolve to 127.0.0.1;
 # tools/studio_backend.js answers them with a certificate from backend-tls/
 # (trusted only in Studio's ssl/cacert.pem).
+#   setup_env.sh [--hosts-only]   --hosts-only: just /etc/hosts (systemd runs the rest)
 cd "$(dirname "$0")/../.."
 services="abtesting accountinformation accountsettings ads api apis assetdelivery assetgame
   auth avatar badges billing catalog chat clientsettings clientsettingscdn contacts
@@ -27,5 +28,6 @@ block=$(mktemp)
 sed -i '/# >>> roblox local backend/,/# <<< roblox local backend/d' /etc/hosts
 cat "$block" >> /etc/hosts && rm "$block"
 echo "hosts: $(grep -c 'sitetest1' /etc/hosts) sitetest1 names"
+[ "${1:-}" = --hosts-only ] && exit 0
 pgrep -x Xvfb >/dev/null || (setsid Xvfb :78 -screen 0 1280x800x24 >/dev/null 2>&1 &)
 tools/restart_studio_backend.sh

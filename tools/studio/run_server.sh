@@ -1,6 +1,6 @@
 #!/bin/bash
 # Starts Roblox Studio as a local game server under Wine on a virtual display.
-#   run_server.sh <placeId | place.rbxl[x]> [port]
+#   run_server.sh <placeId | place.rbxl[x]>[:port] [port]   (default port 53640)
 # A place id is looked up in the platform database (places.file_path).
 # Studio's StartServer task ignores the path argument and always loads
 # %LOCALAPPDATA%\Roblox\server.rbxl (the editor saves the place there before it
@@ -11,7 +11,11 @@
 # platform database (game_servers) with its certificate hash, heartbeated while
 # Studio runs and closed when it exits, so gamejoin can allocate it.
 ROOT=$(readlink -f "$(dirname "$(readlink -f "$0")")/../..")
-port=${2:-53640}
+arg=${1%%:*}; port=${2:-53640}; [[ $1 == *:* ]] && port=${1##*:}
+# Studio picks the WebTransport (RbxTransport) port itself, from the Windows dynamic
+# range 49152-65535, and it is read from the log below. (-rbxTransportPort exists
+# but makes this build tear the server down at once.)
+set -- "$arg"
 if [[ $1 =~ ^[0-9]+$ ]]; then
   PLACE_ID=$1
   file=$(node -e "const p=require('$ROOT/tools/backend/model.js').place(+process.argv[1]); if(!p||!p.file_path) process.exit(1); console.log(p.file_path)" "$1" 2>/dev/null) \
@@ -59,7 +63,7 @@ for _ in $(seq 1 120); do
   if [ -n "$log" ]; then
     tport=$(grep -ao 'Started RbxTransport network server [0-9.]*|[0-9]*' "$log" | head -1 | cut -d'|' -f2)
     cert=""
-    for _ in 1 2 3 4 5; do cert=$(python3 "$ROOT/tools/studio/wt_cert_hash.py" "$tport" "$host" 2>/dev/null) && [ -n "$cert" ] && break; sleep 2; done
+    for _ in 1 2 3 4 5; do cert=$("${PYTHON:-python3}" "$ROOT/tools/studio/wt_cert_hash.py" "$tport" "$host" 2>/dev/null) && [ -n "$cert" ] && break; sleep 2; done
     job=$(node "$ROOT/tools/admin.js" server register "$PLACE_ID" "$host" "$port" "$tport" ${cert:+--cert "$cert"})
     echo "run_server: registered job $job for place $PLACE_ID at $host:$port (RbxTransport $tport, cert ${cert:-unknown})"
     break

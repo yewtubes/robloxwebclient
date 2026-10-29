@@ -12,6 +12,39 @@ The platform is four processes on one machine (or split across machines):
 
 All of them share one SQLite database, `data/platform.db` (`DATA_DIR` to move it).
 
+## 0. Debian VPS, one command
+
+On a fresh Debian 12/13 (or Ubuntu 22.04+) x86-64 server with 4 cores and 8 GB RAM:
+
+```bash
+git clone https://github.com/yewtubes/robloxwebclient && cd robloxwebclient
+sudo deploy/install_debian.sh --public-host <your server's public IP or DNS name>
+```
+
+The installer:
+- installs Wine (WineHQ staging) and Node.js 22, then copies the code to
+  `/opt/robloxwebclient`;
+- downloads the original web client and Studio 0.745.0.7451137 into a Wine prefix
+  in `/opt/studio`;
+- builds `local_rcc_modern`, writes the sitetest1 names to `/etc/hosts`, and
+  creates `/etc/roblox-platform.env` (with a random `ADMIN_KEY`);
+- installs the systemd units and signs Studio in (`tools/studio/signin.sh`);
+- starts a game server for place 1818 (`roblox-studio-server@1818`).
+
+It is safe to run again. Everything runs as the unprivileged `roblox` user.
+Afterwards:
+
+- Put a TLS proxy in front of the gateway (`http://127.0.0.1:8080`). The nginx
+  example in section 5 works, but its `listen` must name the public address
+  (`listen <public-ip>:443 ssl;`): the Studio API holds `127.0.0.1:443`.
+- Firewall: TCP 443, UDP 53640, and UDP 49152–65535 (Studio picks the game
+  server's WebTransport port from that range at each start).
+- More game servers: `systemctl enable --now roblox-studio-server@<placeId>:<udpPort>`,
+  one UDP port per server.
+- Admin: `sudo -u roblox env DATA_DIR=/var/lib/roblox-platform node /opt/robloxwebclient/tools/admin.js …`.
+
+The sections below explain the parts, and how to run them by hand for development.
+
 ## 1. Requirements
 
 - Linux x86-64 (tested: Ubuntu 24.04; Debian 12 works the same way, see below), 4 cores, 8 GB RAM
@@ -74,6 +107,14 @@ With `public`, only items Roblox serves anonymously come through. Others are
 logged as `fallback-denied` and need `opencloud` with your own key, or an
 import.
 
+`mirror` sends every asset id it looks up to the mirror's operator. What a
+mirror returns is stored as is; nothing checks it against Roblox's copy. List
+only mirrors you trust and are allowed to use, best first:
+
+```bash
+ASSET_FALLBACK=mirror ASSET_MIRROR_URL="https://mirror-a.example/asset?id={id} https://mirror-b.example/v1/asset?id={id}"
+```
+
 Back up `data/` (database + `data/content/` blobs). Players also sign up
 themselves at `/signup`.
 
@@ -87,8 +128,10 @@ themselves at `/signup`.
 | `ADMIN_KEY` | (unset) | required as `X-Admin-Key` for `/api/local/servers` and `/api/local/render/*`; unset = loopback callers only |
 | `ASSET_FALLBACK` | `public` | `none`, `public` (Roblox's anonymous asset delivery), `opencloud`, `mirror` |
 | `ROBLOX_OPEN_CLOUD_API_KEY` | | for `opencloud`: an Open Cloud API key you created |
-| `ASSET_MIRROR_URL` | | for `mirror`: URL with `{id}` |
+| `ASSET_MIRROR_URL` | | for `mirror`: one or more URL templates, comma or space separated, tried in order; `{id}` is replaced with the asset id (appended if absent). Each attempt is logged |
 | `STUDIO_OAUTH_USER` | | local account Studio's OAuth is approved for when no browser session is present (headless servers) |
+| `LISTEN_HOST` | all interfaces | address the gateway and the Studio API bind to (`127.0.0.1` behind a TLS proxy) |
+| `PYTHON` | `python3` | interpreter with `aioquic` for `tools/studio/wt_cert_hash.py` (the installer uses `/opt/robloxwebclient/.venv`) |
 | `RCC_HOST` | `127.0.0.1` | address clients use to reach the game server (public IP or DNS name on a VPS) |
 | `STUDIO_DIR` | `/home/user/studio` | Studio install and Wine prefix |
 | `STUDIO_CPUS` | `0,1` | cores Studio is pinned to (keep the browser on others when both run on one machine) |
@@ -140,14 +183,11 @@ LOCAL_RCC=1 tools/studio/run_server.sh 1818     # place 1818's file from the dat
 reads the certificate hash, registers the server (`game_servers`), heartbeats it
 every 30 s and closes it when Studio exits. `gamejoin` then hands players to it.
 
-Studio has to be signed in once per Wine prefix (the session then persists):
+Studio has to be signed in once per Wine prefix (the session then persists).
+With the Studio API running (`STUDIO_OAUTH_USER` set):
 
 ```bash
-STUDIO_OAUTH_USER=Builder tools/studio/setup_env.sh
-cd $STUDIO_DIR/app && PATH=$PWD/../../robloxwebclient/tools/studio/bin:$PATH \
-  NO_PROXY="$NO_PROXY,.robloxlabs.com" WINEPREFIX=$STUDIO_DIR/prefix DISPLAY=:78 \
-  wine RobloxStudioBeta.exe -baseUrl https://www.sitetest1.robloxlabs.com
-# click "Login via Browser" (xdotool mousemove 749 460 click 1 on the 1280x800 display)
+tools/studio/signin.sh     # starts Studio, clicks "Login via Browser", waits for the sign-in
 ```
 
 Studio's embedded login page (WebView2) doesn't load under Wine, so it offers

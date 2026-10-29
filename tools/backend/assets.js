@@ -145,22 +145,42 @@ async function fetchExternal(id) {
     url = `https://apis.roblox.com/asset-delivery-api/v1/assetId/${id}`;
     headers = ['-H', `x-api-key: ${key}`];
   } else if (mode === 'mirror') {
-    const tpl = process.env.ASSET_MIRROR_URL;
-    if (!tpl || !tpl.includes('{id}')) { logMiss(`id:${id}`, 'fallback-error', 'ASSET_FALLBACK=mirror needs ASSET_MIRROR_URL containing {id}'); return false; }
-    const raw = await curl(['-L', '-f', tpl.replace('{id}', id)]);
-    let meta = null;
-    if (raw[0] === 0x7b) { try { meta = JSON.parse(raw.toString()); } catch {} }
-    if (!meta) {
-      putAsset(id, raw, { source: 'fallback:mirror' });
-      logMiss(`id:${id}`, 'fallback-ok', `mirror: ${raw.length} bytes`);
-      console.log(`assets: ${id} from mirror fallback (${raw.length} bytes)`);
+    // ASSET_MIRROR_URL: one or more URL templates (comma or space separated),
+    // tried in order. {id} is replaced with the asset id (appended if absent).
+    // A mirror may answer with the asset bytes, or with a {locations} document.
+    const mirrors = (process.env.ASSET_MIRROR_URL || '').split(/[\s,]+/).filter(Boolean);
+    if (!mirrors.length) { logMiss(`id:${id}`, 'fallback-error', 'ASSET_FALLBACK=mirror needs ASSET_MIRROR_URL'); return false; }
+    for (const tpl of mirrors) {
+      const url = tpl.includes('{id}') ? tpl.replace('{id}', id) : tpl + id;
+      const host = new URL(url).host;
+      let raw;
+      try { raw = await curl(['-L', '-f', url]); } catch (e) { logMiss(`id:${id}`, 'mirror-error', `${host}: ${e.message.split('\n')[0]}`); continue; }
+      const head = raw.subarray(0, 64).toString().trimStart().toLowerCase();
+      if (head.startsWith('{')) {
+        let meta = null;
+        try { meta = JSON.parse(raw.toString()); } catch {}
+        if (meta && meta.locations && (await storeFromLocations(id, meta, `mirror ${host}`))) return true;
+        logMiss(`id:${id}`, 'mirror-error', `${host}: ${raw.toString().slice(0, 160)}`);
+        continue;
+      }
+      if (!raw.length || head.startsWith('<!doctype') || head.startsWith('<html')) { logMiss(`id:${id}`, 'mirror-error', `${host}: not an asset (${raw.length} bytes)`); continue; }
+      const info = await productInfo(id);
+      putAsset(id, raw, { assetTypeId: info.AssetTypeId || 0, name: info.Name || '', description: info.Description || '', source: `fallback:mirror:${host}` });
+      logMiss(`id:${id}`, 'fallback-ok', `mirror ${host}: ${raw.length} bytes`);
+      console.log(`assets: ${id} from mirror ${host} (${raw.length} bytes)`);
       return true;
     }
-    return storeFromLocations(id, meta, mode);
+    return false;
   } else {
     url = `https://assetdelivery.roblox.com/v2/assetId/${id}`;
   }
   return storeFromLocations(id, JSON.parse((await curl([...headers, url])).toString()), mode);
+}
+
+// Name, description and type from Roblox's public product info (anonymous; the
+// asset's original creator isn't an account here, so it isn't copied).
+async function productInfo(id) {
+  try { return JSON.parse((await curl([`https://economy.roblox.com/v2/assets/${id}/details`])).toString()); } catch { return {}; }
 }
 
 async function storeFromLocations(id, meta, mode) {
@@ -173,12 +193,7 @@ async function storeFromLocations(id, meta, mode) {
     return false;
   }
   const data = await curl(['-L', loc]);
-  // Name and description from Roblox's public product info (anonymous; the
-  // asset's original creator isn't an account here, so it isn't copied).
-  let info = {};
-  if (mode !== 'mirror') {
-    try { info = JSON.parse((await curl([`https://economy.roblox.com/v2/assets/${id}/details`])).toString()); } catch {}
-  }
+  const info = await productInfo(id);
   putAsset(id, data, { assetTypeId: meta.assetTypeId || info.AssetTypeId || 0, name: info.Name || '', description: info.Description || '', source: `fallback:${mode}` });
   logMiss(`id:${id}`, 'fallback-ok', `${mode}: type ${meta.assetTypeId}, ${data.length} bytes`);
   console.log(`assets: ${id} from ${mode} fallback (type ${meta.assetTypeId}, ${data.length} bytes)`);

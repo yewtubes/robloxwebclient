@@ -96,5 +96,5 @@ const server = http.createServer((req, res) => {
 require('./relay.js').attach(server, '/local-relay', {
   resolve: (h, p) => [process.env.RCC_HOST || h, +(process.env.RCC_PORT || p)],
 });
-server.listen(PORT, () => console.log(`web client on http://localhost:${PORT}/`));
+server.listen(PORT, process.env.LISTEN_HOST || undefined, () => console.log(`web client on http://localhost:${PORT}/`));
 module.exports = server;

@@ -39,7 +39,7 @@ function placeProductInfo(p) {
 // or are found the way the earlier setup did: RCC_HOST/RCC_PORT plus the RbxTransport
 // port from the newest Studio log and the certificate hash read from the server.
 function studioRbxTransportPort() {
-  const dir = process.env.STUDIO_LOGS || '/home/user/studio/prefix/drive_c/users/root/AppData/Local/Roblox/logs';
+  const dir = process.env.STUDIO_LOGS || path.join(process.env.STUDIO_DIR || '/home/user/studio', 'prefix/drive_c/users', require('os').userInfo().username, 'AppData/Local/Roblox/logs');
   try {
     const logs = fs.readdirSync(dir).filter((f) => f.endsWith('.log'))
       .map((f) => path.join(dir, f)).sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs);
