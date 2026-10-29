@@ -20,6 +20,14 @@ to authenticated requests, so the default `ASSET_FALLBACK=public` gets 401
 `ASSET_FALLBACK=opencloud` with your own Open Cloud API key, or import the asset
 (`node tools/admin.js asset import 123480233606534 <file> --type 4`).
 
+## One client texture isn't available
+
+The client requests an image by content hash, `01fbb35a1b3f53173f68a2d02bb735d2`
+(`assetdelivery /v1/asset?hash=…`, Residual representation). It isn't in the
+store, and Roblox's CDN refuses it (403), so it logs "Request asset was not
+found". Nothing visible depends on it so far. It can be imported once a copy
+is legitimately available.
+
 ## Wearables load on the server, but can't be checked from the client view yet
 
 Wearables (e.g. the Red Baseball Cap 1028606 and the Smile face 144075659,
