@@ -141,6 +141,7 @@ themselves at `/signup`.
 | `RENDER_KINDS` | `avatar,avatar-headshot,avatar-bust,place` | job kinds this worker takes |
 | `RENDER_TIMEOUT_MS` | 150000 | per job |
 | `PRESENCE_TIMEOUT_MS`, `SERVER_TIMEOUT_MS` | 120000, 180000 | when players/servers count as gone |
+| `WEBCLIENT_FLAG_OVERRIDES` | `{}` | JSON of fast flags handed to the engine through WasmPlayer's own `getFlagOverrides` hook, e.g. `{"FIntWasmMemoryPages":"24576"}` (see section 9) |
 
 ## 5. HTTPS
 
@@ -244,3 +245,37 @@ Production: run the services under systemd (`deploy/systemd/`, including
 `roblox-render-worker.service`), behind the TLS proxy above.
 
 Known issues (player controls, R15 head, headless GUI): `docs/KNOWN_ISSUES.md`.
+
+## 9. Chromebooks and school devices
+
+The client is Roblox's own build, unchanged, so a device runs it only if its
+browser has what that build needs. `site-shim.js` checks each browser when the
+play page opens, prints anything missing to the console
+(`[LocalPlatform] this browser lacks …`) and posts a report (user agent, CPU
+architecture and bitness, memory, GPU, WebGL extensions) to
+`<data>/logs/client-report.log`. Check that log first when a device doesn't load.
+
+What the engine needs, from the shipped `WebClient.js` / `WasmPlayer.js`:
+
+| Requirement | Why | Typical Chromebook |
+|---|---|---|
+| HTTPS (secure context) and the gateway's COOP/COEP headers | `SharedArrayBuffer`: the engine is multi-threaded on shared memory | fine once served over HTTPS (the gateway sets the headers; keep them through the TLS proxy) |
+| WebGL 2 | the only graphics path; Emscripten's context creation asks for `webgl2` and nothing else, with no WebGL 1 or WebGPU fallback | ARM Mali and Intel Chromebooks report it (`chrome://gpu`: "WebGL2: Hardware accelerated") unless an admin policy or the GPU blocklist disables it |
+| JS Promise Integration (`WebAssembly.Suspending`) | async engine calls | Chrome 137 and later |
+| WebTransport over UDP to the game server | game traffic (`RbxTransport`) | often the real blocker on school networks, which filter or drop UDP/QUIC; the server's UDP port must be reachable from that network |
+| 2 GiB of shared memory, reserved at start | `WasmPlayer.js` allocates `FIntWasmMemoryPages` × 64 KiB (default 32768 pages = 2 GiB; Roblox's own flags don't change it) as one fixed, non-growable block | can fail on 4 GB devices or 32-bit browsers |
+
+Texture formats are not a requirement: the asset service serves source
+images and the engine compresses them on the device (it has ETC2, ASTC and BC
+encoders), so GPUs without S3TC/BPTC (ARM Mali, for example) are covered.
+Extensions such as `EXT_clip_control`, `EXT_depth_clamp` and
+`OES_texture_float_linear` are queried by name rather than required at
+context creation, and Roblox's `FFlagRenderWebGLWasmCompatibilityFallbacks` is
+on. That the engine renders fully without them hasn't been verified on such a
+device yet; the client report shows which ones a device lacks.
+
+If the report shows the memory reservation as the problem, the operator can
+set a smaller reservation with an engine flag (not a change to the client), e.g.
+`WEBCLIENT_FLAG_OVERRIDES='{"FIntWasmMemoryPages":"24576"}'` (1.5 GiB). It
+applies to every player, and big places can run out of memory with less, so
+lower it only as far as needed.

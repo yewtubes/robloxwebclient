@@ -76,7 +76,10 @@ const server = http.createServer((req, res) => {
     }
     const html = fs.readFileSync(path.join(ROOT, 'site', 'games', 'start.html'), 'utf8');
     log(req, 200);
-    return send(res, 200, html.replace('<head>', '<head><script src="/site-shim.js"></script>'), 'text/html');
+    // WEBCLIENT_FLAG_OVERRIDES (JSON) goes to the engine through its own
+    // __wasmDevSettings.getFlagOverrides hook (see site-shim.js).
+    const overrides = (process.env.WEBCLIENT_FLAG_OVERRIDES || '{}').replace(/</g, '\\u003c');
+    return send(res, 200, html.replace('<head>', `<head><script>self.__rbxLocalFlagOverrides=${overrides}</script><script src="/site-shim.js"></script>`), 'text/html');
   }
   if (/^\/[0-9a-f]{40}\//.test(p)) return serveFile(req, res, path.join(ROOT, 'site', p));
   if (p === '/') return serveFile(req, res, path.join(ROOT, 'WebClient.html'));

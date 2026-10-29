@@ -78,6 +78,15 @@ function friendJson(id) {
 const friendTarget = (u) => +(/users\/(\d+)/.exec(u.pathname) || [])[1];
 
 const ROUTES = [
+  // Browser capability reports from site-shim.js (which devices can run the engine).
+  ['POST', /^local$/, /^\/api\/local\/client-report$/, (req, res, u, body) => {
+    const r = parseJson(body, null);
+    if (!r || typeof r !== 'object') return badRequest(res, 'expected a JSON report');
+    const line = JSON.stringify({ at: new Date().toISOString(), ip: req.socket.remoteAddress, ...r }).slice(0, 8192);
+    fs.mkdirSync(path.join(DATA, 'logs'), { recursive: true });
+    fs.appendFileSync(path.join(DATA, 'logs', 'client-report.log'), line + '\n');
+    json(res, 200, {});
+  }],
   // Fast flags: engine defaults plus webclient/LocalFlags.json. Other apps (e.g. Studio's
   // PCStudioApp) get their own production set from webclient/flags/<app>.json plus <app>.local.json.
   ['GET', /^clientsettings(cdn)?\.roblox\.com$/, /^\/v\d\/settings\/application\//, (req, res, u) => {

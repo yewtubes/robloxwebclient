@@ -128,6 +128,7 @@ Assets seen that the platform can't serve yet (`asset misses`):
 | avatar | `POST /v1/avatar/set-body-colors`, `set-player-avatar-type`, `set-scales`, `/v1|v2/avatar/set-wearing-assets` | saved to `avatars`. Wearing: assets missing from the store are fetched through `ASSET_FALLBACK` (logged) and accepted only if they are a wearable type (clothing, faces, heads, body parts, accessories, animations, emotes, layered clothing) | session | implemented |
 | thumbnails | `POST /v1/batch`, `GET /v1/games/icons`, `/v1/games/multiget/thumbnails`, `/v1/places/gameicons`, `/v1/users/avatar-headshot|avatar-bust|avatar`, `/v1/assets` | `{data: [{targetId, state, imageUrl, version}]}`; images that exist come back `Completed`; renders are queued and return `Pending` until the Studio render worker (`tools/render/worker.js`) completes them | none | partial: the worker is preliminary (see docs/KNOWN_ISSUES.md) |
 | local | `POST /api/local/render/claim`, `POST /api/local/render/jobs/{key}/result`, `GET /api/local/render/jobs` | render-job queue for the Studio render worker (avatars, places, non-image assets), as RCC renders for Roblox | loopback/admin | implemented (queue) |
+| local | `POST /api/local/client-report` | browser capability report from `site-shim.js` (GPU, WebGL extensions, memory, JSPI, WebTransport), appended to `<data>/logs/client-report.log` | none | implemented |
 
 ## Configuration, policy and platform services
 

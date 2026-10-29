@@ -34,7 +34,9 @@
       setAuthCookie(c) { authCookie = c; },
       isCookieFromPool: () => false,
       allocateCookieFromPool: async () => null,
-      getFlagOverrides: () => ({}),
+      // Operator-set flags (WEBCLIENT_FLAG_OVERRIDES, injected by tools/server.js),
+      // applied by WasmPlayer.js over the fetched flags before the engine starts.
+      getFlagOverrides: () => ({ ...(self.__rbxLocalFlagOverrides || {}) }),
     };
   }
 
@@ -49,5 +51,44 @@
   if (self.navigator?.sendBeacon) {
     const nativeBeacon = navigator.sendBeacon.bind(navigator);
     navigator.sendBeacon = (url, data) => nativeBeacon(rewrite(url), data);
+  }
+
+  // What this browser offers against what the engine needs (Chromebooks, school
+  // devices). Missing requirements are printed to the console and the report goes
+  // to the server's <data>/logs/client-report.log; nothing here changes the engine.
+  if (self.document) {
+    const report = async () => {
+      const r = { ua: navigator.userAgent, memoryGB: navigator.deviceMemory ?? null, cores: navigator.hardwareConcurrency,
+        screen: `${screen.width}x${screen.height}@${devicePixelRatio}` };
+      const need = {
+        secureContext: self.isSecureContext,
+        crossOriginIsolated: self.crossOriginIsolated, // SharedArrayBuffer, the engine's threads
+        sharedArrayBuffer: typeof SharedArrayBuffer === 'function',
+        jspi: typeof WebAssembly?.Suspending === 'function',
+        webTransport: typeof WebTransport === 'function', // game server connection (UDP)
+      };
+      try {
+        const h = await navigator.userAgentData?.getHighEntropyValues(['architecture', 'bitness', 'platform', 'platformVersion']);
+        if (h) Object.assign(r, { arch: h.architecture, bitness: h.bitness, platform: h.platform, platformVersion: h.platformVersion });
+      } catch (e) {}
+      try {
+        const gl = document.createElement('canvas').getContext('webgl2');
+        need.webgl2 = !!gl;
+        if (gl) {
+          const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+          r.gpu = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+          r.maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+          r.extensions = gl.getSupportedExtensions();
+          gl.getExtension('WEBGL_lose_context')?.loseContext();
+        }
+      } catch (e) { need.webgl2 = false; }
+      r.need = need;
+      const missing = Object.keys(need).filter((k) => !need[k]);
+      if (missing.length) console.warn(`[LocalPlatform] this browser lacks what the Roblox engine needs: ${missing.join(', ')}`);
+      if (r.bitness === '32' || (r.memoryGB && r.memoryGB < 4)) console.warn(`[LocalPlatform] the engine reserves FIntWasmMemoryPages (default 2 GiB) of shared memory at start; this device (${r.bitness || '?'}-bit, ${r.memoryGB ?? '?'} GB) may not be able to`);
+      r.missing = missing;
+      try { fetch(`${origin}/api/local/client-report`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(r), keepalive: true }); } catch (e) {}
+    };
+    report();
   }
 })();
