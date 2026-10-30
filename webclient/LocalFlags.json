@@ -21642,7 +21642,7 @@
 "FIntLsbImproveCompatibilityReport": "1",
 "FIntLsbOptimizationCompatibilityLevel": "1",
 "FIntLsbOptimizeMin": "1",
-"FIntLsbValidateMin": "2147483647",
+"FIntLsbValidateMin": "512",
 "FIntLuaAppAccountSecurityPromptForcePopUpRenderAfterSeconds": "600",
 "FIntLuaAppAccountSecurityPromptPopUpSpawnDelay": "1",
 "FIntLuaAppAccountSecurityPromptRollout": "100",
