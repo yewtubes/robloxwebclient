@@ -66,6 +66,9 @@ then RbxTransport if the backend found a Studio server, else RakNet through
 `/local-relay`). Run `node tools/build_playsolo.js` again to go back to Play
 Solo.
 
+The same build also runs on Roblox's own play page with its real loading screen:
+`/games/start?build=local` (see docs/STUDIO_SERVER_JOIN.md).
+
 ## Pieces
 
 | Piece | What it is |

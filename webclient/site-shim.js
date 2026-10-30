@@ -10,6 +10,8 @@
 // - The page and the engine otherwise call roblox.com directly (the engine
 //   from its workers, with CORS), so fetch/XHR/sendBeacon are pointed at
 //   /proxy/ as well.
+// - ?build=local runs this repo's patched engine build on the same page (see
+//   LOCAL_BUILD below) instead of the downloaded one.
 (() => {
   if (self.__rbxLocalShim) return;
   self.__rbxLocalShim = true;
@@ -24,6 +26,66 @@
     return u;
   };
 
+  // ?build=local: Roblox's page and loader, with this repo's engine build (the
+  // WasmPlayer.js/WebClient.js/patched wasm and content overlay served under
+  // /engine/, which also carry the Lua App bootstrap from tools/build_playsolo.js).
+  // The loader takes a pinned engineVersion from robloxWasmHostConfig; the backend
+  // serves this upload id from /engine/. Without placeId in the URL the engine
+  // starts the Lua App, so the bootstrap runs (Play Solo, or --join).
+  const LOCAL_BUILD = 'version-0000000000000745';
+  const localBuild = !!self.document && new URLSearchParams(self.location.search).get('build') === 'local';
+  if (localBuild) {
+    let host;
+    Object.defineProperty(self, 'robloxWasmHostConfig', {
+      configurable: true,
+      get: () => host,
+      set: (v) => { host = v && { ...v, engineVersion: LOCAL_BUILD }; },
+    });
+    // As in webclient/WasmLoader.js: the bundled Lua App patch is the Studio
+    // package's copy, so its signature does not verify.
+    self.__rbxLocalFlagOverrides = { FFlagDebugSkipPostTtiSignatureVerification: 'True',
+      DFFlagDebugSkipPostTtiSignatureVerification: 'True', ...(self.__rbxLocalFlagOverrides || {}) };
+    // WasmPlayer.js hardcodes wss://localhost/local-relay for local RCC mode.
+    const NativeWebSocket = self.WebSocket;
+    self.WebSocket = function (url, protocols) {
+      if (String(url) === 'wss://localhost/local-relay') url = `${self.location.protocol === 'https:' ? 'wss' : 'ws'}://${self.location.host}/local-relay`;
+      return new NativeWebSocket(url, protocols);
+    };
+    self.WebSocket.prototype = NativeWebSocket.prototype;
+    Object.assign(self.WebSocket, { CONNECTING: 0, OPEN: 1, CLOSING: 2, CLOSED: 3 });
+    // With the join bootstrap (playsolo/Join.lua) there is no placeId in the URL,
+    // so WasmPlayer.js takes its loading screen down as soon as the engine runs
+    // (the Lua App), not when a game has loaded. Hold the screen through the join:
+    // WasmPlayer's own dismissal (the loading-exiting class, then hidden) is
+    // overridden until the engine reports its second load (the Lua App's DataModel,
+    // then the joined game), and then takes effect with its usual fade.
+    if (self.__rbxLocalBootstrap?.mode === 'join') {
+      const root = document.documentElement;
+      const style = document.createElement('style');
+      style.textContent = 'html.local-join-hold #loading-overlay{display:grid!important;opacity:1!important;pointer-events:auto!important}'
+        + 'html.local-join-fade #loading-overlay{display:grid!important}';
+      document.head.appendChild(style);
+      root.classList.add('local-join-hold');
+      const release = (why) => {
+        if (!root.classList.contains('local-join-hold')) return;
+        console.log(`[LocalPlatform] loading screen released: ${why}`);
+        root.classList.replace('local-join-hold', 'local-join-fade');
+        setTimeout(() => root.classList.remove('local-join-fade'), 600);
+      };
+      // A join that never completes would otherwise leave the screen up for good.
+      setTimeout(() => release('no game loaded after 90 s'), 90e3);
+      let onLoaded = null, loads = 0;
+      Object.defineProperty(self, '__onExperienceLoaded', {
+        configurable: true,
+        get: () => onLoaded && ((...a) => {
+          if (++loads === 2) release('joined game loaded');
+          return onLoaded(...a);
+        }),
+        set: (fn) => { onLoaded = fn; },
+      });
+    }
+  }
+
   if (self.document) {
     let authCookie = 'local';
     const proxy = { url: toProxy, authHeaders: () => ({}) };
@@ -37,6 +99,9 @@
       // Operator-set flags (WEBCLIENT_FLAG_OVERRIDES, injected by tools/server.js),
       // applied by WasmPlayer.js over the fetched flags before the engine starts.
       getFlagOverrides: () => ({ ...(self.__rbxLocalFlagOverrides || {}) }),
+      // The local build's WasmPlayer.js benchmarks the CPU in a worker started
+      // from <engine>/stub.js, which webclient/stub.js does not implement.
+      ...(localBuild ? { skipDeviceProbe: true } : {}),
     };
   }
 

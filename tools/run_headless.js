@@ -126,7 +126,8 @@ fs.mkdirSync(path.dirname(shot), { recursive: true });
     });
     setTimeout(() => dbg.send('Debugger.pause').catch((err) => console.log('pause failed', err.message)), +process.env.DEBUGPAUSE * 1000);
   }
-  const step = 10;
+  // STEP=<sec>: screenshot interval (default 10), e.g. STEP=2 SHOTS=1 for the loading screen.
+  const step = +(process.env.STEP || 10);
   for (let s = 0; s < secs; s += step) {
     await page.waitForTimeout(step * 1000);
     await page.screenshot({ path: shot }).catch((e) => console.log('screenshot failed', e.message));

@@ -72,6 +72,40 @@ RCC_HOST=127.0.0.1 RCC_PORT=53640 taskset -c 2,3 node tools/run_headless.js 75
   (~19.8k instances) on Chrome's cores. With the Baseplate as the app place
   (now the `--join` default) the handshake succeeded on every later run.
 
+### On Roblox's own page (`/games/start?build=local`)
+
+`/` is the hand-written `webclient/WebClient.html`. Roblox's play page can run
+the same patched build instead:
+
+```bash
+node tools/build_playsolo.js --join=1818
+RCC_HOST=127.0.0.1 RCC_PORT=53640 taskset -c 2,3 node tools/run_headless.js 60 'games/start?build=local'
+```
+
+- Roblox's page sets `robloxWasmHostConfig`, and its WasmLoader honours a pinned
+  `engineVersion`. With `build=local`, `site-shim.js` pins
+  `version-0000000000000745`, and the backend answers that upload's files with
+  redirects to the gateway's `/engine/` (our WasmPlayer.js, WebClient.js,
+  `WebClient.patched.wasm`, overlay + content). Roblox's page, CSS, loader and
+  loading screen are unchanged.
+- The local WasmPlayer.js benchmarks the CPU in a worker from
+  `<engine>/stub.js`, which our stub doesn't implement, so the page hung; the
+  shim sets `skipDeviceProbe` for this build (as `webclient/WasmLoader.js` does).
+- Without `placeId` in the URL (needed, or the engine joins directly and the
+  Lua App never starts) WasmPlayer drops the loading screen as soon as the
+  engine runs. `build_playsolo.js` writes `overlay/bootstrap.json`; the gateway
+  passes it to the page, and in join mode the shim holds the loading screen
+  (overriding WasmPlayer's `loading-exiting`/`hidden`) until the engine's second
+  `__onExperienceLoaded`, i.e. the joined game, then lets WasmPlayer's own fade
+  finish (90 s cap if no game loads).
+- Result (`screenshots/bootstrap-join-roblox-page-sheet.png`, 2 s steps): Roblox's
+  loading screen at 2-4 s, then the Baseplate with Player1; between frames the
+  character's arms move (idle animation), which suggests the game's `Animate`
+  LocalScript runs on the client.
+- Not the same as a direct join: the loading card shows the default "Roblox"
+  title and an empty icon, because WasmPlayer only loads the experience's name
+  and icon when `placeId` is in the URL.
+
 ## How to reproduce the working connection
 
 ```bash

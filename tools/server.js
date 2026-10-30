@@ -80,7 +80,12 @@ const server = http.createServer((req, res) => {
     // WEBCLIENT_FLAG_OVERRIDES (JSON) goes to the engine through its own
     // __wasmDevSettings.getFlagOverrides hook (see site-shim.js).
     const overrides = (process.env.WEBCLIENT_FLAG_OVERRIDES || '{}').replace(/</g, '\\u003c');
-    return send(res, 200, html.replace('<head>', `<head><script>self.__rbxLocalFlagOverrides=${overrides}</script><script src="/site-shim.js"></script>`), 'text/html');
+    // ?build=local: the bootstrap in webclient/overlay/ (tools/build_playsolo.js).
+    let bootstrap = 'null';
+    if (url.searchParams.get('build') === 'local') {
+      try { bootstrap = JSON.stringify(JSON.parse(fs.readFileSync(path.join(ROOT, 'overlay', 'bootstrap.json'), 'utf8'))).replace(/</g, '\\u003c'); } catch {}
+    }
+    return send(res, 200, html.replace('<head>', `<head><script>self.__rbxLocalFlagOverrides=${overrides};self.__rbxLocalBootstrap=${bootstrap}</script><script src="/site-shim.js"></script>`), 'text/html');
   }
   if (/^\/[0-9a-f]{40}\//.test(p)) return serveFile(req, res, path.join(ROOT, 'site', p));
   if (p === '/') return serveFile(req, res, path.join(ROOT, 'WebClient.html'));

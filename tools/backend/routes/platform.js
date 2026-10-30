@@ -18,9 +18,19 @@ function liveWebClient() {
   } catch (e) { return null; }
 }
 
+// The repo's own engine build (patched wasm, rebuilt WebClient.js, content overlay
+// with the Lua App bootstrap), which tools/server.js serves under /engine/. Roblox's
+// page loads it when site-shim.js pins this upload id (/games/start?build=local).
+const LOCAL_BUILD = 'version-0000000000000745';
+
 function webClientFile(req, res, u) {
   const [, upload] = /^\/webclient\/(version-[0-9a-f]+)-RobloxWebClient\//.exec(u.pathname);
   const rel = decodeURIComponent(u.pathname.slice(`/webclient/${upload}-RobloxWebClient/`.length));
+  if (upload === LOCAL_BUILD) {
+    if (rel.includes('..')) return notFound(res, `web client file ${upload}/${rel}`);
+    res.writeHead(302, { Location: `/engine/${rel.split('/').map(encodeURIComponent).join('/')}`, 'Access-Control-Allow-Origin': '*' });
+    return res.end();
+  }
   const file = path.join(ROOT, 'webclient', 'live', upload, rel);
   if (rel.includes('..') || !fs.existsSync(file) || !fs.statSync(file).isFile()) return notFound(res, `web client file ${upload}/${rel}`);
   const types = { '.js': 'text/javascript', '.wasm': 'application/wasm', '.json': 'application/json' };

@@ -97,3 +97,7 @@ const outPlace = path.join(OV, 'ExtraContent/places/Mobile.rbxl');
 fs.mkdirSync(path.dirname(outPlace), { recursive: true });
 fs.copyFileSync(place, outPlace);
 console.log(`place: ${place} -> ${path.relative(ROOT, outPlace)}`);
+
+// 4. which bootstrap the overlay carries, for Roblox's page (/games/start?build=local,
+// see webclient/site-shim.js)
+fs.writeFileSync(path.join(OV, 'bootstrap.json'), JSON.stringify(joinPlace ? { mode: 'join', placeId: joinPlace } : { mode: 'playsolo' }) + '\n');
