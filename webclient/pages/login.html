@@ -31,24 +31,13 @@
 
   /* A framed window onto the games collage, not a full-page backdrop. */
   .showcase { position: relative; overflow: hidden; border-radius: 22px; background: #1d1e22; isolation: isolate; }
-  .showcase::before { content: ""; position: absolute; inset: 0; z-index: -2; background: url(/pages/assets/games.jpg) 40% center / cover no-repeat;
+  .showcase::before { content: ""; position: absolute; inset: 0; background: url(/pages/assets/games.jpg) 40% center / cover no-repeat;
     animation: pan 30s ease-in-out infinite alternate; }
-  .showcase::after { content: ""; position: absolute; inset: 0; z-index: -1;
-    background: linear-gradient(180deg, rgba(14, 15, 17, .35) 0%, rgba(14, 15, 17, 0) 28%, rgba(14, 15, 17, 0) 50%, rgba(14, 15, 17, .92) 100%); }
   @keyframes pan { from { transform: scale(1.06) translate(-1.5%, 1%); } to { transform: scale(1.12) translate(1.5%, -1%); } }
   @media (prefers-reduced-motion: reduce) { .showcase::before { animation: none; } }
-  .showcase-copy { position: absolute; left: 0; right: 0; bottom: 0; padding: 36px 40px; }
-  .chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 10px; border-radius: 999px; background: rgba(14, 15, 17, .6);
-    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--soft); font-size: 13px; font-weight: 500; }
-  .chip i { width: 8px; height: 8px; border-radius: 50%; background: #3ddc84; box-shadow: 0 0 0 3px rgba(61, 220, 132, .2); }
-  .showcase h2 { margin: 16px 0 0; max-width: 520px; font: 800 clamp(28px, 3.2vw, 44px)/1.08 var(--display); }
-  .showcase p { margin: 12px 0 0; max-width: 440px; color: var(--soft); font-size: 16px; }
 
   /* Form column. */
   .side { display: flex; flex-direction: column; padding: 20px clamp(20px, 4vw, 56px) 14px; }
-  .top { display: flex; align-items: center; justify-content: space-between; }
-  .wordmark { color: var(--fg); text-decoration: none; font: 800 17px var(--display); letter-spacing: .02em; text-transform: uppercase; }
-  .wordmark span { color: var(--muted); }
   main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 0; }
   .form { width: 100%; max-width: 380px; }
 
@@ -95,13 +84,9 @@
 
   @media (max-width: 900px) {
     .page { grid-template-columns: 1fr; grid-template-rows: auto 1fr; padding: 10px; gap: 0; }
-    .showcase { height: 210px; border-radius: 18px; }
+    .showcase { height: 180px; border-radius: 18px; }
     .showcase::before { background-size: auto 140%; }
-    .showcase-copy { padding: 18px 20px; }
-    .showcase h2 { margin-top: 10px; font-size: 22px; }
-    .showcase p { display: none; }
     .side { padding: 0 8px 8px; }
-    .top { display: none; }
     main { align-items: flex-start; padding: 24px 0 28px; }
     .form { max-width: none; }
     .seg { margin-bottom: 24px; }
@@ -110,18 +95,9 @@
 </head>
 <body>
 <div class="page">
-  <section class="showcase" aria-hidden="true">
-    <div class="showcase-copy">
-      <span class="chip"><i></i>Plays in your browser</span>
-      <h2>Your games, on your own server.</h2>
-      <p>Play the experiences you love through the web client, with accounts that live right here.</p>
-    </div>
-  </section>
+  <section class="showcase" aria-hidden="true"></section>
 
   <div class="side">
-    <div class="top">
-      <a class="wordmark" href="/login">Web<span>Client</span></a>
-    </div>
     <main>
       <div class="form">
         <nav class="seg" aria-label="Account">
