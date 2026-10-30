@@ -43,6 +43,8 @@ async function handle(req, res, target) {
       t: new Date(t0).toISOString(), ms: Date.now() - t0, method: req.method, host: u.hostname, path: u.pathname, query: q,
       status: res.statusCode, user: user ? user.id : null, route: !!route, via: req.headers['x-original-host'] ? 'studio' : 'web',
       ...(!route || res.statusCode >= 400 ? { body: body.toString('utf8', 0, 600) } : {}),
+      // LOG_BODY=<regex>: also the full request body and headers of matching paths (debugging).
+      ...(process.env.LOG_BODY && new RegExp(process.env.LOG_BODY).test(u.pathname) ? { body: body.toString('utf8'), headers: req.headers } : {}),
     }) + '\n');
   });
   if (route) {

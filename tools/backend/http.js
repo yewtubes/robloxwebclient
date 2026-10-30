@@ -1,5 +1,6 @@
 // Response helpers shared by the route modules. Error bodies use the shape
 // Roblox's web APIs return: {errors:[{code, message}]}.
+const zlib = require('zlib');
 function json(res, code, body, headers = {}) {
   const data = Buffer.from(JSON.stringify(body));
   res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': data.length, ...headers });
@@ -17,7 +18,17 @@ function readBody(req) {
   return new Promise((resolve, reject) => {
     const chunks = [];
     req.on('data', (c) => chunks.push(c));
-    req.on('end', () => resolve(Buffer.concat(chunks)));
+    req.on('end', () => {
+      // Studio compresses some request bodies (asset delivery batches: gzip).
+      const raw = Buffer.concat(chunks), enc = String(req.headers['content-encoding'] || '').toLowerCase();
+      try {
+        if (enc === 'gzip' || enc === 'x-gzip') return resolve(zlib.gunzipSync(raw));
+        if (enc === 'deflate') return resolve(zlib.inflateSync(raw));
+        if (enc === 'br') return resolve(zlib.brotliDecompressSync(raw));
+        if (enc === 'zstd' && zlib.zstdDecompressSync) return resolve(zlib.zstdDecompressSync(raw));
+      } catch (e) { console.log(`backend: undecodable ${enc} request body: ${e.message}`); }
+      resolve(raw);
+    });
     req.on('error', reject);
   });
 }
