@@ -15,7 +15,9 @@ const args = process.argv.slice(2);
 const joinArg = args.find((a) => /^--join(=|$)/.test(a));
 const joinPlace = joinArg ? +(joinArg.split('=')[1] || 1818) : 0;
 if (joinArg && !(Number.isSafeInteger(joinPlace) && joinPlace > 0)) throw new Error(`bad place id in ${joinArg}`);
-const place = args.find((a) => !a.startsWith('--')) || path.join(ROOT, 'places', 'WorldHQ.rbxl');
+// In join mode the place only fills the app DataModel, so a light one is used:
+// a heavy one (World HQ) slows the page enough to miss the QUIC handshake timeout.
+const place = args.find((a) => !a.startsWith('--')) || path.join(ROOT, 'places', joinArg ? 'Baseplate.rbxlx' : 'WorldHQ.rbxl');
 
 // 1. compile the bootstrap
 const bc = path.join(OV, 'PlaySolo.bin');

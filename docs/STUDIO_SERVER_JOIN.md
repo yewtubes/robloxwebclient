@@ -12,7 +12,7 @@ record that survives context loss.
 | Studio server starts with Baseplate / Grow a Garden | works (`tools/studio/run_server.sh`) |
 | Real web client boots from the local server | works (`/games/start?placeId=1818`) |
 | Join through our backend (`tools/backend.js`) | works |
-| Join started by our Lua App bootstrap (`playsolo/Join.lua`, normal page) | works up to the wire (no Studio server to test against yet) |
+| Join started by our Lua App bootstrap (`playsolo/Join.lua`, normal page) | works: RbxTransport, Replicator, character, topbar; no script errors (see below) |
 | WebTransport handshake to Studio's RbxTransport | works when Studio and Chrome are on separate cores |
 | Replicator created, world and character replicate | works |
 | Studio sends compiled script bytecode (`LOCAL_RCC=1`, `local_rcc_modern/`) | works |
@@ -49,19 +49,28 @@ RCC_HOST=127.0.0.1 RCC_PORT=53640 taskset -c 2,3 node tools/run_headless.js 75
   the app DataModel (it runs as a CoreScript, which that API needs). The
   `NetworkClient:PlayerConnect` join-script path is gone from this build (no
   such reflection name in the wasm).
-- Verified without a Studio server (this container has none): `[Join] launching
-  place 1818` → `SingleSurfaceApp launchUGCGame` → `UgcExperienceController:
-  join: initialized dm` → backend `/v1/join-game` → `Joining game ... place
-  1818 at 127.0.0.1` → `[LIFECYCLE] joinGameSucceeded`. With no RbxTransport
-  fields in the join script ("RbxTransport token or port is empty") the client
-  falls back to RakNet through `/local-relay`; a UDP listener on 53640 got the
-  client's connection request (packet ID 0x7b, 1160 bytes, retried 25 times in
-  30 s).
-- Not yet run against Studio: whether the RbxTransport handshake behaves the
-  same from this page, and what the game scripts do. This page serves
-  `WebClient.patched.wasm`, whose `luau_load` change (`tools/patch_wasm.js`)
-  also applies to bytecode from the server, so the "bytecode corrupted" result
-  above may differ here.
+- Without a server: `[Join] launching place 1818` → `SingleSurfaceApp
+  launchUGCGame` → `UgcExperienceController: join: initialized dm` → backend
+  `/v1/join-game` → `Joining game ... place 1818 at 127.0.0.1`. With no
+  RbxTransport fields the client falls back to RakNet through `/local-relay`
+  (connection request ID 0x7b reached a UDP listener on 53640).
+- With Studio 0.745.0.7451137 (`LOCAL_RCC=1 run_server.sh 1818`, signed in as
+  Builder, registered job, RbxTransport port 47203): `Joining game
+  'a19ce8f4-…'` → `Connection accepted from 127.0.0.1|47203` →
+  `Replicator created` within ~1.5 s of the launch. Player1 spawns in the
+  Baseplate with the default avatar, 2026 topbar and player list
+  (`screenshots/bootstrap-join-studio.png`, log next to it). The log has no
+  `bytecode corrupted` and no `CreatorError` for game scripts. This page serves
+  `WebClient.patched.wasm` (7451142), whose `luau_load` change
+  (`tools/patch_wasm.js`) also lets the server's local_rcc_modern bytecode
+  load. With `KEYS="w:4000"` the view moves relative to the spawn pad, so the
+  client's control scripts most likely run; the character's position wasn't
+  measured.
+- The first attempt failed with `ERR_QUIC_PROTOCOL_ERROR.QUIC_NETWORK_IDLE_TIMEOUT`
+  and then RakNet handshake error 6. Studio was at 200% on its two pinned
+  cores (main thread + llvmpipe), and the app DataModel was loading World HQ
+  (~19.8k instances) on Chrome's cores. With the Baseplate as the app place
+  (now the `--join` default) the handshake succeeded on every later run.
 
 ## How to reproduce the working connection
 
