@@ -83,9 +83,14 @@ function friendsOf(id) {
 function friendJson(id) {
   const u = M.user(id), p = M.presenceOf(id);
   return { isOnline: p.userPresenceType > 0, presenceType: p.userPresenceType, isDeleted: false, friendFrequentScore: 0, friendFrequentRank: 1,
-    hasVerifiedBadge: false, description: u.description, created: u.created_at, isBanned: !!u.is_banned, externalAppDisplayName: null,
+    hasVerifiedBadge: !!u.has_verified_badge, description: u.description, created: u.created_at, isBanned: !!u.is_banned, externalAppDisplayName: null,
     id: u.id, name: u.name, displayName: u.display_name };
 }
+function groupJson(gid) {
+  const n = open().prepare('SELECT COUNT(*) n FROM group_members WHERE group_id = ?').get(gid).n;
+  return { id: gid, name: `Group ${gid}`, memberCount: n, hasVerifiedBadge: false };
+}
+const roleJson = (gid, r) => ({ id: gid * 1000 + r.rank, name: r.role_name, rank: r.rank });
 const friendTarget = (u) => +(/users\/(\d+)/.exec(u.pathname) || [])[1];
 
 const ROUTES = [
@@ -207,9 +212,25 @@ const ROUTES = [
   ['GET', /^friends\.roblox\.com$/, /^\/v1\/users\/\d+\/(followers|followings)\/count$/, (req, res) => json(res, 200, { count: 0 })],
 
   // Groups: this platform has none yet, so memberships are genuinely empty.
-  ['GET', /^groups\.roblox\.com$/, /^\/v[12]\/users\/\d+\/groups\/roles$/, (req, res) => json(res, 200, { data: [] })],
-  ['GET', /^groups\.roblox\.com$/, /^\/v2\/groups\/\d+\/users$/, (req, res) => json(res, 200, { previousPageCursor: null, nextPageCursor: null, data: [] })],
-  ['GET', /^groups\.roblox\.com$/, /^\/v[12]\/groups\/\d+$/, (req, res) => error(res, 400, 'Group is invalid or does not exist.', 1)],
+  // Groups exist only as memberships set with tools/admin.js (group_members). The
+  // game server answers Player:IsInGroup/GetRankInGroup/GetRoleInGroup from
+  // /v2/groups/{id}/users?userIds= (data[].roles[].rank); the in-game CoreScripts
+  // use those for the name icons (Roblox admins, group 1200769, and others).
+  ['GET', /^groups\.roblox\.com$/, /^\/v[12]\/users\/\d+\/groups\/roles$/, (req, res, u) => json(res, 200, {
+    data: M.groupRoles(friendTarget(u)).map((r) => ({ group: groupJson(r.group_id), role: roleJson(r.group_id, r), isPrimaryGroup: false })) })],
+  ['GET', /^groups\.roblox\.com$/, /^\/v2\/groups\/\d+\/users$/, (req, res, u) => {
+    const gid = +/groups\/(\d+)/.exec(u.pathname)[1];
+    const data = idList(u, 'userIds').map((id) => [id, M.groupRole(gid, id)]).filter(([, r]) => r).map(([id, r]) => {
+      const x = M.user(id);
+      return { userId: id, user: { userId: id, username: x ? x.name : '', displayName: x ? x.display_name : '', hasVerifiedBadge: !!(x && x.has_verified_badge) }, roles: [roleJson(gid, r)], role: roleJson(gid, r) };
+    });
+    json(res, 200, { previousPageCursor: null, nextPageCursor: null, data });
+  }],
+  ['GET', /^groups\.roblox\.com$/, /^\/v[12]\/groups\/\d+$/, (req, res, u) => {
+    const gid = +/groups\/(\d+)/.exec(u.pathname)[1];
+    if (!groupJson(gid).memberCount) return error(res, 400, 'Group is invalid or does not exist.', 1);
+    json(res, 200, { ...groupJson(gid), description: '', owner: null, shout: null, isBuildersClubOnly: false, publicEntryAllowed: false, isLocked: false });
+  }],
   ['GET', /^groups\.roblox\.com$/, /^\/v2\/groups$/, (req, res) => json(res, 200, { data: [] })],
 
   // Crash reports stay local.

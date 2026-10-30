@@ -14,6 +14,11 @@ const universe = (id) => open().prepare('SELECT * FROM universes WHERE id = ?').
 const universeOfPlace = (placeId) => { const p = place(placeId); return p ? universe(p.universe_id) : null; };
 const user = (id) => open().prepare('SELECT * FROM users WHERE id = ?').get(id) || null;
 
+// The verified badge of a creator (users only: groups have no badge here).
+const verified = (type, id) => type === 'User' && !!(user(id) || {}).has_verified_badge;
+const groupRoles = (userId) => open().prepare('SELECT group_id, role_name, rank FROM group_members WHERE user_id = ? ORDER BY group_id').all(userId);
+const groupRole = (groupId, userId) => open().prepare('SELECT role_name, rank FROM group_members WHERE group_id = ? AND user_id = ?').get(groupId, userId);
+
 function creatorName(type, id) {
   if (type === 'User') { const u = user(id); return u ? u.name : ''; }
   return '';
@@ -157,7 +162,7 @@ function saveAvatar(userId, patch) {
 }
 
 module.exports = { wearable, WEARABLE_TYPES,
-  place, universe, universeOfPlace, user, creatorName, playingCount, serverPlayers,
+  place, universe, universeOfPlace, user, creatorName, verified, groupRoles, groupRole, playingCount, serverPlayers,
   upsertServer, heartbeatServer, closeServer, activeServers, pickServer,
   joinSession, touch, setPresence, presenceOf, avatarOf, saveAvatar, BRICK, ACTIVE_MS,
 };

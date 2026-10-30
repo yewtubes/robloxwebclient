@@ -13,7 +13,7 @@ const ADMIN_KEY = process.env.ADMIN_KEY || '';
 function gameJson(g, viewer) {
   return {
     id: g.id, rootPlaceId: g.root_place_id, name: g.name, description: g.description, sourceName: g.name, sourceDescription: g.description,
-    creator: { id: g.creator_id, name: M.creatorName(g.creator_type, g.creator_id), type: g.creator_type, isRNVAccount: false, hasVerifiedBadge: false },
+    creator: { id: g.creator_id, name: M.creatorName(g.creator_type, g.creator_id), type: g.creator_type, isRNVAccount: false, hasVerifiedBadge: M.verified(g.creator_type, g.creator_id) },
     price: null, allowedGearGenres: [g.genre], allowedGearCategories: [], isGenreEnforced: false, copyingAllowed: false,
     playing: M.playingCount(g.id), visits: g.visits, maxPlayers: g.max_players, created: g.created_at, updated: g.updated_at,
     studioAccessToApisAllowed: false, createVipServersAllowed: false, universeAvatarType: g.avatar_type, genre: g.genre,
@@ -24,7 +24,7 @@ function gameJson(g, viewer) {
 // (MarketplaceService:GetProductInfo and the loading screen read it).
 function placeProductInfo(p) {
   const g = M.universe(p.universe_id);
-  const creator = { Id: g.creator_id, Name: M.creatorName(g.creator_type, g.creator_id), CreatorType: g.creator_type, CreatorTargetId: g.creator_id, HasVerifiedBadge: false };
+  const creator = { Id: g.creator_id, Name: M.creatorName(g.creator_type, g.creator_id), CreatorType: g.creator_type, CreatorTargetId: g.creator_id, HasVerifiedBadge: M.verified(g.creator_type, g.creator_id) };
   return {
     TargetId: p.id, ProductType: 'User Product', AssetId: p.id, ProductId: 0, Name: p.name, Description: p.description,
     AssetTypeId: 9, Creator: creator, IconImageAssetId: g.icon_asset_id || 0, Created: p.created_at, Updated: p.updated_at,
@@ -192,7 +192,7 @@ const ROUTES = [
     if (!a) return error(res, 400, 'Asset not found.', 0);
     json(res, 200, {
       TargetId: a.id, ProductType: 'User Product', AssetId: a.id, ProductId: 0, Name: a.name, Description: a.description, AssetTypeId: a.asset_type_id,
-      Creator: { Id: a.creator_id, Name: M.creatorName(a.creator_type, a.creator_id), CreatorType: a.creator_type, CreatorTargetId: a.creator_id, HasVerifiedBadge: false },
+      Creator: { Id: a.creator_id, Name: M.creatorName(a.creator_type, a.creator_id), CreatorType: a.creator_type, CreatorTargetId: a.creator_id, HasVerifiedBadge: M.verified(a.creator_type, a.creator_id) },
       IconImageAssetId: 0, Created: a.created_at, Updated: a.updated_at, PriceInRobux: null, PriceInTickets: null, Sales: 0, IsNew: false, IsForSale: false,
       IsPublicDomain: false, IsLimited: false, IsLimitedUnique: false, Remaining: null, MinimumMembershipLevel: 0, ContentRatingTypeId: 0,
     });
@@ -212,7 +212,7 @@ const ROUTES = [
     const g = M.universe(p.universe_id);
     return { placeId: p.id, name: p.name, description: p.description, sourceName: p.name, sourceDescription: p.description,
       url: `https://www.roblox.com/games/${p.id}/`, builder: M.creatorName(g.creator_type, g.creator_id), builderId: g.creator_id,
-      hasVerifiedBadge: false, isPlayable: true, reasonProhibited: 'None', universeId: g.id, universeRootPlaceId: g.root_place_id, price: 0, imageToken: '' };
+      hasVerifiedBadge: M.verified(g.creator_type, g.creator_id), isPlayable: true, reasonProhibited: 'None', universeId: g.id, universeRootPlaceId: g.root_place_id, price: 0, imageToken: '' };
   }))],
   ['GET', /^games\.roblox\.com$/, /^\/v1\/games\/\d+\/servers\/(Public|0)$/, (req, res, u) => {
     const g = M.universe(+/games\/(\d+)/.exec(u.pathname)[1]);

@@ -6,7 +6,7 @@ const M = require('../model.js');
 const { open, now } = require('../db.js');
 const { json, error, unauthorized, badRequest, parseJson, formOrJson, idList } = require('../http.js');
 
-const userJson = (u) => ({ hasVerifiedBadge: false, id: u.id, name: u.name, displayName: u.display_name });
+const userJson = (u) => ({ hasVerifiedBadge: !!u.has_verified_badge, id: u.id, name: u.name, displayName: u.display_name });
 const requireUser = (fn) => (req, res, u, body, ctx) => (ctx.user ? fn(req, res, u, body, ctx) : unauthorized(res));
 
 // ---- local account API (our own web pages use these) -------------------------

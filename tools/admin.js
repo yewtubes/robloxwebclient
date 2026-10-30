@@ -2,6 +2,9 @@
 // Platform administration on the database directly (no running backend needed).
 //   node tools/admin.js user create <name> <password> [--birthdate YYYY-MM-DD] [--display <name>]
 //   node tools/admin.js user list | user password <name> <pw> | user ban <name> | user unban <name>
+//   node tools/admin.js user verify <name> | user unverify <name>  the verified badge
+//   node tools/admin.js group add <groupId> <name> [--rank 1-255] [--role <name>] | group remove <groupId> <name> | group list [<name>]
+//   node tools/admin.js admin <name> | unadmin <name>             Roblox admin badge (group 1200769, rank 255)
 //   node tools/admin.js friend <name> <name>                      make two users friends
 //   node tools/admin.js block <name> <name> | unblock <name> <name>  first user blocks/unblocks the second
 //   node tools/admin.js universe create <id> <name> --creator <userId> [--max 10]
@@ -31,6 +34,7 @@ const die = (m) => { console.error(m); process.exit(1); };
 const userArg = (n) => A.getUserByName(n) || (/^\d+$/.test(n) && A.getUser(+n)) || die(`no user ${n}`);
 const db = open();
 
+const rankOpt = opt('rank'), roleOpt = opt('role');
 const birthdate = opt('birthdate'), display = opt('display'), creator = opt('creator'), max = opt('max'), nameOpt = opt('name'),
   type = opt('type'), job = opt('job'), cert = opt('cert'), root = flag('root');
 const [cmd, sub, ...a] = argv;
@@ -51,6 +55,27 @@ switch (`${cmd} ${sub}`) {
     db.prepare('UPDATE users SET is_banned = ? WHERE id = ?').run(sub === 'ban' ? 1 : 0, userArg(a[0]).id);
     if (sub === 'ban') db.prepare('DELETE FROM sessions WHERE user_id = ?').run(userArg(a[0]).id);
     console.log('ok');
+    break;
+  case 'user verify': case 'user unverify':
+    db.prepare('UPDATE users SET has_verified_badge = ? WHERE id = ?').run(sub === 'verify' ? 1 : 0, userArg(a[0]).id);
+    console.log('ok');
+    break;
+  case 'group add': case 'group remove': case `admin ${sub}`: case `unadmin ${sub}`: {
+    const admin = cmd === 'admin' || cmd === 'unadmin';
+    const gid = admin ? 1200769 : +a[0], x = userArg(admin ? sub : a[1]);
+    if (!(gid > 0)) die('bad group id');
+    if (cmd === 'admin' || sub === 'add') {
+      const rank = +(rankOpt || (admin ? 255 : 1));
+      if (!(rank >= 1 && rank <= 255)) die('--rank must be 1-255');
+      db.prepare(`INSERT INTO group_members (group_id, user_id, role_name, rank, created_at) VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT(group_id, user_id) DO UPDATE SET role_name = excluded.role_name, rank = excluded.rank`)
+        .run(gid, x.id, roleOpt || (admin ? 'Admin' : 'Member'), rank, now());
+    } else db.prepare('DELETE FROM group_members WHERE group_id = ? AND user_id = ?').run(gid, x.id);
+    console.log('ok');
+    break;
+  }
+  case `group list`:
+    for (const r of db.prepare('SELECT g.group_id, u.name, g.role_name, g.rank FROM group_members g JOIN users u ON u.id = g.user_id WHERE ? IS NULL OR u.name = ? ORDER BY g.group_id, g.rank DESC').all(a[0] ?? null, a[0] ?? null)) console.log(r);
     break;
   case `friend ${sub}`: {
     const x = userArg(sub), y = userArg(a[0]);
