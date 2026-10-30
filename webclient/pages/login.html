@@ -19,7 +19,7 @@
     color-scheme: dark;
     --bg: #0e0f11; --fill: #1a1b1f; --fill-hover: #212227; --seg: #17181b;
     --fg: #f4f5f7; --soft: #c9ccd4; --muted: #8c909b; --line: #26272c;
-    --focus: #7aa2ff; --err: #ff6b62; --cta: #f4f5f7; --cta-fg: #0e0f11;
+    --focus: #7aa2ff; --err: #ff6b62; --cta: #335fff; --cta-hover: #4a70ff; --cta-fg: #fff;
     --sans: "Builder Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     --display: "Builder Extended", "Builder Sans", Arial, sans-serif;
   }
@@ -72,10 +72,9 @@
 
   #err { min-height: 20px; margin: 2px 0 10px; color: var(--err); font-size: 14px; }
   .go { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 48px; border: 0; border-radius: 12px; background: var(--cta); color: var(--cta-fg); font: 700 15px var(--sans); cursor: pointer; transition: opacity .15s, transform .1s; }
-  .go svg { transition: transform .2s; }
-  .go:hover:not(:disabled) svg { transform: translateX(3px); }
+  .go:hover:not(:disabled) { background: var(--cta-hover); }
   .go:active:not(:disabled) { transform: scale(.99); }
-  .go:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+  .go:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
   .go:disabled { opacity: .5; cursor: default; }
   .fine { display: flex; gap: 8px; margin: 18px 0 0; color: var(--muted); font-size: 13px; }
   .fine svg { flex: none; margin-top: 2px; }
@@ -133,9 +132,7 @@
             </div>
           </div>
           <div id="err" role="alert"></div>
-          <button class="go" id="submit"><span id="submit-label">Log in</span>
-            <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M11.3 4.3a1 1 0 0 1 1.4 0l5 5a1 1 0 0 1 0 1.4l-5 5a1 1 0 0 1-1.4-1.4L14.6 11H3a1 1 0 1 1 0-2h11.6l-3.3-3.3a1 1 0 0 1 0-1.4Z"/></svg>
-          </button>
+          <button class="go" id="submit"><span id="submit-label">Log in</span></button>
         </form>
         <p class="fine">
           <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M8 1a3.5 3.5 0 0 0-3.5 3.5V6H4a1.5 1.5 0 0 0-1.5 1.5v6A1.5 1.5 0 0 0 4 15h8a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 12 6h-.5V4.5A3.5 3.5 0 0 0 8 1Zm2 5V4.5a2 2 0 1 0-4 0V6h4Z"/></svg>
