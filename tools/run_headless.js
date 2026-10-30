@@ -149,6 +149,15 @@ fs.mkdirSync(path.dirname(shot), { recursive: true });
       // type:<text> types text (e.g. a chat message after "/"); "enter" presses Enter.
       if (step.startsWith('type:')) { w(`input: type ${step.slice(5)}`); await page.keyboard.type(step.slice(5), { delay: 60 }); continue; }
       if (step === 'enter') { w('input: Enter'); await page.keyboard.press('Enter'); continue; }
+      // dom: log the focused element and the hidden text inputs (TextBox editing)
+      if (step === 'dom') {
+        const d = await page.evaluate(() => {
+          const a = document.activeElement, f = (e) => e && { id: e.id, value: e.value, display: e.style.display, type: e.type };
+          const c = document.getElementById('input-container');
+          return { active: a && (a.id || a.tagName), input: f(document.getElementById('input-input')), textarea: f(document.getElementById('input-textarea')), container: c && c.getAttribute('style') };
+        });
+        w(`dom: ${JSON.stringify(d)}`); console.log('dom', JSON.stringify(d)); continue;
+      }
       const [k, ms] = step.split(':');
       const key = { space: 'Space', w: 'KeyW', a: 'KeyA', s: 'KeyS', d: 'KeyD', q: 'KeyQ', e: 'KeyE' }[k] || k;
       w(`input: ${key} for ${ms}ms`);

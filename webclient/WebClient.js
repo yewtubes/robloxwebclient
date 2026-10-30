@@ -3156,9 +3156,22 @@ async function createWasm() {
       return 1;
     };
 
-  var _blur_text_input = () => { try { Module.inputElement?.blur(); } catch (e) {} };
+  var _blur_text_input = () => {
+    var c = Module.inputContainer, el = Module.currentInput;
+    if (c && el) { c.style.zIndex = -100; el.blur(); }
+  };
 
-  var _choose_current_text_input = (multiline, a, b) => {};
+  var _choose_current_text_input = (typePtr, multiline, secure) => {
+    var type = UTF8ToString(typePtr), el;
+    if (type == 'text' || type == 'no-suggestions') {
+      if (!multiline && !secure) { el = Module.inputElement; el.type = 'text'; } else el = Module.textAreaElement;
+      for (var a of ['autocomplete', 'autocorrect', 'spellcheck']) {
+        if (type == 'no-suggestions') el.setAttribute(a, a == 'spellcheck' ? 'false' : 'off'); else el.removeAttribute(a);
+      }
+    } else { el = Module.inputElement; el.type = type; }
+    el.style.display = 'block';
+    Module.currentInput = el;
+  };
 
   var _emscripten_get_now = () => performance.timeOrigin + performance.now();
   
@@ -3193,8 +3206,8 @@ async function createWasm() {
   }
 
   var _copy_pending_text = (dst) => {
-      if (Module.pendingBytes) HEAPU8.set(Module.pendingBytes, dst);
-    };
+    if (Module.pendingBytes) HEAPU8.set(Module.pendingBytes, dst >>> 0);
+  };
 
   var readEmAsmArgsArray = [];
   
@@ -5870,7 +5883,7 @@ async function createWasm() {
 
   var _fiber_destroy_js = (token) => { rbxFibers.destroyed++; rbxFibers.parked.delete(token); };
 
-  var _focus_text_input = () => { try { Module.inputElement?.focus({ preventScroll: true }); } catch (e) {} };
+  var _focus_text_input = () => { Module.currentInput?.focus(); };
 
   var _get_effective_device_pixel_ratio = () => Module.getEffectiveDevicePixelRatio ? Module.getEffectiveDevicePixelRatio() : (window.devicePixelRatio || 1);
 
@@ -7386,7 +7399,9 @@ async function createWasm() {
       console.error('[rbx] report_crash', s(a), s(b), s(c), s(d), e);
     };
 
-  var _reset_current_text_input = () => { if (Module.inputElement) Module.inputElement.value = ''; };
+  var _reset_current_text_input = () => {
+    if (Module.currentInput) { Module.currentInput.style.display = 'none'; Module.currentInput = null; }
+  };
 
   var _schedule_main_loop = () => {
       var running = false;
@@ -7411,33 +7426,62 @@ async function createWasm() {
   
   var _set_crash_attribute = (k, v) => console.log('[rbx] crash attribute', UTF8ToString(k), '=', UTF8ToString(v));
 
-  var _set_text_box_horiz_alignment = (a) => {};
+  var _set_text_box_horiz_alignment = (ptr) => { if (Module.currentInput) Module.currentInput.style.textAlign = UTF8ToString(ptr); };
 
-  var _set_text_box_overlay = (on) => {};
+  var _set_text_box_overlay = (on) => {
+    var c = Module.inputContainer, el = Module.currentInput;
+    if (!c || !el) return;
+    el.style.background = on ? 'none' : 'white';
+    c.style.zIndex = on ? 100 : -100;
+  };
 
-  var _set_text_box_vert_alignment = (a) => {};
+  var _set_text_box_vert_alignment = (ptr) => { if (Module.inputContainer) Module.inputContainer.style.alignItems = UTF8ToString(ptr); };
 
-  var _set_text_color = (r, g, b, a) => {};
+  var _set_text_color = (r, g, b, a) => {
+    var el = Module.currentInput;
+    if (el) el.style.color = `rgb(${Math.floor(r * 255)} ${Math.floor(g * 255)} ${Math.floor(b * 255)} / ${a})`;
+  };
 
-  var _setup_font = (a, b, c, size, d) => {};
+  var _setup_font = (namePtr, urlPtr, weight, size, italic) => {
+    var el = Module.currentInput;
+    if (!el) return;
+    var name = UTF8ToString(namePtr), url = 'url(' + UTF8ToString(urlPtr) + ')';
+    var apply = () => {
+      el.style.fontFamily = name; el.style.fontWeight = weight;
+      el.style.fontSize = `${size}px`; el.style.fontStyle = italic ? 'italic' : 'normal';
+    };
+    if (name in Module.fontMap) return apply();
+    var face = new FontFace(name, url);
+    document.fonts.add(face);
+    face.load().then(() => { Module.fontMap[name] = face; apply(); }, (e) => console.error(e));
+  };
 
-  var _shift_canvas = (dy) => {};
+  var _shift_canvas = (dy) => {
+    var canvas = document.getElementById('canvas'), c = Module.inputContainer;
+    if (canvas && c) { canvas.style.transform = `translateY(${dy}px)`; c.style.transform = `translateY(${dy}px)`; }
+  };
 
   
   var _sync_text_and_pos = (textPtr, selStart, selEnd) => {
-      var el = Module.inputElement;
-      if (!el) return;
-      var text = UTF8ToString(textPtr);
-      el.value = text;
-      try { el.setSelectionRange(selStart, selEnd); } catch (e) {}
-    };
+    var el = Module.currentInput;
+    if (!el) return console.error('Could not find current text input to update.');
+    var text = UTF8ToString(textPtr), bytes = Module.encoder.encode(text);
+    var start = Module.decoder.decode(bytes.subarray(0, selStart)).length;
+    var end = selEnd == selStart ? start : Module.decoder.decode(bytes.subarray(0, selEnd)).length;
+    el.value = text; el.selectionStart = start; el.selectionEnd = end;
+  };
 
   var rbxText = {
   horiz:0,
   vert:0,
   overlay:0,
   };
-  var _update_text_box_rect = (x, y, w, h) => { rbxText.rect = [x, y, w, h]; };
+  var _update_text_box_rect = (x, y, w, h) => {
+    var c = Module.inputContainer, el = Module.currentInput;
+    if (!c || !el) return console.error('Could not find current text input to update.');
+    c.style.left = `${x}px`; c.style.top = `${y}px`; c.style.width = `${w}px`; c.style.height = `${h}px`;
+    el.style.width = `${w}px`; el.style.maxHeight = `${h}px`;
+  };
 
 
 
