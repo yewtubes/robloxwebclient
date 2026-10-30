@@ -115,6 +115,9 @@ local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
 local p = Players.LocalPlayer
 UIS.InputBegan:Connect(function(i, gp) print("[ClientProbe] input", i.KeyCode.Name, i.UserInputType.Name, gp) end)
+task.spawn(function()
+	print("[ClientProbe] badges", "verified", p.HasVerifiedBadge, "admin group", pcall(p.IsInGroup, p, 1200769), "rank", pcall(p.GetRankInGroup, p, 1200769))
+end)
 local ps = p:WaitForChild("PlayerScripts")
 task.wait(3)
 for _, c in ps:GetChildren() do print("[ClientProbe] PlayerScripts:", c.Name, c.ClassName) end
