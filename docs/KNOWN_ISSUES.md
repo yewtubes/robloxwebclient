@@ -20,11 +20,13 @@ and animation work there (docs/STUDIO_SERVER_JOIN.md,
 
 ## R15 characters have no head
 
-The default dynamic head uses mesh asset 123480233606534. Roblox serves it only
-to authenticated requests, so the default `ASSET_FALLBACK=public` gets 401
-(`data/logs/asset-fallback.log`: `fallback-denied`). Use
-`ASSET_FALLBACK=opencloud` with your own Open Cloud API key, or import the asset
-(`node tools/admin.js asset import 123480233606534 <file> --type 4`).
+The default dynamic head uses mesh asset 123480233606534, which Roblox serves
+only to authenticated requests (the default `ASSET_FALLBACK=public` gets 401).
+On 2026-10-30 it was fetched once with a signed-in account
+(`assetdelivery.roblox.com/v2/assetId/…`, a gzip'd `version 7.00` mesh, 100 KB)
+and imported with `node tools/admin.js asset import 123480233606534 <file> --type 4`.
+The store (`data/`) isn't committed, so each deployment needs that import (or
+`ASSET_FALLBACK=opencloud` with your own key). Not yet checked in-game.
 
 ## One client texture isn't available
 
@@ -81,3 +83,31 @@ finished:
 Until this is solved, experiences can use uploaded images instead of renders
 (`tools/admin.js universe icon|thumbnail`). Avatar thumbnails stay `Pending`
 unless the worker runs.
+
+## Chat: typed text doesn't reach the chat box (patched build)
+
+`/` opens chat and focuses the box (the game sees `Slash` as processed), but
+typed text never arrives, so nothing is sent. Cause, from Roblox's own
+WebClient.js: the engine edits TextBoxes through the page's hidden
+`<input>`/`<textarea>`. `choose_current_text_input` picks one, sets it to
+`display:block` and makes it `Module.currentInput`; focus, blur, sync, rect,
+overlay and font calls then act on it, and its input events feed
+`on_virtual_text_changed`. Our `webclient/glue/rbxlib.js` has stubs for these
+(the input is never shown, so focusing it does nothing). Fix: port those
+functions into rbxlib.js (and the generated WebClient.js). Not done yet.
+
+## Lag (all devices)
+
+Reported as very laggy on every device. Not investigated yet. Things to check:
+our rebuilt WebClient.js is an `-O0 -sASSERTIONS=1` post-link (tools/build_glue.sh),
+unlike Roblox's optimized glue, and runs the engine's JS imports unoptimized;
+SwiftShader timings in headless runs don't say anything about real devices.
+
+## Studio test server dies or can't sign in (cloud container)
+
+The container sometimes rewrites `/etc/hosts` (the sitetest1 names disappear:
+Studio then gets "self-signed certificate in certificate chain" from Roblox's
+real hosts) and can kill background processes. Re-run
+`tools/studio/setup_env.sh --hosts-only`, restart `tools/studio_backend.js`, and
+start servers with `nohup setsid … &` so they outlive the shell.
+

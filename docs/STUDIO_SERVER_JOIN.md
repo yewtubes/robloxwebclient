@@ -114,6 +114,19 @@ RCC_HOST=127.0.0.1 RCC_PORT=53640 taskset -c 2,3 node tools/run_headless.js 60 '
   title and an empty icon, because WasmPlayer only loads the experience's name
   and icon when `placeId` is in the URL.
 
+### Join speed and the loading card (2026-10-30)
+
+- Page start to playable went from 12.4 s to 7.7 s (headless, 4 shared cores):
+  an 8-worker pthread pool in WebClient.js (the rebuilt glue had none, and a
+  main-thread futex wait stalled joins ~4 s), `Join.lua` launching after the
+  first rendered frame (launching inside the engine's initialize() stalled the
+  join), and an app patch with every Source but the bootstrap's emptied
+  (75 MB -> 6.8 MB).
+- `/games/start?build=local&placeId=1818`: WasmPlayer's loading card shows the
+  experience's name and creator (Baseplate / Builder); `site-shim.js` keeps
+  `set_place_id` from the engine so the bootstrap still joins. The icon stays
+  blank while the backend's thumbnail is Pending.
+
 ## How to reproduce the working connection
 
 ```bash
