@@ -36,6 +36,14 @@ function avatarV2(userId) {
   return { scales: a.scales, playerAvatarType: a.avatarType, bodyColor3s: color3s(a.colors), assets: assetsJson(a.assets),
     defaultShirtApplied: false, defaultPantsApplied: false, emotes: a.emotes };
 }
+// Enum.AssetType names for the types users wear or own.
+const ASSET_TYPE_NAMES = { 2: 'TShirt', 8: 'Hat', 11: 'Shirt', 12: 'Pants', 17: 'Head', 18: 'Face', 19: 'Gear', 27: 'Torso',
+  28: 'RightArm', 29: 'LeftArm', 30: 'LeftLeg', 31: 'RightLeg', 41: 'HairAccessory', 42: 'FaceAccessory', 43: 'NeckAccessory',
+  44: 'ShoulderAccessory', 45: 'FrontAccessory', 46: 'BackAccessory', 47: 'WaistAccessory', 48: 'ClimbAnimation',
+  50: 'FallAnimation', 51: 'IdleAnimation', 52: 'JumpAnimation', 53: 'RunAnimation', 54: 'SwimAnimation', 55: 'WalkAnimation',
+  56: 'PoseAnimation', 61: 'EmoteAnimation', 64: 'TShirtAccessory', 65: 'ShirtAccessory', 66: 'PantsAccessory',
+  67: 'JacketAccessory', 68: 'SweaterAccessory', 69: 'ShortsAccessory', 70: 'LeftShoeAccessory', 71: 'RightShoeAccessory',
+  72: 'DressSkirtAccessory', 76: 'EyebrowAccessory', 77: 'EyelashAccessory', 78: 'MoodAnimation', 79: 'DynamicHead' };
 const userIdOf = (u) => +(u.searchParams.get('userId') || (/users\/(\d+)/.exec(u.pathname) || [])[1]);
 const authed = (fn) => (req, res, u, body, ctx) => (ctx.user ? fn(req, res, u, body, ctx) : unauthorized(res));
 
@@ -175,6 +183,18 @@ const ROUTES = [
   ['GET', /^avatar\.roblox\.com$/, /^\/v1\/users\/\d+\/avatar$/, (req, res, u) => (M.user(userIdOf(u)) ? json(res, 200, avatarV1(userIdOf(u))) : error(res, 400, 'The user id is invalid.', 1))],
   ['GET', /^avatar\.roblox\.com$/, /^\/v2\/avatar\/users\/\d+\/avatar$/, (req, res, u) => (M.user(userIdOf(u)) ? json(res, 200, avatarV2(userIdOf(u))) : error(res, 400, 'The user id is invalid.', 1))],
   ['GET', /^avatar\.roblox\.com$/, /^\/v1\/users\/\d+\/currently-wearing$/, (req, res, u) => json(res, 200, { assetIds: M.avatarOf(userIdOf(u)).assets.map((a) => a.id) })],
+  // A user's items of one asset type. There is no ownership ledger here: a user
+  // has what they wear, the emotes they have equipped and the assets they created.
+  ['GET', /^inventory\.roblox\.com$/, /^\/v2\/users\/\d+\/inventory\/\d+$/, (req, res, u) => {
+    const userId = userIdOf(u), type = +/inventory\/(\d+)/.exec(u.pathname)[1];
+    if (!M.user(userId)) return error(res, 400, 'The user id is invalid.', 1);
+    const a = M.avatarOf(userId);
+    const ids = new Set([...a.assets.filter((x) => x.assetTypeId === type).map((x) => x.id),
+      ...a.emotes.map((e) => +e.assetId).filter((id) => S.getAsset(id)?.asset_type_id === type),
+      ...open().prepare("SELECT id FROM assets WHERE creator_type = 'User' AND creator_id = ? AND asset_type_id = ?").all(userId, type).map((r) => r.id)]);
+    const data = [...ids].map((id) => { const x = S.getAsset(id); return { assetId: id, name: x ? x.name : '', assetType: ASSET_TYPE_NAMES[type] || String(type), created: x ? x.created_at : null }; });
+    json(res, 200, { previousPageCursor: null, nextPageCursor: null, data });
+  }],
   ['GET', /^avatar\.roblox\.com$/, /^\/v1\/avatar$/, authed((req, res, u, b, { user }) => json(res, 200, avatarV1(user.id)))],
   ['GET', /^avatar\.roblox\.com$/, /^\/v2\/avatar\/avatar$/, authed((req, res, u, b, { user }) => json(res, 200, avatarV2(user.id)))],
   ['GET', /^avatar\.roblox\.com$/, /^\/v1\/avatar-rules$/, (req, res) => json(res, 200, {
