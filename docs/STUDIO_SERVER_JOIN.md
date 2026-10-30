@@ -55,6 +55,18 @@ RCC_HOST=127.0.0.1 RCC_PORT=53640 taskset -c 2,3 node tools/run_headless.js 75 '
 - Logs of a good run: `screenshots/real-join.log` (Replicator created,
   then `CreatorError: Error: <script>` for every game script).
 
+### Patched wasm and the join (2026-10-30)
+
+- `tools/studio/wt_cert_hash.py` needs `aioquic` (`pip install aioquic`).
+  Without it the join script has no RbxTransport fields and the client falls
+  back to RakNet with port 0 ("Failed to start network client").
+- `WebClient.patched.wasm` is not part of this path: `games/start` loads the
+  live 7451145 build from `webclient/live/` unmodified, and the patches in
+  `tools/patch_wasm.js` are for the 7451142 wasm used by Play Solo. A join
+  with `places/WorldHQ.rbxl` as the server (`screenshots/patched-join.log`)
+  gives the same result as before: RbxTransport, Replicator created, every
+  client script `bytecode corrupted`.
+
 ## Why Studio sent no bytecode, and the fix (`local_rcc_modern/`)
 
 Two Studio stubs, both confirmed by disassembly (same causes as local_rcc
