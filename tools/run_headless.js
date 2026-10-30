@@ -134,6 +134,24 @@ fs.mkdirSync(path.dirname(shot), { recursive: true });
     // SHOTS=1 also keeps each step's screenshot (<out>-<sec>s.png), e.g. to see the loading screen.
     if (process.env.SHOTS && fs.existsSync(shot)) fs.copyFileSync(shot, shot.replace(/\.png$/, `-${s + step}s.png`));
   }
+  // PROFILE=<sec>: CPU profile of the page's main thread after loading; prints the
+  // functions with the most self time and writes <out>.cpuprofile.
+  if (process.env.PROFILE) {
+    const prof = await context.newCDPSession(page);
+    await prof.send('Profiler.enable');
+    await prof.send('Profiler.setSamplingInterval', { interval: 500 });
+    const frames0 = await page.evaluate(() => new Promise((r) => { let n = 0; const t0 = performance.now(); const f = () => { n++; performance.now() - t0 < 3000 ? requestAnimationFrame(f) : r(n / 3); }; requestAnimationFrame(f); }));
+    await prof.send('Profiler.start');
+    await page.waitForTimeout(+process.env.PROFILE * 1000);
+    const { profile } = await prof.send('Profiler.stop');
+    fs.writeFileSync(shot.replace(/\.png$/, '.cpuprofile'), JSON.stringify(profile));
+    const self = new Map(), byId = new Map(profile.nodes.map((n) => [n.id, n]));
+    const dt = profile.timeDeltas, total = dt.reduce((a, b) => a + b, 0);
+    profile.samples.forEach((id, i) => { const n = byId.get(id); const k = `${n.callFrame.functionName || '(anon)'} ${n.callFrame.url.split('/').pop()}:${n.callFrame.lineNumber}`; self.set(k, (self.get(k) || 0) + (dt[i] || 0)); });
+    const top = [...self].sort((a, b) => b[1] - a[1]).slice(0, 25);
+    const out = [`rAF fps before profiling: ${frames0.toFixed(1)}`, ...top.map(([k, v]) => `${(100 * v / total).toFixed(1).padStart(5)}%  ${k}`)].join('\n');
+    w('profile:\n' + out); console.log(out);
+  }
   // Optional input script after loading, e.g. KEYS="w:3000,space:300,d:1500"
   if (process.env.KEYS) {
     await page.mouse.click(640, 360);
