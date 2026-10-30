@@ -60,45 +60,40 @@ Studio's editor calls a few services this platform doesn't provide (start page
 feeds, templates, the assistant, real-time notifications). See "Called but not
 implemented" in `docs/API_ROUTE_COVERAGE.md`. Studio keeps working without them.
 
-## Thumbnail rendering is preliminary
+## Thumbnail rendering
 
-Roblox renders thumbnails on RCC with `ThumbnailGenerator:Click`. Studio has no
-`ThumbnailGenerator`, so `tools/render/worker.js` lets Studio render the scene in
-its editor viewport and captures that from the worker's virtual display. The
-engine loads avatars from the backend: `GetHumanoidDescriptionFromUserId` reads
-`/v2/avatar/avatar-fetch`, because `CreateLocalPlayer` needs the RCC-only
-`LocalUser` capability. Renders come out with transparent backgrounds and
-Roblox's headshot framing (straight on, head slightly below center). It isn't
-finished:
+Roblox renders thumbnails on RCC with `ThumbnailGenerator:Click`, which returns
+the image as base64. Studio has no ThumbnailGenerator, so `tools/render/RenderPlugin.lua`
+does the same inside the engine: it builds the scene (avatars from avatar-fetch),
+captures the 3D view with `CaptureService`, reads the pixels back with an
+EditableImage and prints them to Studio's log as base64 in 800-character chunks
+(Studio cuts log lines at 1023). `tools/render/worker.js` reassembles them into
+the PNG. No display capture is involved. A screen capture located by magenta
+markers is kept only as a fallback.
 
-- Studio's "opening place" toast is a separate top-level window. With no window
-  manager on the virtual display it never closes, so it shows up in captures.
-  Unmapping it from the worker also unmapped the editor's dialogs, which left the
-  viewport black. That approach was dropped.
-- First-run dialogs ("Start Tour") can also sit over the viewport.
+Fixed along the way: Studio's textures never loaded, because Studio gzips its
+asset delivery batch requests (now decompressed by the backend) and asked for
+ktx2 textures only (turned off with `FStringTextureTranscodeRollout` in
+`webclient/flags/PCStudioApp.local.json`).
 
-Until this is solved, experiences can use uploaded images instead of renders
-(`tools/admin.js universe icon|thumbnail`). Avatar thumbnails stay `Pending`
-unless the worker runs.
+Open: one Studio launch per job (about 80 s here, mostly Studio start-up). A
+worker that keeps one Studio open across jobs would be much faster.
 
-## Chat: typed text doesn't reach the chat box (patched build)
+## Chat (patched build)
 
-`/` opens chat and focuses the box (the game sees `Slash` as processed), but
-typed text never arrives, so nothing is sent. Cause, from Roblox's own
-WebClient.js: the engine edits TextBoxes through the page's hidden
-`<input>`/`<textarea>`. `choose_current_text_input` picks one, sets it to
-`display:block` and makes it `Module.currentInput`; focus, blur, sync, rect,
-overlay and font calls then act on it, and its input events feed
-`on_virtual_text_changed`. Our `webclient/glue/rbxlib.js` has stubs for these
-(the input is never shown, so focusing it does nothing). Fix: port those
-functions into rbxlib.js (and the generated WebClient.js). Not done yet.
+Typing and sending work (TextBox functions ported from Roblox's WebClient.js
+into `webclient/glue/rbxlib.js`; Enter in the textarea submits). Open: speech
+bubbles show without text. Bubble chat sizes its text with `TextService`, and
+`TextService:GetTextSize` did not return in a client probe.
 
-## Lag (all devices)
+## Lag and lighting (all devices)
 
-Reported as very laggy on every device. Not investigated yet. Things to check:
-our rebuilt WebClient.js is an `-O0 -sASSERTIONS=1` post-link (tools/build_glue.sh),
-unlike Roblox's optimized glue, and runs the engine's JS imports unoptimized;
-SwiftShader timings in headless runs don't say anything about real devices.
+Reported as very laggy on every device. The main loop now runs like Roblox's
+(a MessageChannel loop, not requestAnimationFrame). Still to check: our
+WebClient.js is an `-O0 -sASSERTIONS=1` post-link (tools/build_glue.sh), unlike
+Roblox's optimized glue. Lighting is reported flat (no shadows). Automatic
+graphics quality drops to its lowest level when the frame rate is low, which
+turns shadows off, so this may follow from the lag. Not confirmed yet.
 
 ## Studio test server dies or can't sign in (cloud container)
 
