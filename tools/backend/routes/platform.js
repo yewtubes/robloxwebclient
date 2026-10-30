@@ -126,6 +126,17 @@ const ROUTES = [
     (req, res) => json(res, 200, {})],
   ['GET', /^setup\.rbxcdn\.com$/, /^\/webclient\/(version-[0-9a-f]+)-RobloxWebClient\//, webClientFile],
 
+  // Auto-localization table for an experience: this platform has none, so the
+  // table is empty (the client stops retrying and shows source text).
+  ['GET', /^(gameinternationalization|locale)\.roblox\.com$/, /^\/v1\/(auto-localization-table|autolocalization)\/games\/\d+\/autolocalizationtable$/,
+    (req, res) => json(res, 200, { autoLocalizationTableId: null, isAutoLocalizationEnabled: false })],
+  ['POST', /^(gameinternationalization|locale|localizationtables)\.roblox\.com$/, /^\/v1\/(auto-localization-table|autolocalization)\/games\/\d+\/autolocalizationtable$/,
+    (req, res) => json(res, 200, { autoLocalizationTableId: null, isAutoLocalizationEnabled: false })],
+  // A user's in-experience localization settings: default to the account locale,
+  // auto-translation off (this platform runs no translation service).
+  ['GET', /^gameinternationalization\.roblox\.com$/, /^\/v1\/user-localization-settings\/universe\/\d+$/, (req, res, u, b, { user }) =>
+    json(res, 200, { automaticTranslationStatusEnabled: false, automaticTranslationEnabledForUser: false,
+      translationLanguage: (user && user.locale && user.locale.split('_')[0]) || 'en', languageCode: (user && user.locale && user.locale.split('_')[0]) || 'en' })],
   ['GET', /^locale\.roblox\.com$/, /^\/v1\/locales/, (req, res, u, b, { user }) => {
     const l = { id: 1, locale: (user && user.locale) || 'en_us', name: 'English', nativeName: 'English', language: { id: 41, name: 'English', nativeName: 'English', languageCode: 'en' } };
     json(res, 200, { signupAndLogin: l, generalExperience: l, ugc: l, data: [{ locale: l, isEnabledForFullExperience: true, isEnabledForSignupAndLogin: true, isEnabledForInGameUgc: true }] });

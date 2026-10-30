@@ -154,6 +154,7 @@ Assets seen that the platform can't serve yet (`asset misses`):
 | apis | `GET /universe-chat-api/v1/universe-chat-settings` | `{globalChatEnabled: false, presetChatStatus: "Enabled"}`: no universe-wide chat (universe-chat-messaging-api isn't run here) | implemented |
 | users, accountinformation | `GET|POST /v1/description` | the account's `description` | implemented |
 | ephemeralcounters.api, ecsv2, lms, metrics, tracing, client-telemetry, `*/experience-signals-ingest/*`, `*/pbe`, `*.rbxinfra.com` | telemetry, counters and crash reports: accepted (`200 {}`), recorded in the request log, not forwarded | implemented (sink) |
+| localizationtables, gameinternationalization | `GET|POST /v1/autolocalization/games/{id}/autolocalizationtable`, `GET /v1/user-localization-settings/universe/{id}` | no auto-localization or translation service here: the table is empty and auto-translation is off, so the client shows source text and stops retrying | none | implemented |
 
 ## Called but not implemented
 
