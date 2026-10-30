@@ -10,168 +10,174 @@
 <style>
   /* Fonts and background: tools/fetch_login_assets.sh. */
   @font-face { font-family: "Builder Sans"; src: url(/pages/assets/BuilderSans-Regular.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "Builder Sans"; src: url(/pages/assets/BuilderSans-Medium.woff2) format("woff2"); font-weight: 500; font-display: swap; }
   @font-face { font-family: "Builder Sans"; src: url(/pages/assets/BuilderSans-SemiBold.woff2) format("woff2"); font-weight: 600; font-display: swap; }
   @font-face { font-family: "Builder Sans"; src: url(/pages/assets/BuilderSans-Bold.woff2) format("woff2"); font-weight: 700; font-display: swap; }
   @font-face { font-family: "Builder Extended"; src: url(/pages/assets/BuilderExtended-ExtraBold.woff2) format("woff2"); font-weight: 800; font-display: swap; }
 
   :root {
     color-scheme: dark;
-    --bg: #121215; --raised: #191a1f;
-    --fg: #f7f7f8; --soft: #d5d7dd; --muted: #a3a6b1; --link: #528bff;
-    --stroke: rgba(208, 217, 251, .36); --stroke-muted: rgba(208, 217, 251, .12);
-    --focus: #335fff; --err: #f0453c;
-    --button: rgba(208, 217, 251, .12); --hover: rgba(208, 217, 251, .08);
+    --bg: #0e0f11; --fill: #1a1b1f; --fill-hover: #212227; --seg: #17181b;
+    --fg: #f4f5f7; --soft: #c9ccd4; --muted: #8c909b; --line: #26272c;
+    --focus: #7aa2ff; --err: #ff6b62; --cta: #f4f5f7; --cta-fg: #0e0f11;
     --sans: "Builder Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     --display: "Builder Extended", "Builder Sans", Arial, sans-serif;
-    --panel: 480px;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
-  body { background: var(--bg); color: var(--fg); font: 400 14px/1.4 var(--sans); -webkit-font-smoothing: antialiased; }
+  body { min-height: 100vh; background: var(--bg); color: var(--fg); font: 400 15px/1.45 var(--sans); -webkit-font-smoothing: antialiased; }
 
-  /* The games collage fills the page; a slanted fade hands it over to the panel. */
-  .art { position: fixed; inset: 0; overflow: hidden; }
-  .art::before { content: ""; position: absolute; inset: -4%; background: var(--bg) url(/pages/assets/games.jpg) 60% center / cover no-repeat;
-    transform: scale(1.02); transition: transform 1.2s cubic-bezier(.22, 1, .36, 1); }
-  .signup .art::before { transform: translateX(2%) scale(1.06); }
-  .art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(18, 18, 21, .75), rgba(18, 18, 21, 0) 45%); }
-  .fade { position: fixed; top: 0; bottom: 0; left: -10vh; width: calc(var(--panel) + 700px + 10vh); transform: skewX(6deg); transform-origin: top left;
-    background: linear-gradient(90deg, var(--bg) calc(100% - 700px), rgba(18, 18, 21, .94) calc(100% - 560px), rgba(18, 18, 21, .72) calc(100% - 400px),
-      rgba(18, 18, 21, .4) calc(100% - 230px), rgba(18, 18, 21, .12) calc(100% - 90px), rgba(18, 18, 21, 0) 100%); }
-  .tagline { position: fixed; right: 44px; bottom: 36px; max-width: 440px; text-align: right; text-shadow: 0 2px 16px rgba(0, 0, 0, .7); }
-  .tagline strong { display: block; font: 800 24px/1.2 var(--display); }
-  .tagline span { display: block; margin-top: 6px; color: var(--soft); font-size: 16px; }
+  .page { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(420px, 1fr); min-height: 100vh; padding: 14px; gap: 14px; }
 
-  .panel { position: relative; z-index: 1; width: var(--panel); min-height: 100vh; display: flex; flex-direction: column; padding: 34px 40px 26px 56px; }
-  .brand { display: inline-flex; align-items: center; gap: 12px; align-self: flex-start; color: var(--fg); text-decoration: none; }
-  .brand svg { display: block; }
-  .brand strong { font: 800 18px var(--display); }
-  main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 32px 0; }
+  /* A framed window onto the games collage, not a full-page backdrop. */
+  .showcase { position: relative; overflow: hidden; border-radius: 22px; background: #1d1e22; isolation: isolate; }
+  .showcase::before { content: ""; position: absolute; inset: 0; z-index: -2; background: url(/pages/assets/games.jpg) 40% center / cover no-repeat;
+    animation: pan 30s ease-in-out infinite alternate; }
+  .showcase::after { content: ""; position: absolute; inset: 0; z-index: -1;
+    background: linear-gradient(180deg, rgba(14, 15, 17, .35) 0%, rgba(14, 15, 17, 0) 28%, rgba(14, 15, 17, 0) 50%, rgba(14, 15, 17, .92) 100%); }
+  @keyframes pan { from { transform: scale(1.06) translate(-1.5%, 1%); } to { transform: scale(1.12) translate(1.5%, -1%); } }
+  @media (prefers-reduced-motion: reduce) { .showcase::before { animation: none; } }
+  .showcase-copy { position: absolute; left: 0; right: 0; bottom: 0; padding: 36px 40px; }
+  .chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 10px; border-radius: 999px; background: rgba(14, 15, 17, .6);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--soft); font-size: 13px; font-weight: 500; }
+  .chip i { width: 8px; height: 8px; border-radius: 50%; background: #3ddc84; box-shadow: 0 0 0 3px rgba(61, 220, 132, .2); }
+  .showcase h2 { margin: 16px 0 0; max-width: 520px; font: 800 clamp(28px, 3.2vw, 44px)/1.08 var(--display); }
+  .showcase p { margin: 12px 0 0; max-width: 440px; color: var(--soft); font-size: 16px; }
+
+  /* Form column. */
+  .side { display: flex; flex-direction: column; padding: 20px clamp(20px, 4vw, 56px) 14px; }
+  .top { display: flex; align-items: center; justify-content: space-between; }
+  .wordmark { color: var(--fg); text-decoration: none; font: 800 17px var(--display); letter-spacing: .02em; text-transform: uppercase; }
+  .wordmark span { color: var(--muted); }
+  main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 0; }
   .form { width: 100%; max-width: 380px; }
 
-  h1 { margin: 0; font: 800 42px/1.1 var(--display); }
-  .sub { margin: 10px 0 26px; color: var(--soft); font-size: 16px; }
+  .seg { display: grid; grid-template-columns: 1fr 1fr; padding: 4px; margin-bottom: 32px; border: 1px solid var(--line); border-radius: 12px; background: var(--seg); }
+  .seg a { padding: 8px 0; border-radius: 8px; text-align: center; color: var(--muted); font-weight: 600; font-size: 14px; text-decoration: none; transition: background .2s, color .2s; }
+  .seg a:hover { color: var(--soft); }
+  .seg a[aria-current="page"] { background: var(--fill-hover); color: var(--fg); box-shadow: 0 1px 0 rgba(255, 255, 255, .04) inset; }
+  .seg a:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
 
-  .field { display: flex; flex-direction: column; gap: 8px; padding-bottom: 16px; }
-  .field > label, .field > .label { font-weight: 700; color: var(--fg); }
+  h1 { margin: 0; font: 700 30px/1.15 var(--sans); letter-spacing: -.01em; }
+  .sub { margin: 6px 0 28px; color: var(--muted); font-size: 15px; }
+
+  .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
+  .field > label, .field > .label { font-size: 13px; font-weight: 600; color: var(--soft); }
   .opt { font-weight: 400; color: var(--muted); }
-  .input { position: relative; display: flex; align-items: center; height: 40px; padding: 0 12px; border: 1px solid var(--stroke); border-radius: 8px; }
-  .input:focus-within { border-color: var(--focus); box-shadow: inset 0 0 0 1px var(--focus); }
-  .input input, .input select { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0; background: none; color: var(--fg); font: 400 14px var(--sans); appearance: none; }
+  .input { position: relative; display: flex; align-items: center; height: 46px; padding: 0 14px; border: 1px solid transparent; border-radius: 12px; background: var(--fill); transition: background .15s, border-color .15s; }
+  .input:hover { background: var(--fill-hover); }
+  .input:focus-within { border-color: var(--focus); background: var(--fill); }
+  .input input, .input select { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0; background: none; color: var(--fg); font: 400 15px var(--sans); appearance: none; }
   .input input::placeholder { color: var(--muted); }
   .input select { cursor: pointer; padding-right: 18px; }
   .input select:invalid { color: var(--muted); }
-  .input select option { background: var(--raised); color: var(--fg); }
-  .input.select::after { content: ""; position: absolute; right: 13px; top: 50%; width: 6px; height: 6px; margin-top: -5px; border: solid var(--muted); border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); pointer-events: none; }
+  .input select option { background: var(--fill); color: var(--fg); }
+  .input.select::after { content: ""; position: absolute; right: 15px; top: 50%; width: 6px; height: 6px; margin-top: -5px; border: solid var(--muted); border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); pointer-events: none; }
   .birthday { display: grid; grid-template-columns: 1.4fr .9fr 1fr; gap: 8px; }
-  .reveal { flex: none; display: grid; place-items: center; width: 28px; height: 28px; margin-right: -6px; border: 0; border-radius: 6px; background: none; color: var(--muted); cursor: pointer; }
-  .reveal:hover { background: var(--hover); color: var(--fg); }
-  .reveal.on { color: var(--fg); }
+  .reveal { flex: none; margin-right: -6px; padding: 6px 8px; border: 0; border-radius: 8px; background: none; color: var(--muted); font: 600 12px var(--sans); text-transform: uppercase; letter-spacing: .04em; cursor: pointer; }
+  .reveal:hover { color: var(--fg); background: rgba(255, 255, 255, .06); }
 
-  /* Sign-up fields fold away on the log-in side. */
-  .extra { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .5s cubic-bezier(.22, 1, .36, 1), opacity .35s; }
+  .extra { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .45s cubic-bezier(.22, 1, .36, 1), opacity .3s; }
   .extra > div { overflow: hidden; }
   .signup .extra { grid-template-rows: 1fr; opacity: 1; }
 
-  #err { min-height: 20px; margin: 0 0 12px; color: var(--err); }
-  .go { position: relative; width: 100%; height: 40px; border: 0; border-radius: 8px; background: var(--button); color: var(--fg); font: 600 14px var(--sans); cursor: pointer; }
-  .go:hover:not(:disabled) { background: rgba(208, 217, 251, .18); }
-  .go:active:not(:disabled) { background: rgba(208, 217, 251, .22); }
-  .go:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  #err { min-height: 20px; margin: 2px 0 10px; color: var(--err); font-size: 14px; }
+  .go { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 48px; border: 0; border-radius: 12px; background: var(--cta); color: var(--cta-fg); font: 700 15px var(--sans); cursor: pointer; transition: opacity .15s, transform .1s; }
+  .go svg { transition: transform .2s; }
+  .go:hover:not(:disabled) svg { transform: translateX(3px); }
+  .go:active:not(:disabled) { transform: scale(.99); }
+  .go:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
   .go:disabled { opacity: .5; cursor: default; }
-  .switch { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--stroke-muted); color: var(--soft); }
-  .switch a { color: var(--link); font-weight: 700; text-decoration: none; }
-  .switch a:hover { text-decoration: underline; }
-  .foot { color: var(--muted); font-size: 12px; }
+  .fine { display: flex; gap: 8px; margin: 18px 0 0; color: var(--muted); font-size: 13px; }
+  .fine svg { flex: none; margin-top: 2px; }
 
-  /* First visit: say plainly that this isn't Roblox. */
-  dialog { width: calc(100% - 32px); max-width: 560px; padding: 24px; border: 1px solid rgba(208, 217, 251, .08); border-radius: 16px; background: var(--raised); color: var(--fg);
-    box-shadow: 0 16px 32px rgba(4, 4, 8, .4), 0 48px 56px rgba(4, 4, 8, .3); font: 400 16px/1.45 var(--sans); }
-  dialog::backdrop { background: rgba(10, 10, 14, .75); }
-  dialog h2 { margin: 0 0 14px; font: 700 22px/1.2 var(--sans); }
-  dialog p { margin: 0 0 10px; color: var(--soft); }
-  dialog .check { display: flex; gap: 12px; margin-top: 20px; font-size: 14px; cursor: pointer; }
-  dialog .check input { flex: none; width: 22px; height: 22px; margin: 0; accent-color: var(--focus); cursor: pointer; }
-  dialog .ok { width: 100%; height: 44px; margin-top: 28px; border: 0; border-radius: 8px; background: var(--focus); color: #fff; font: 600 15px var(--sans); cursor: pointer; }
-  dialog .ok:disabled { background: var(--button); color: var(--muted); cursor: default; }
+  .bottom { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 12px; }
 
-  @media (prefers-reduced-motion: reduce) { .art::before, .extra { transition: none; } }
-  @media (max-width: 760px) {
-    .fade, .tagline { display: none; }
-    .art { position: relative; height: 32vh; min-height: 190px; }
-    .art::before { inset: 0; transform: none !important; background-size: auto 150%; background-position: 45% 40%; }
-    .art::after { background: linear-gradient(0deg, var(--bg), rgba(18, 18, 21, 0) 55%); }
-    .panel { width: 100%; min-height: 0; margin-top: -24px; padding: 0 20px 20px; }
-    main { justify-content: flex-start; padding: 24px 0 28px; }
+  @media (max-width: 900px) {
+    .page { grid-template-columns: 1fr; grid-template-rows: auto 1fr; padding: 10px; gap: 0; }
+    .showcase { height: 210px; border-radius: 18px; }
+    .showcase::before { background-size: auto 140%; }
+    .showcase-copy { padding: 18px 20px; }
+    .showcase h2 { margin-top: 10px; font-size: 22px; }
+    .showcase p { display: none; }
+    .side { padding: 0 8px 8px; }
+    .top { display: none; }
+    main { align-items: flex-start; padding: 24px 0 28px; }
     .form { max-width: none; }
-    h1 { font-size: 34px; }
+    .seg { margin-bottom: 24px; }
   }
 </style>
 </head>
 <body>
-<div class="art" aria-hidden="true"></div>
-<div class="fade" aria-hidden="true"></div>
-<div class="tagline" aria-hidden="true"><strong>Every world is one click away.</strong><span>Jump into your favorite games, hosted by you.</span></div>
+<div class="page">
+  <section class="showcase" aria-hidden="true">
+    <div class="showcase-copy">
+      <span class="chip"><i></i>Plays in your browser</span>
+      <h2>Your games, on your own server.</h2>
+      <p>Play the experiences you love through the web client, with accounts that live right here.</p>
+    </div>
+  </section>
 
-<div class="panel">
-  <a class="brand" href="/login">
-    <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="10" fill="#335fff"/><rect x="11" y="11" width="18" height="18" rx="3" fill="none" stroke="#fff" stroke-width="3.5" transform="rotate(14 20 20)"/></svg>
-    <strong id="brand">Web Client</strong>
-  </a>
-  <main>
-    <div class="form">
-      <h1 id="title">Log in</h1>
-      <p class="sub" id="sub">Welcome back. Your games are waiting.</p>
-      <form id="form" novalidate>
-        <div class="field">
-          <label for="username">Username</label>
-          <div class="input"><input id="username" name="username" maxlength="20" autocomplete="username" spellcheck="false" autocapitalize="none"></div>
-        </div>
-        <div class="extra"><div>
+  <div class="side">
+    <div class="top">
+      <a class="wordmark" href="/login">Web<span>Client</span></a>
+    </div>
+    <main>
+      <div class="form">
+        <nav class="seg" aria-label="Account">
+          <a id="tab-login" href="/login">Log in</a>
+          <a id="tab-signup" href="/signup">Sign up</a>
+        </nav>
+        <h1 id="title">Good to see you</h1>
+        <p class="sub" id="sub">Log in with your local account.</p>
+        <form id="form" novalidate>
           <div class="field">
-            <label for="displayName">Display name <span class="opt">optional</span></label>
-            <div class="input"><input id="displayName" name="displayName" maxlength="20" autocomplete="nickname" spellcheck="false" placeholder="What your friends see"></div>
+            <label for="username">Username</label>
+            <div class="input"><input id="username" name="username" maxlength="20" autocomplete="username" spellcheck="false" autocapitalize="none"></div>
           </div>
-          <div class="field" role="group" aria-labelledby="bday">
-            <span class="label" id="bday">Birthday</span>
-            <div class="birthday">
-              <div class="input select"><select id="month" aria-label="Month" required><option value="" disabled selected>Month</option></select></div>
-              <div class="input select"><select id="day" aria-label="Day" required><option value="" disabled selected>Day</option></select></div>
-              <div class="input select"><select id="year" aria-label="Year" required><option value="" disabled selected>Year</option></select></div>
+          <div class="extra"><div>
+            <div class="field">
+              <label for="displayName">Display name <span class="opt">(optional)</span></label>
+              <div class="input"><input id="displayName" name="displayName" maxlength="20" autocomplete="nickname" spellcheck="false"></div>
+            </div>
+            <div class="field" role="group" aria-labelledby="bday">
+              <span class="label" id="bday">Birthday</span>
+              <div class="birthday">
+                <div class="input select"><select id="month" aria-label="Month" required><option value="" disabled selected>Month</option></select></div>
+                <div class="input select"><select id="day" aria-label="Day" required><option value="" disabled selected>Day</option></select></div>
+                <div class="input select"><select id="year" aria-label="Year" required><option value="" disabled selected>Year</option></select></div>
+              </div>
+            </div>
+          </div></div>
+          <div class="field">
+            <label for="password">Password</label>
+            <div class="input">
+              <input id="password" name="password" type="password" maxlength="200" autocomplete="current-password">
+              <button class="reveal" id="reveal" type="button" aria-pressed="false">Show</button>
             </div>
           </div>
-        </div></div>
-        <div class="field">
-          <label for="password">Password</label>
-          <div class="input">
-            <input id="password" name="password" type="password" maxlength="200" autocomplete="current-password">
-            <button class="reveal" id="reveal" type="button" aria-label="Show password" aria-pressed="false">
-              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 5c5.5 0 9.3 4.4 10.6 6.3.3.4.3 1 0 1.4C21.3 14.6 17.5 19 12 19S2.7 14.6 1.4 12.7a1.2 1.2 0 0 1 0-1.4C2.7 9.4 6.5 5 12 5Zm0 2c-4.2 0-7.4 3.2-8.6 5 1.2 1.8 4.4 5 8.6 5s7.4-3.2 8.6-5c-1.2-1.8-4.4-5-8.6-5Zm0 1.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7Z"/></svg>
-            </button>
-          </div>
-        </div>
-        <div id="err" role="alert"></div>
-        <button class="go" id="submit">Log in</button>
-      </form>
-      <div class="switch"><span id="prompt"></span> <a id="switch" href="/signup"></a></div>
-    </div>
-  </main>
-  <div class="foot">Local accounts only. This is not Roblox.</div>
+          <div id="err" role="alert"></div>
+          <button class="go" id="submit"><span id="submit-label">Log in</span>
+            <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M11.3 4.3a1 1 0 0 1 1.4 0l5 5a1 1 0 0 1 0 1.4l-5 5a1 1 0 0 1-1.4-1.4L14.6 11H3a1 1 0 1 1 0-2h11.6l-3.3-3.3a1 1 0 0 1 0-1.4Z"/></svg>
+          </button>
+        </form>
+        <p class="fine">
+          <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M8 1a3.5 3.5 0 0 0-3.5 3.5V6H4a1.5 1.5 0 0 0-1.5 1.5v6A1.5 1.5 0 0 0 4 15h8a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 12 6h-.5V4.5A3.5 3.5 0 0 0 8 1Zm2 5V4.5a2 2 0 1 0-4 0V6h4Z"/></svg>
+          <span>Accounts here are local to this server, not Roblox accounts. Don't reuse your Roblox password.</span>
+        </p>
+      </div>
+    </main>
+    <div class="bottom"><span>Self-hosted. Not affiliated with Roblox Corporation.</span></div>
+  </div>
 </div>
-
-<dialog id="notice" aria-labelledby="notice-title">
-  <h2 id="notice-title">Before you continue</h2>
-  <p>This is a self-hosted platform. It is not Roblox and is not affiliated with Roblox Corporation.</p>
-  <p>Accounts here are local to this server. Never enter your Roblox password.</p>
-  <label class="check"><input type="checkbox" id="agree"><span>I understand this is not a Roblox account.</span></label>
-  <button class="ok" id="notice-ok" type="button" disabled>Continue</button>
-</dialog>
 
 <script>
   const $ = (id) => document.getElementById(id);
   const params = new URLSearchParams(location.search);
   const returnUrl = /^\/(?!\/)/.test(params.get('returnUrl') || '') ? params.get('returnUrl') : '/games/start?placeId=1818';
   const qs = `?returnUrl=${encodeURIComponent(returnUrl)}`;
+  $('tab-login').href = `/login${qs}`;
+  $('tab-signup').href = `/signup${qs}`;
 
   // Birthday dropdowns (month / day / year), sent as YYYY-MM-DD.
   ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -184,40 +190,40 @@
     return y && m && d && dt.getUTCMonth() === m - 1 ? dt.toISOString().slice(0, 10) : null;
   };
 
-  // Log in and sign up share the page; switching keeps the URL in step.
+  // Log in and sign up share the page; the switch keeps the URL in step.
   let signup;
   function setMode(s, push) {
     signup = s;
     document.body.classList.toggle('signup', s);
+    $(s ? 'tab-signup' : 'tab-login').setAttribute('aria-current', 'page');
+    $(s ? 'tab-login' : 'tab-signup').removeAttribute('aria-current');
     document.title = s ? 'Sign up' : 'Log in';
-    $('title').textContent = s ? 'Create account' : 'Log in';
-    $('sub').textContent = s ? 'Pick a name and start playing in seconds.' : 'Welcome back. Your games are waiting.';
-    $('submit').textContent = s ? 'Sign up' : 'Log in';
-    $('username').placeholder = s ? "Don't use your real name" : '';
-    $('password').placeholder = s ? 'At least 8 characters' : '';
+    $('title').textContent = s ? 'Make an account' : 'Good to see you';
+    $('sub').textContent = s ? 'It takes a few seconds. No email needed.' : 'Log in with your local account.';
+    $('submit-label').textContent = s ? 'Create account' : 'Log in';
+    $('password').placeholder = s ? '8 characters or more' : '';
     $('password').autocomplete = s ? 'new-password' : 'current-password';
-    $('prompt').textContent = s ? 'Already have an account?' : 'New here?';
-    $('switch').textContent = s ? 'Log in' : 'Sign up';
-    $('switch').href = `/${s ? 'login' : 'signup'}${qs}`;
     for (const el of document.querySelectorAll('.extra input, .extra select')) el.tabIndex = s ? 0 : -1;
     $('err').textContent = '';
     if (push) history.pushState(null, '', `/${s ? 'signup' : 'login'}${location.search}`);
   }
   setMode(location.pathname === '/signup');
   addEventListener('popstate', () => setMode(location.pathname === '/signup'));
-  $('switch').addEventListener('click', (e) => {
-    if (e.metaKey || e.ctrlKey || e.shiftKey) return;
-    e.preventDefault();
-    setMode(!signup, true);
-    $('username').focus();
-  });
+  for (const id of ['tab-login', 'tab-signup']) {
+    $(id).addEventListener('click', (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+      e.preventDefault();
+      const s = id === 'tab-signup';
+      if (s !== signup) setMode(s, true);
+      $('username').focus();
+    });
+  }
 
   $('reveal').addEventListener('click', () => {
     const show = $('password').type === 'password';
     $('password').type = show ? 'text' : 'password';
-    $('reveal').classList.toggle('on', show);
+    $('reveal').textContent = show ? 'Hide' : 'Show';
     $('reveal').setAttribute('aria-pressed', show);
-    $('reveal').setAttribute('aria-label', show ? 'Hide password' : 'Show password');
   });
 
   $('form').addEventListener('submit', async (e) => {
@@ -242,20 +248,6 @@
     }
     $('submit').disabled = false;
   });
-
-  // The notice shows once per browser.
-  let seen = false;
-  try { seen = localStorage.getItem('localNoticeSeen') === '1'; } catch {}
-  if (!seen) {
-    $('notice').showModal();
-    $('notice').addEventListener('cancel', (e) => e.preventDefault());
-    $('agree').addEventListener('change', () => { $('notice-ok').disabled = !$('agree').checked; });
-    $('notice-ok').addEventListener('click', () => {
-      try { localStorage.setItem('localNoticeSeen', '1'); } catch {}
-      $('notice').close();
-      $('username').focus();
-    });
-  }
 </script>
 </body>
 </html>
