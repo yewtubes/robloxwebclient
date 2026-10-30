@@ -18,16 +18,13 @@ bootstrap from `tools/build_playsolo.js --join`) loads them: controls, jumping
 and animation work there (docs/STUDIO_SERVER_JOIN.md,
 `screenshots/bootstrap-join-movement.mp4`).
 
-## R15 characters have no head
+## R15 characters have no head (fixed)
 
 The default dynamic head uses mesh asset 123480233606534, which Roblox serves
-only to authenticated requests (the default `ASSET_FALLBACK=public` gets 401).
-On 2026-10-30 it was fetched once with a signed-in account
-(`assetdelivery.roblox.com/v2/assetId/…`, a gzip'd `version 7.00` mesh, 100 KB)
-and imported with `node tools/admin.js asset import 123480233606534 <file> --type 4`.
-The store (`data/`) isn't committed, so each deployment needs that import (or
-`ASSET_FALLBACK=opencloud` with your own key). Not yet checked in-game.
-
+only to signed-in requests. It's now in the repo as
+`webclient/assets/123480233606534` (`version 7.00` mesh, fetched once on
+2026-10-30 with a signed-in account), which the backend imports into its store
+on first use.
 ## One client texture isn't available
 
 The client requests an image by content hash, `01fbb35a1b3f53173f68a2d02bb735d2`

@@ -2,6 +2,9 @@ webclient/files/
 webclient/overlay/
 webclient/assets/*
 !webclient/assets/.gitkeep
+# The default R15 dynamic head's mesh: Roblox serves it only to signed-in requests.
+!webclient/assets/123480233606534
+!webclient/assets/123480233606534.json
 .pkgcache/
 screenshots/latest*
 screenshots/*.webm
