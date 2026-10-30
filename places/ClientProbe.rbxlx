@@ -87,6 +87,30 @@
 				<Properties>
 					<string name="Name">ClientProbe</string>
 					<ProtectedString name="Source"><![CDATA[print("[ClientProbe] LocalScript running")
+-- Text measuring, which bubble chat sizes its bubbles with (the chat window does not).
+local TS = game:GetService("TextService")
+local TCS = game:GetService("TextChatService")
+print("[ClientProbe] chat", TCS.ChatVersion.Name, TCS:FindFirstChildOfClass("BubbleChatConfiguration") ~= nil)
+TCS.MessageReceived:Connect(function(m) print("[ClientProbe] message", m.Text, m.Status.Name) end)
+for _, f in { Enum.Font.Legacy, Enum.Font.SourceSans, Enum.Font.BuilderSans, Enum.Font.GothamMedium } do
+	task.spawn(function()
+		print("[ClientProbe] GetTextSize start", f.Name)
+		print("[ClientProbe] GetTextSize", f.Name, pcall(TS.GetTextSize, TS, "hello world", 16, f, Vector2.new(1000, 1000)))
+	end)
+end
+task.spawn(function()
+	local p = Instance.new("GetTextBoundsParams")
+	p.Text = "hello world"; p.Size = 16; p.Width = 1000
+	p.Font = Font.fromEnum(Enum.Font.BuilderSans)
+	print("[ClientProbe] GetTextBoundsAsync start")
+	print("[ClientProbe] GetTextBoundsAsync", pcall(TS.GetTextBoundsAsync, TS, p))
+end)
+task.delay(5, function()
+	local l = Instance.new("TextLabel")
+	l.Text = "hello world"; l.Size = UDim2.fromOffset(300, 50); l.Parent = Instance.new("ScreenGui", game.Players.LocalPlayer.PlayerGui)
+	task.wait(2)
+	print("[ClientProbe] TextLabel bounds", l.TextBounds, l.TextFits)
+end)
 local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
 local p = Players.LocalPlayer
