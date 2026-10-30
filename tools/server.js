@@ -8,7 +8,7 @@ const ROOT = path.resolve(__dirname, '..', 'webclient');
 const PORT = +process.env.PORT || 8080;
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.wasm': 'application/wasm', '.json': 'application/json',
   '.png': 'image/png', '.ttf': 'font/ttf', '.otf': 'font/otf', '.css': 'text/css', '.svg': 'image/svg+xml',
-  '.woff2': 'font/woff2', '.jpg': 'image/jpeg' };
+  '.woff2': 'font/woff2', '.jpg': 'image/jpeg', '.webm': 'video/webm' };
 
 function send(res, code, body, type = 'text/plain') {
   res.writeHead(code, { 'Content-Type': type });
@@ -17,13 +17,24 @@ function send(res, code, body, type = 'text/plain') {
 function serveFile(req, res, file) {
   fs.stat(file, (err, st) => {
     if (err || !st.isFile()) { log(req, 404); return send(res, 404, 'not found'); }
-    res.writeHead(200, { 'Content-Type': TYPES[path.extname(file)] || 'application/octet-stream', 'Content-Length': st.size });
+    const type = TYPES[path.extname(file)] || 'application/octet-stream';
+    // Single byte ranges, so videos can seek before they have fully loaded.
+    const m = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || '');
+    if (m && (m[1] || m[2])) {
+      const start = m[1] ? +m[1] : Math.max(0, st.size - +m[2]);
+      const end = m[1] && m[2] ? Math.min(+m[2], st.size - 1) : st.size - 1;
+      if (start > end) { res.writeHead(416, { 'Content-Range': `bytes */${st.size}` }); log(req, 416); return res.end(); }
+      res.writeHead(206, { 'Content-Type': type, 'Content-Length': end - start + 1, 'Content-Range': `bytes ${start}-${end}/${st.size}`, 'Accept-Ranges': 'bytes' });
+      fs.createReadStream(file, { start, end }).pipe(res);
+      return log(req, 206);
+    }
+    res.writeHead(200, { 'Content-Type': type, 'Content-Length': st.size, 'Accept-Ranges': 'bytes' });
     fs.createReadStream(file).pipe(res);
     log(req, 200);
   });
 }
 function log(req, code) {
-  if (code !== 200 || process.env.VERBOSE) console.log(code, req.method, req.url);
+  if ((code !== 200 && code !== 206) || process.env.VERBOSE) console.log(code, req.method, req.url);
 }
 // WebClient.metadata.json lists the web build's own content files; ours come from
 // other platforms' packages, so sizes differ and some files are missing. Serve a

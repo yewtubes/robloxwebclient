@@ -3,8 +3,9 @@
 # uses, once, into webclient/pages/assets/:
 #   - Builder Sans / Builder Extended, the fonts roblox.com/login serves from
 #     css.rbxcdn.com (the @font-face list in its Builder.css)
-#   - the background: the "original Roblox games" photo from
-#     https://devforum.roblox.com/t/original-roblox-games-photo/1889074
+#   - the background: the hero video on roblox.com's landing page
+#     (tools/fetch_landing_video.js; needs Playwright and ffmpeg), plus a still
+#     from it as the poster
 # Nothing is fetched from Roblox at runtime; tools/server.js serves these.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -31,8 +32,6 @@ font 'Builder Sans' 600 BuilderSans-SemiBold.woff2
 font 'Builder Sans' 700 BuilderSans-Bold.woff2
 font 'Builder Extended' 800 BuilderExtended-ExtraBold.woff2
 
-# The topic's first post links the full-size upload.
-topic=$(curl -sfL -A "$UA" https://devforum.roblox.com/t/1889074.json)
-bg=$(python3 -c 'import json,re,sys; c=json.load(sys.stdin)["post_stream"]["posts"][0]["cooked"]; print("https:"+re.search(r"//[^\"]*/uploads/original/[^\"]*\.jpe?g", c).group(0))' <<<"$topic")
-get "$bg" "$out/games.jpg"
+node tools/fetch_landing_video.js "$out/landing.webm"
+ffmpeg -v error -y -ss 9 -i "$out/landing.webm" -frames:v 1 -q:v 4 "$out/landing.jpg"
 ls -l "$out"

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
 <title>Log in</title>
-<link rel="preload" as="image" href="/pages/assets/games.jpg">
+<link rel="preload" as="image" href="/pages/assets/landing.jpg">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/pages/assets/BuilderSans-Regular.woff2">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/pages/assets/BuilderExtended-ExtraBold.woff2">
 <style>
@@ -29,12 +29,10 @@
 
   .page { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(420px, 1fr); min-height: 100vh; padding: 14px; gap: 14px; }
 
-  /* A framed window onto the games collage, not a full-page backdrop. */
-  .showcase { position: relative; overflow: hidden; border-radius: 22px; background: #1d1e22; isolation: isolate; }
-  .showcase::before { content: ""; position: absolute; inset: 0; background: url(/pages/assets/games.jpg) 40% center / cover no-repeat;
-    animation: pan 30s ease-in-out infinite alternate; }
-  @keyframes pan { from { transform: scale(1.06) translate(-1.5%, 1%); } to { transform: scale(1.12) translate(1.5%, -1%); } }
-  @media (prefers-reduced-motion: reduce) { .showcase::before { animation: none; } }
+  /* A framed window onto roblox.com's landing video. It has no controls and
+     can't be clicked, paused or opened picture-in-picture. */
+  .showcase { position: relative; overflow: hidden; border-radius: 22px; background: #1d1e22 url(/pages/assets/landing.jpg) center / cover; user-select: none; }
+  .showcase video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 
   /* Form column. */
   .side { display: flex; flex-direction: column; padding: 20px clamp(20px, 4vw, 56px) 14px; }
@@ -84,7 +82,6 @@
   @media (max-width: 900px) {
     .page { grid-template-columns: 1fr; grid-template-rows: auto 1fr; padding: 10px; gap: 0; }
     .showcase { height: 180px; border-radius: 18px; }
-    .showcase::before { background-size: auto 140%; }
     .side { padding: 0 8px 8px; }
     main { align-items: flex-start; padding: 24px 0 28px; }
     .form { max-width: none; }
@@ -94,7 +91,10 @@
 </head>
 <body>
 <div class="page">
-  <section class="showcase" aria-hidden="true"></section>
+  <section class="showcase" aria-hidden="true" oncontextmenu="return false">
+    <video id="bg" src="/pages/assets/landing.webm" poster="/pages/assets/landing.jpg" autoplay muted loop playsinline preload="auto"
+      disablepictureinpicture disableremoteplayback controlslist="nodownload nofullscreen noremoteplayback" tabindex="-1"></video>
+  </section>
 
   <div class="side">
     <main>
@@ -146,6 +146,15 @@
 
 <script>
   const $ = (id) => document.getElementById(id);
+
+  // Background video (tools/fetch_login_assets.sh): skip its opening white
+  // fade on first load, and resume whenever something pauses it.
+  const bg = $('bg');
+  bg.addEventListener('loadedmetadata', () => { bg.currentTime = 8; }, { once: true });
+  const resume = () => { if (bg.paused) bg.play().catch(() => {}); };
+  bg.addEventListener('pause', resume);
+  document.addEventListener('visibilitychange', resume);
+  if ('mediaSession' in navigator) for (const a of ['pause', 'stop']) try { navigator.mediaSession.setActionHandler(a, resume); } catch {}
   const params = new URLSearchParams(location.search);
   const returnUrl = /^\/(?!\/)/.test(params.get('returnUrl') || '') ? params.get('returnUrl') : '/games/start?placeId=1818';
   const qs = `?returnUrl=${encodeURIComponent(returnUrl)}`;
