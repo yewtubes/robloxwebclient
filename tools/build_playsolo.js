@@ -2,18 +2,34 @@
 //  - ExtraContent/models/UniversalApp/UniversalApp.rbxm with the Lua App entry
 //    point (CoreScripts.LuaAppStarterScript) replaced by playsolo/PlaySolo.lua
 //  - ExtraContent/places/Mobile.rbxl = the place to play (default: World HQ)
-// Usage: node tools/build_playsolo.js [place.rbxl]
+// With --join[=<placeId>] the entry point is playsolo/Join.lua instead: the
+// app asks the engine to join a game server (place 1818 by default) rather
+// than playing the place locally.
+// Usage: node tools/build_playsolo.js [--join[=<placeId>]] [place.rbxl]
 const fs = require('fs'), path = require('path'), { execFileSync } = require('child_process');
 const R = require('./rbxm.js');
 const ROOT = path.resolve(__dirname, '..');
 const W = path.join(ROOT, 'webclient');
 const OV = path.join(W, 'overlay');
-const place = process.argv[2] || path.join(ROOT, 'places', 'WorldHQ.rbxl');
+const args = process.argv.slice(2);
+const joinArg = args.find((a) => /^--join(=|$)/.test(a));
+const joinPlace = joinArg ? +(joinArg.split('=')[1] || 1818) : 0;
+if (joinArg && !(Number.isSafeInteger(joinPlace) && joinPlace > 0)) throw new Error(`bad place id in ${joinArg}`);
+const place = args.find((a) => !a.startsWith('--')) || path.join(ROOT, 'places', 'WorldHQ.rbxl');
 
 // 1. compile the bootstrap
 const bc = path.join(OV, 'PlaySolo.bin');
 fs.mkdirSync(OV, { recursive: true });
-execFileSync(path.join(ROOT, 'tools/luauc/luauc'), [path.join(ROOT, 'playsolo/PlaySolo.lua'), bc]);
+let entry = path.join(ROOT, 'playsolo/PlaySolo.lua');
+if (joinPlace) {
+  const src = fs.readFileSync(path.join(ROOT, 'playsolo/Join.lua'), 'utf8');
+  const out = src.replace(/^local PLACE_ID = \d+/m, `local PLACE_ID = ${joinPlace}`);
+  if (out === src && !src.includes(`local PLACE_ID = ${joinPlace}`)) throw new Error('PLACE_ID line not found in Join.lua');
+  entry = path.join(OV, 'Join.lua');
+  fs.writeFileSync(entry, out);
+}
+execFileSync(path.join(ROOT, 'tools/luauc/luauc'), [entry, bc]);
+if (joinPlace) fs.unlinkSync(entry);
 const bytecode = fs.readFileSync(bc);
 fs.unlinkSync(bc);
 
@@ -69,7 +85,7 @@ if (fs.existsSync(repDir)) {
     console.log(`replace: ${full}`);
   }
 }
-console.log(`${HOST} -> LuaAppStarterScript (${bytecode.length} bytes of bytecode)`);
+console.log(`${HOST} -> LuaAppStarterScript (${joinPlace ? `join place ${joinPlace}` : 'Play Solo'}, ${bytecode.length} bytes of bytecode)`);
 const outModel = path.join(OV, 'ExtraContent/models/UniversalApp/UniversalApp.rbxm');
 fs.mkdirSync(path.dirname(outModel), { recursive: true });
 R.write(m, outModel);

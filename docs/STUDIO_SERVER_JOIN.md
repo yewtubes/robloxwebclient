@@ -12,6 +12,7 @@ record that survives context loss.
 | Studio server starts with Baseplate / Grow a Garden | works (`tools/studio/run_server.sh`) |
 | Real web client boots from the local server | works (`/games/start?placeId=1818`) |
 | Join through our backend (`tools/backend.js`) | works |
+| Join started by our Lua App bootstrap (`playsolo/Join.lua`, normal page) | works up to the wire (no Studio server to test against yet) |
 | WebTransport handshake to Studio's RbxTransport | works when Studio and Chrome are on separate cores |
 | Replicator created, world and character replicate | works |
 | Studio sends compiled script bytecode (`LOCAL_RCC=1`, `local_rcc_modern/`) | works |
@@ -29,6 +30,38 @@ HTML (the file on disk is unchanged); that shim points the page's roblox.com
 requests at the local backend. The large engine files (`WebClient.js`,
 `WebClient.wasm`, `WasmPlayer.js`, 2862 content files) are not committed; run
 `tools/fetch_webclient.sh` once to download them into `webclient/live/`.
+
+## Joining from our own bootstrap (2026-10-30)
+
+The runs above use Roblox's page with `placeId` in the URL, so the engine joins
+straight away (`set_place_id`) and the Lua App never starts. The other way in
+is the normal page (`/`, our WasmLoader, the overlay and
+`WebClient.patched.wasm`) with the Lua App's entry script replaced by
+`playsolo/Join.lua`:
+
+```bash
+node tools/build_playsolo.js --join=1818
+tools/studio/run_server.sh /home/user/studio/prefix/drive_c/places/Baseplate.rbxl 53640   # LOCAL_RCC=1 for bytecode
+RCC_HOST=127.0.0.1 RCC_PORT=53640 taskset -c 2,3 node tools/run_headless.js 75
+```
+
+- `Join.lua` calls `ExperienceService:LaunchExperience({ placeId = 1818 })` from
+  the app DataModel (it runs as a CoreScript, which that API needs). The
+  `NetworkClient:PlayerConnect` join-script path is gone from this build (no
+  such reflection name in the wasm).
+- Verified without a Studio server (this container has none): `[Join] launching
+  place 1818` → `SingleSurfaceApp launchUGCGame` → `UgcExperienceController:
+  join: initialized dm` → backend `/v1/join-game` → `Joining game ... place
+  1818 at 127.0.0.1` → `[LIFECYCLE] joinGameSucceeded`. With no RbxTransport
+  fields in the join script ("RbxTransport token or port is empty") the client
+  falls back to RakNet through `/local-relay`; a UDP listener on 53640 got the
+  client's connection request (packet ID 0x7b, 1160 bytes, retried 25 times in
+  30 s).
+- Not yet run against Studio: whether the RbxTransport handshake behaves the
+  same from this page, and what the game scripts do. This page serves
+  `WebClient.patched.wasm`, whose `luau_load` change (`tools/patch_wasm.js`)
+  also applies to bytecode from the server, so the "bytecode corrupted" result
+  above may differ here.
 
 ## How to reproduce the working connection
 

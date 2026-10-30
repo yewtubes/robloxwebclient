@@ -52,6 +52,20 @@ Joining a real server through the relay: run `RCC_HOST=<server ip>
 RCC_PORT=<udp port> node tools/server.js` and open
 `/?placeId=1818&flags=FFlagDebugLocalRccServerConnection=True`.
 
+Joining from the bootstrap instead (the normal page, no `placeId` in the URL):
+
+```bash
+node tools/build_playsolo.js --join          # or --join=<placeId>
+RCC_HOST=127.0.0.1 RCC_PORT=53640 node tools/run_headless.js 60
+```
+
+The Lua App boots as for Play Solo, but its entry script is
+`playsolo/Join.lua`, which calls `ExperienceService:LaunchExperience`. The
+engine then joins natively (`launchUGCGame`, `/v1/join-game` from the backend,
+then RbxTransport if the backend found a Studio server, else RakNet through
+`/local-relay`). Run `node tools/build_playsolo.js` again to go back to Play
+Solo.
+
 ## Pieces
 
 | Piece | What it is |
@@ -66,6 +80,7 @@ RCC_PORT=<udp port> node tools/server.js` and open
 | `tools/luauc/` | Luau compiler that emits the client's bytecode format (opcodes ×227, 8-byte prefix) |
 | `tools/rbxm.js` | Binary rbxm/rbxl reader and writer |
 | `playsolo/PlaySolo.lua` | Play Solo bootstrap; replaces the Lua App entry script |
+| `playsolo/Join.lua` | Networked-join bootstrap (`build_playsolo.js --join`): the Lua App launches the game through `ExperienceService` |
 
 ### Content
 `tools/fetch_content.sh` builds `webclient/files/` from the public Windows
