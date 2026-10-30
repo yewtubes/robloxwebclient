@@ -138,4 +138,17 @@ end
 			</Item>
 		</Item>
 	</Item>
+	<Item class="ServerScriptService" referent="RBXSSS">
+		<Properties><string name="Name">ServerScriptService</string></Properties>
+		<Item class="Script" referent="RBXSRVPROBE">
+			<Properties>
+				<string name="Name">ServerProbe</string>
+				<ProtectedString name="Source"><![CDATA[game:GetService("Players").PlayerAdded:Connect(function(p)
+	print("[ServerProbe] join", p.Name, p.UserId, "verified", p.HasVerifiedBadge,
+		"admin group", pcall(p.IsInGroup, p, 1200769), "rank", pcall(p.GetRankInGroup, p, 1200769), "role", pcall(p.GetRoleInGroup, p, 1200769))
+end)
+]]></ProtectedString>
+			</Properties>
+		</Item>
+	</Item>
 </roblox>

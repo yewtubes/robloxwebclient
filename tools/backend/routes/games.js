@@ -106,7 +106,7 @@ function joinResponse(user, p, s) {
       ServerConnections: [{ Address: s.host, Port: s.port }], UdmuxEndpoints: [], DirectServerReturn: true,
       ...transportFields(s),
       TokenGenAlgorithm: 0, PepperId: 0, TokenValue: '', PingUrl: '', PingInterval: 0,
-      UserName: user.name, DisplayName: user.display_name, SeleniumTestMode: false, UserId: user.id,
+      UserName: user.name, DisplayName: user.display_name, SeleniumTestMode: false, UserId: user.id, HasVerifiedBadge: !!user.has_verified_badge,
       RobloxLocale: user.locale, GameLocale: user.locale, SuperSafeChat: false, FlexibleChatEnabled: false,
       CharacterAppearance: `https://avatar.roblox.com/v1/avatar-fetch?userId=${user.id}&placeId=${p.id}`, ClientTicket: '',
       GameId: s.job_id, PlaceId: p.id, BaseUrl: 'https://www.roblox.com/', ChatStyle: 'ClassicAndBubble',

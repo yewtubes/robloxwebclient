@@ -98,7 +98,7 @@ const ROUTES = [
   ['POST', /^local$/, /^\/api\/local\/client-report$/, (req, res, u, body) => {
     const r = parseJson(body, null);
     if (!r || typeof r !== 'object') return badRequest(res, 'expected a JSON report');
-    const line = JSON.stringify({ at: new Date().toISOString(), ip: req.socket.remoteAddress, ...r }).slice(0, 8192);
+    const line = JSON.stringify({ at: new Date().toISOString(), ip: req.socket.remoteAddress, ...r }).slice(0, r.kind === 'crash' ? 262144 : 8192);
     fs.mkdirSync(path.join(DATA, 'logs'), { recursive: true });
     fs.appendFileSync(path.join(DATA, 'logs', 'client-report.log'), line + '\n');
     json(res, 200, {});

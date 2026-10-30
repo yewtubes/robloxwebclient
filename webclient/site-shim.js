@@ -177,5 +177,28 @@
       try { fetch(`${origin}/api/local/client-report`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(r), keepalive: true }); } catch (e) {}
     };
     report();
+
+    // Engine crashes (a wasm trap shows as "SIGTRAP") are only printed to the
+    // console. Keep the recent console lines and send them with the crash to
+    // <data>/logs/client-report.log, so device-specific crashes can be read later.
+    const recent = [];
+    let sent = 0;
+    const crashy = /report_crash|RuntimeError|SIGTRAP|SIGSEGV|SIGABRT|Aborted\(|unreachable|memory access out of bounds/;
+    for (const level of ['error', 'warn', 'log']) {
+      const orig = console[level].bind(console);
+      console[level] = (...args) => {
+        let text;
+        try { text = args.map((a) => (a instanceof Error ? `${a.message}\n${a.stack}` : typeof a === 'string' ? a : JSON.stringify(a))).join(' '); } catch (e) { text = String(args[0]); }
+        recent.push(`${level}: ${text.slice(0, 2000)}`);
+        if (recent.length > 120) recent.shift();
+        if (level !== 'log' && crashy.test(text) && sent++ < 3) {
+          const r = { kind: 'crash', ua: navigator.userAgent, url: location.pathname + location.search, message: text.slice(0, 8000), recent: recent.slice(-120) };
+          try { fetch(`${origin}/api/local/client-report`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(r), keepalive: false }); } catch (e) {}
+        }
+        return orig(...args);
+      };
+    }
+    self.addEventListener('error', (e) => console.error('[LocalPlatform] uncaught', e.error || e.message));
+    self.addEventListener('unhandledrejection', (e) => console.error('[LocalPlatform] unhandled rejection', e.reason));
   }
 })();
