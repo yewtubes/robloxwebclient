@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
 <title>Log in</title>
 <link rel="preload" as="image" href="/pages/assets/games.jpg">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/pages/assets/BuilderSans-Regular.woff2">
@@ -10,211 +10,206 @@
 <style>
   /* Fonts and background: tools/fetch_login_assets.sh. */
   @font-face { font-family: "Builder Sans"; src: url(/pages/assets/BuilderSans-Regular.woff2) format("woff2"); font-weight: 400; font-display: swap; }
-  @font-face { font-family: "Builder Sans"; src: url(/pages/assets/BuilderSans-Medium.woff2) format("woff2"); font-weight: 500; font-display: swap; }
   @font-face { font-family: "Builder Sans"; src: url(/pages/assets/BuilderSans-SemiBold.woff2) format("woff2"); font-weight: 600; font-display: swap; }
   @font-face { font-family: "Builder Sans"; src: url(/pages/assets/BuilderSans-Bold.woff2) format("woff2"); font-weight: 700; font-display: swap; }
   @font-face { font-family: "Builder Extended"; src: url(/pages/assets/BuilderExtended-ExtraBold.woff2) format("woff2"); font-weight: 800; font-display: swap; }
 
   :root {
     color-scheme: dark;
-    --bg: #111214; --card: rgba(22, 23, 26, .78); --line: rgba(208, 217, 251, .14); --line-strong: rgba(208, 217, 251, .32);
-    --fg: #f7f7f8; --soft: #d5d7dd; --muted: #9a9ca6; --field: rgba(255, 255, 255, .04);
-    --accent: #335fff; --accent-hover: #4a72ff; --link: #6e95ff; --err: #ff5a52; --warn-bg: rgba(255, 186, 73, .1); --warn: #ffcf7a;
+    --bg: #121215; --raised: #191a1f;
+    --fg: #f7f7f8; --soft: #d5d7dd; --muted: #a3a6b1; --link: #528bff;
+    --stroke: rgba(208, 217, 251, .36); --stroke-muted: rgba(208, 217, 251, .12);
+    --focus: #335fff; --err: #f0453c;
+    --button: rgba(208, 217, 251, .12); --hover: rgba(208, 217, 251, .08);
     --sans: "Builder Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     --display: "Builder Extended", "Builder Sans", Arial, sans-serif;
+    --panel: 480px;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
-  body { min-height: 100vh; background: var(--bg); color: var(--fg); font: 400 15px/1.45 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  body { background: var(--bg); color: var(--fg); font: 400 14px/1.4 var(--sans); -webkit-font-smoothing: antialiased; }
 
-  /* Background: the games collage, drifting slowly along its own tilt. */
-  .art { position: fixed; inset: 0; overflow: hidden; z-index: 0; }
-  .art::before { content: ""; position: absolute; inset: -8%; background: var(--bg) url(/pages/assets/games.jpg) center / cover no-repeat;
-    animation: drift 40s ease-in-out infinite alternate; filter: saturate(1.08); }
-  .art::after { content: ""; position: absolute; inset: 0;
-    background:
-      radial-gradient(120% 90% at 30% 40%, rgba(17, 18, 20, 0) 0%, rgba(17, 18, 20, .55) 70%, rgba(17, 18, 20, .9) 100%),
-      linear-gradient(270deg, rgba(17, 18, 20, .92) 0%, rgba(17, 18, 20, .6) 34%, rgba(17, 18, 20, 0) 62%),
-      linear-gradient(0deg, rgba(17, 18, 20, .85) 0%, rgba(17, 18, 20, 0) 35%); }
-  @keyframes drift { from { transform: translate(-2%, 1.5%) scale(1.04); } to { transform: translate(2%, -1.5%) scale(1.1); } }
-  @media (prefers-reduced-motion: reduce) { .art::before { animation: none; } }
+  /* The games collage fills the page; a slanted fade hands it over to the panel. */
+  .art { position: fixed; inset: 0; overflow: hidden; }
+  .art::before { content: ""; position: absolute; inset: -4%; background: var(--bg) url(/pages/assets/games.jpg) 60% center / cover no-repeat;
+    transform: scale(1.02); transition: transform 1.2s cubic-bezier(.22, 1, .36, 1); }
+  .signup .art::before { transform: translateX(2%) scale(1.06); }
+  .art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(18, 18, 21, .75), rgba(18, 18, 21, 0) 45%); }
+  .fade { position: fixed; top: 0; bottom: 0; left: -10vh; width: calc(var(--panel) + 700px + 10vh); transform: skewX(6deg); transform-origin: top left;
+    background: linear-gradient(90deg, var(--bg) calc(100% - 700px), rgba(18, 18, 21, .94) calc(100% - 560px), rgba(18, 18, 21, .72) calc(100% - 400px),
+      rgba(18, 18, 21, .4) calc(100% - 230px), rgba(18, 18, 21, .12) calc(100% - 90px), rgba(18, 18, 21, 0) 100%); }
+  .tagline { position: fixed; right: 44px; bottom: 36px; max-width: 440px; text-align: right; text-shadow: 0 2px 16px rgba(0, 0, 0, .7); }
+  .tagline strong { display: block; font: 800 24px/1.2 var(--display); }
+  .tagline span { display: block; margin-top: 6px; color: var(--soft); font-size: 16px; }
 
-  .layout { position: relative; z-index: 1; min-height: 100vh; display: grid; grid-template-columns: 1fr minmax(360px, 440px); gap: 48px;
-    padding: 32px clamp(20px, 5vw, 72px); align-items: center; }
+  .panel { position: relative; z-index: 1; width: var(--panel); min-height: 100vh; display: flex; flex-direction: column; padding: 34px 40px 26px 56px; }
+  .brand { display: inline-flex; align-items: center; gap: 12px; align-self: flex-start; color: var(--fg); text-decoration: none; }
+  .brand svg { display: block; }
+  .brand strong { font: 800 18px var(--display); }
+  main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 32px 0; }
+  .form { width: 100%; max-width: 380px; }
 
-  .hero { align-self: end; padding-bottom: 8px; max-width: 560px; text-shadow: 0 2px 18px rgba(0, 0, 0, .65); }
-  .hero h2 { margin: 0; font: 800 clamp(30px, 4vw, 52px)/1.04 var(--display); letter-spacing: -.01em; }
-  .hero p { margin: 14px 0 0; color: var(--soft); font-size: 17px; max-width: 420px; }
+  h1 { margin: 0; font: 800 42px/1.1 var(--display); }
+  .sub { margin: 10px 0 26px; color: var(--soft); font-size: 16px; }
 
-  /* The card. */
-  .card { position: relative; width: 100%; padding: 28px; border: 1px solid var(--line); border-radius: 20px; background: var(--card);
-    backdrop-filter: blur(22px) saturate(1.3); -webkit-backdrop-filter: blur(22px) saturate(1.3);
-    box-shadow: 0 30px 80px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .05); }
-
-  .tabs { position: relative; display: grid; grid-template-columns: 1fr 1fr; padding: 4px; margin-bottom: 24px; border-radius: 12px; background: rgba(255, 255, 255, .06); }
-  .tabs a { position: relative; z-index: 1; padding: 9px 0; text-align: center; border-radius: 9px; color: var(--muted); font-weight: 600; font-size: 14px; text-decoration: none; transition: color .2s; }
-  .tabs a[aria-current="page"] { color: var(--fg); }
-  .tabs a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-  .tabs .pill { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); border-radius: 9px; background: rgba(255, 255, 255, .12);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .4); transition: transform .35s cubic-bezier(.22, 1, .36, 1); }
-  .signup .tabs .pill { transform: translateX(100%); }
-
-  h1 { margin: 0; font: 800 28px/1.1 var(--display); }
-  .sub { margin: 8px 0 20px; color: var(--soft); font-size: 15px; }
-
-  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-  .field > label, .legend { font-weight: 600; font-size: 13px; color: var(--soft); }
-  .field .opt { font-weight: 400; color: var(--muted); }
-  .input { display: flex; align-items: center; height: 44px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--field); transition: border-color .15s, box-shadow .15s; }
-  .input:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(51, 95, 255, .3); }
-  .input input, .input select { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0; background: none; color: var(--fg); font: 400 15px var(--sans); }
+  .field { display: flex; flex-direction: column; gap: 8px; padding-bottom: 16px; }
+  .field > label, .field > .label { font-weight: 700; color: var(--fg); }
+  .opt { font-weight: 400; color: var(--muted); }
+  .input { position: relative; display: flex; align-items: center; height: 40px; padding: 0 12px; border: 1px solid var(--stroke); border-radius: 8px; }
+  .input:focus-within { border-color: var(--focus); box-shadow: inset 0 0 0 1px var(--focus); }
+  .input input, .input select { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0; background: none; color: var(--fg); font: 400 14px var(--sans); appearance: none; }
   .input input::placeholder { color: var(--muted); }
-  .input select { appearance: none; cursor: pointer; }
-  .input select option { background: #1e1f23; color: var(--fg); }
-  .input.select { position: relative; padding-right: 30px; }
-  .input.select::after { content: ""; position: absolute; right: 13px; top: 50%; width: 7px; height: 7px; margin-top: -6px; border: solid var(--muted); border-width: 0 2px 2px 0; transform: rotate(45deg); pointer-events: none; }
-  .birthday { display: grid; grid-template-columns: 1.3fr .8fr 1fr; gap: 8px; }
-  .hint { color: var(--muted); font-size: 12px; }
-  .reveal { flex: none; display: grid; place-items: center; width: 30px; height: 30px; margin-right: -6px; border: 0; border-radius: 8px; background: none; color: var(--muted); cursor: pointer; }
-  .reveal:hover, .reveal.on { color: var(--fg); background: rgba(255, 255, 255, .08); }
+  .input select { cursor: pointer; padding-right: 18px; }
+  .input select:invalid { color: var(--muted); }
+  .input select option { background: var(--raised); color: var(--fg); }
+  .input.select::after { content: ""; position: absolute; right: 13px; top: 50%; width: 6px; height: 6px; margin-top: -5px; border: solid var(--muted); border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); pointer-events: none; }
+  .birthday { display: grid; grid-template-columns: 1.4fr .9fr 1fr; gap: 8px; }
+  .reveal { flex: none; display: grid; place-items: center; width: 28px; height: 28px; margin-right: -6px; border: 0; border-radius: 6px; background: none; color: var(--muted); cursor: pointer; }
+  .reveal:hover { background: var(--hover); color: var(--fg); }
+  .reveal.on { color: var(--fg); }
 
-  /* Sign-up-only fields fold open. */
-  .extra { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .45s cubic-bezier(.22, 1, .36, 1), opacity .3s; }
+  /* Sign-up fields fold away on the log-in side. */
+  .extra { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .5s cubic-bezier(.22, 1, .36, 1), opacity .35s; }
   .extra > div { overflow: hidden; }
   .signup .extra { grid-template-rows: 1fr; opacity: 1; }
 
-  .notice { display: flex; gap: 10px; margin: 4px 0 16px; padding: 10px 12px; border-radius: 10px; background: var(--warn-bg); color: var(--warn); font-size: 13px; line-height: 1.4; }
-  .notice svg { flex: none; margin-top: 1px; }
-
-  .go { width: 100%; height: 46px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; font: 700 16px var(--sans); cursor: pointer; transition: background .15s, transform .1s; }
-  .go:hover:not(:disabled) { background: var(--accent-hover); }
-  .go:active:not(:disabled) { transform: scale(.985); }
-  .go:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-  .go:disabled { opacity: .6; cursor: default; }
-  #err { min-height: 20px; margin: 10px 0 0; color: var(--err); font-size: 13px; }
-  .switch { margin-top: 6px; text-align: center; color: var(--muted); font-size: 14px; }
-  .switch a { color: var(--link); font-weight: 600; text-decoration: none; }
+  #err { min-height: 20px; margin: 0 0 12px; color: var(--err); }
+  .go { position: relative; width: 100%; height: 40px; border: 0; border-radius: 8px; background: var(--button); color: var(--fg); font: 600 14px var(--sans); cursor: pointer; }
+  .go:hover:not(:disabled) { background: rgba(208, 217, 251, .18); }
+  .go:active:not(:disabled) { background: rgba(208, 217, 251, .22); }
+  .go:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .go:disabled { opacity: .5; cursor: default; }
+  .switch { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--stroke-muted); color: var(--soft); }
+  .switch a { color: var(--link); font-weight: 700; text-decoration: none; }
   .switch a:hover { text-decoration: underline; }
+  .foot { color: var(--muted); font-size: 12px; }
 
-  @media (max-width: 860px) {
-    .layout { grid-template-columns: 1fr; gap: 24px; padding: 20px 16px 32px; align-content: start; }
-    .hero { align-self: auto; order: -1; padding-top: 24px; }
-    .hero h2 { font-size: 30px; }
-    .hero p { font-size: 15px; }
-    .card { padding: 22px 18px; }
-    .art::after { background: linear-gradient(0deg, rgba(17, 18, 20, .95) 30%, rgba(17, 18, 20, .55) 75%, rgba(17, 18, 20, .3) 100%); }
+  /* First visit: say plainly that this isn't Roblox. */
+  dialog { width: calc(100% - 32px); max-width: 560px; padding: 24px; border: 1px solid rgba(208, 217, 251, .08); border-radius: 16px; background: var(--raised); color: var(--fg);
+    box-shadow: 0 16px 32px rgba(4, 4, 8, .4), 0 48px 56px rgba(4, 4, 8, .3); font: 400 16px/1.45 var(--sans); }
+  dialog::backdrop { background: rgba(10, 10, 14, .75); }
+  dialog h2 { margin: 0 0 14px; font: 700 22px/1.2 var(--sans); }
+  dialog p { margin: 0 0 10px; color: var(--soft); }
+  dialog .check { display: flex; gap: 12px; margin-top: 20px; font-size: 14px; cursor: pointer; }
+  dialog .check input { flex: none; width: 22px; height: 22px; margin: 0; accent-color: var(--focus); cursor: pointer; }
+  dialog .ok { width: 100%; height: 44px; margin-top: 28px; border: 0; border-radius: 8px; background: var(--focus); color: #fff; font: 600 15px var(--sans); cursor: pointer; }
+  dialog .ok:disabled { background: var(--button); color: var(--muted); cursor: default; }
+
+  @media (prefers-reduced-motion: reduce) { .art::before, .extra { transition: none; } }
+  @media (max-width: 760px) {
+    .fade, .tagline { display: none; }
+    .art { position: relative; height: 32vh; min-height: 190px; }
+    .art::before { inset: 0; transform: none !important; background-size: auto 150%; background-position: 45% 40%; }
+    .art::after { background: linear-gradient(0deg, var(--bg), rgba(18, 18, 21, 0) 55%); }
+    .panel { width: 100%; min-height: 0; margin-top: -24px; padding: 0 20px 20px; }
+    main { justify-content: flex-start; padding: 24px 0 28px; }
+    .form { max-width: none; }
+    h1 { font-size: 34px; }
   }
 </style>
 </head>
 <body>
 <div class="art" aria-hidden="true"></div>
-<div class="layout">
-  <section class="hero" aria-hidden="true">
-    <h2>Millions of worlds.<br>One login away.</h2>
-    <p>Hop into your favorite experiences with friends on this self-hosted platform.</p>
-  </section>
+<div class="fade" aria-hidden="true"></div>
+<div class="tagline" aria-hidden="true"><strong>Every world is one click away.</strong><span>Jump into your favorite games, hosted by you.</span></div>
 
-  <main class="card">
-    <nav class="tabs" aria-label="Account">
-      <span class="pill" aria-hidden="true"></span>
-      <a id="tab-login" href="/login">Log in</a>
-      <a id="tab-signup" href="/signup">Sign up</a>
-    </nav>
-
-    <h1 id="title">Welcome back</h1>
-    <p class="sub" id="sub">Log in to jump back into the game.</p>
-
-    <form id="form" novalidate>
-      <div class="field">
-        <label for="username">Username</label>
-        <div class="input"><input id="username" name="username" autocomplete="username" spellcheck="false" autocapitalize="none" maxlength="20" required></div>
-      </div>
-
-      <div class="extra"><div>
+<div class="panel">
+  <a class="brand" href="/login">
+    <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="10" fill="#335fff"/><rect x="11" y="11" width="18" height="18" rx="3" fill="none" stroke="#fff" stroke-width="3.5" transform="rotate(14 20 20)"/></svg>
+    <strong id="brand">Web Client</strong>
+  </a>
+  <main>
+    <div class="form">
+      <h1 id="title">Log in</h1>
+      <p class="sub" id="sub">Welcome back. Your games are waiting.</p>
+      <form id="form" novalidate>
         <div class="field">
-          <label for="displayName">Display name <span class="opt">optional</span></label>
-          <div class="input"><input id="displayName" name="displayName" maxlength="20" autocomplete="nickname" placeholder="What your friends see"></div>
+          <label for="username">Username</label>
+          <div class="input"><input id="username" name="username" maxlength="20" autocomplete="username" spellcheck="false" autocapitalize="none"></div>
         </div>
-        <div class="field" role="group" aria-labelledby="bday-label">
-          <span class="legend" id="bday-label">Birthday</span>
-          <div class="birthday">
-            <div class="input select"><select id="month" aria-label="Month"><option value="">Month</option></select></div>
-            <div class="input select"><select id="day" aria-label="Day"><option value="">Day</option></select></div>
-            <div class="input select"><select id="year" aria-label="Year"><option value="">Year</option></select></div>
+        <div class="extra"><div>
+          <div class="field">
+            <label for="displayName">Display name <span class="opt">optional</span></label>
+            <div class="input"><input id="displayName" name="displayName" maxlength="20" autocomplete="nickname" spellcheck="false" placeholder="What your friends see"></div>
+          </div>
+          <div class="field" role="group" aria-labelledby="bday">
+            <span class="label" id="bday">Birthday</span>
+            <div class="birthday">
+              <div class="input select"><select id="month" aria-label="Month" required><option value="" disabled selected>Month</option></select></div>
+              <div class="input select"><select id="day" aria-label="Day" required><option value="" disabled selected>Day</option></select></div>
+              <div class="input select"><select id="year" aria-label="Year" required><option value="" disabled selected>Year</option></select></div>
+            </div>
+          </div>
+        </div></div>
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="input">
+            <input id="password" name="password" type="password" maxlength="200" autocomplete="current-password">
+            <button class="reveal" id="reveal" type="button" aria-label="Show password" aria-pressed="false">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 5c5.5 0 9.3 4.4 10.6 6.3.3.4.3 1 0 1.4C21.3 14.6 17.5 19 12 19S2.7 14.6 1.4 12.7a1.2 1.2 0 0 1 0-1.4C2.7 9.4 6.5 5 12 5Zm0 2c-4.2 0-7.4 3.2-8.6 5 1.2 1.8 4.4 5 8.6 5s7.4-3.2 8.6-5c-1.2-1.8-4.4-5-8.6-5Zm0 1.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7Z"/></svg>
+            </button>
           </div>
         </div>
-      </div></div>
-
-      <div class="field">
-        <label for="password">Password</label>
-        <div class="input">
-          <input id="password" name="password" type="password" autocomplete="current-password" maxlength="200" required>
-          <button class="reveal" id="reveal" type="button" aria-label="Show password" aria-pressed="false">
-            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 5c5.5 0 9.3 4.4 10.6 6.3.3.4.3 1 0 1.4C21.3 14.6 17.5 19 12 19S2.7 14.6 1.4 12.7a1.2 1.2 0 0 1 0-1.4C2.7 9.4 6.5 5 12 5Zm0 2c-4.2 0-7.4 3.2-8.6 5 1.2 1.8 4.4 5 8.6 5s7.4-3.2 8.6-5c-1.2-1.8-4.4-5-8.6-5Zm0 1.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7Z"/></svg>
-          </button>
-        </div>
-        <span class="hint" id="pw-hint" hidden>At least 8 characters.</span>
-      </div>
-
-      <div class="notice">
-        <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10 1.5a8.5 8.5 0 1 1 0 17 8.5 8.5 0 0 1 0-17Zm0 11.75a1 1 0 1 0 0 2 1 1 0 0 0 0-2ZM10 5a.9.9 0 0 0-.9.95l.25 5.1a.65.65 0 0 0 1.3 0l.25-5.1A.9.9 0 0 0 10 5Z"/></svg>
-        <span>This is a local account, not a Roblox account. Never use your Roblox password here.</span>
-      </div>
-
-      <button class="go" id="submit">Log in</button>
-      <div id="err" role="alert"></div>
-    </form>
-    <div class="switch" id="switch"></div>
+        <div id="err" role="alert"></div>
+        <button class="go" id="submit">Log in</button>
+      </form>
+      <div class="switch"><span id="prompt"></span> <a id="switch" href="/signup"></a></div>
+    </div>
   </main>
+  <div class="foot">Local accounts only. This is not Roblox.</div>
 </div>
+
+<dialog id="notice" aria-labelledby="notice-title">
+  <h2 id="notice-title">Before you continue</h2>
+  <p>This is a self-hosted platform. It is not Roblox and is not affiliated with Roblox Corporation.</p>
+  <p>Accounts here are local to this server. Never enter your Roblox password.</p>
+  <label class="check"><input type="checkbox" id="agree"><span>I understand this is not a Roblox account.</span></label>
+  <button class="ok" id="notice-ok" type="button" disabled>Continue</button>
+</dialog>
+
 <script>
   const $ = (id) => document.getElementById(id);
   const params = new URLSearchParams(location.search);
   const returnUrl = /^\/(?!\/)/.test(params.get('returnUrl') || '') ? params.get('returnUrl') : '/games/start?placeId=1818';
   const qs = `?returnUrl=${encodeURIComponent(returnUrl)}`;
-  $('tab-login').href = `/login${qs}`;
-  $('tab-signup').href = `/signup${qs}`;
 
-  // Birthday dropdowns, Roblox-style (month / day / year).
-  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  months.forEach((m, i) => $('month').add(new Option(m, i + 1)));
+  // Birthday dropdowns (month / day / year), sent as YYYY-MM-DD.
+  ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    .forEach((m, i) => $('month').add(new Option(m, i + 1)));
   for (let d = 1; d <= 31; d++) $('day').add(new Option(d, d));
   for (let y = new Date().getFullYear(), end = y - 100; y >= end; y--) $('year').add(new Option(y, y));
   const birthdate = () => {
     const y = +$('year').value, m = +$('month').value, d = +$('day').value;
-    if (!y || !m || !d) return null;
     const dt = new Date(Date.UTC(y, m - 1, d));
-    if (dt.getUTCMonth() !== m - 1) return null; // e.g. February 30
-    return dt.toISOString().slice(0, 10);
+    return y && m && d && dt.getUTCMonth() === m - 1 ? dt.toISOString().slice(0, 10) : null;
   };
 
-  // Log in and sign up are one page; the tabs switch in place.
+  // Log in and sign up share the page; switching keeps the URL in step.
   let signup;
   function setMode(s, push) {
     signup = s;
     document.body.classList.toggle('signup', s);
-    $(s ? 'tab-signup' : 'tab-login').setAttribute('aria-current', 'page');
-    $(s ? 'tab-login' : 'tab-signup').removeAttribute('aria-current');
     document.title = s ? 'Sign up' : 'Log in';
-    $('title').textContent = s ? 'Create an account' : 'Welcome back';
-    $('sub').textContent = s ? 'Pick a username and start playing in seconds.' : 'Log in to jump back into the game.';
+    $('title').textContent = s ? 'Create account' : 'Log in';
+    $('sub').textContent = s ? 'Pick a name and start playing in seconds.' : 'Welcome back. Your games are waiting.';
     $('submit').textContent = s ? 'Sign up' : 'Log in';
+    $('username').placeholder = s ? "Don't use your real name" : '';
+    $('password').placeholder = s ? 'At least 8 characters' : '';
     $('password').autocomplete = s ? 'new-password' : 'current-password';
-    $('pw-hint').hidden = !s;
+    $('prompt').textContent = s ? 'Already have an account?' : 'New here?';
+    $('switch').textContent = s ? 'Log in' : 'Sign up';
+    $('switch').href = `/${s ? 'login' : 'signup'}${qs}`;
     for (const el of document.querySelectorAll('.extra input, .extra select')) el.tabIndex = s ? 0 : -1;
-    $('switch').innerHTML = s ? `Already have an account? <a href="/login${qs}" data-mode="login">Log in</a>`
-                              : `New here? <a href="/signup${qs}" data-mode="signup">Create an account</a>`;
     $('err').textContent = '';
     if (push) history.pushState(null, '', `/${s ? 'signup' : 'login'}${location.search}`);
   }
   setMode(location.pathname === '/signup');
   addEventListener('popstate', () => setMode(location.pathname === '/signup'));
-  document.addEventListener('click', (e) => {
-    const a = e.target.closest('#tab-login, #tab-signup, #switch a');
-    if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
+  $('switch').addEventListener('click', (e) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey) return;
     e.preventDefault();
-    const s = a.id === 'tab-signup' || a.dataset.mode === 'signup';
-    if (s !== signup) setMode(s, true);
+    setMode(!signup, true);
+    $('username').focus();
   });
 
   $('reveal').addEventListener('click', () => {
@@ -242,11 +237,25 @@
       if (r.ok) return location.assign(returnUrl);
       const j = await r.json().catch(() => ({}));
       err.textContent = (j.errors && j.errors[0] && j.errors[0].message) || `Request failed (HTTP ${r.status})`;
-    } catch (x) {
+    } catch {
       err.textContent = 'Could not reach the server.';
     }
     $('submit').disabled = false;
   });
+
+  // The notice shows once per browser.
+  let seen = false;
+  try { seen = localStorage.getItem('localNoticeSeen') === '1'; } catch {}
+  if (!seen) {
+    $('notice').showModal();
+    $('notice').addEventListener('cancel', (e) => e.preventDefault());
+    $('agree').addEventListener('change', () => { $('notice-ok').disabled = !$('agree').checked; });
+    $('notice-ok').addEventListener('click', () => {
+      try { localStorage.setItem('localNoticeSeen', '1'); } catch {}
+      $('notice').close();
+      $('username').focus();
+    });
+  }
 </script>
 </body>
 </html>
