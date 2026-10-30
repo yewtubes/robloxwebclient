@@ -102,6 +102,27 @@ game with `&quality=21` (site-shim.js sets `DFIntDebugFRMQualityLevelOverride`)
 on a device with a GPU and compare. Wasm exports are now called directly rather
 than through -sASSERTIONS' per-call checking wrapper.
 
+## Crash after loading on some devices ("SIGTRAP")
+
+Reported on Chromebooks and other devices that otherwise run the client: the
+game loads, then the engine crashes with "SIGTRAP" (a wasm trap: `unreachable`,
+an out-of-bounds access, or an engine fatal error). Not reproduced here. The page
+now sends crashes with the last 120 console lines to the backend
+(`<data>/logs/client-report.log`, `"kind":"crash"`); that report shows where it
+trapped. Ruled out: the heap size. It is fixed at `FIntWasmMemoryPages` (2 GiB),
+and a device that can't reserve it fails at start, not after loading. Our glue
+isn't built for more than 2 GiB.
+
+## Verified and admin badges
+
+Verified: `tools/admin.js user verify <name>` sets `users.has_verified_badge`,
+which the join script carries (`HasVerifiedBadge`); the game server sets
+`Player.HasVerifiedBadge` from it. Admin: `tools/admin.js admin <name>` adds the
+account to group 1200769 at rank 255. The game server's group check reaches the
+backend and gets that rank. Not yet confirmed in game which icons the 2026
+CoreScripts draw from it. A running game server caches group ranks, so restart
+it after changing them.
+
 ## Studio test server dies or can't sign in (cloud container)
 
 The container sometimes rewrites `/etc/hosts` (the sitetest1 names disappear:
