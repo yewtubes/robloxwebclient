@@ -69,6 +69,31 @@ async function settled(raw, rect, until) {
 }
 const capture = (file) => execFileSync('import', ['-display', DISPLAY, '-window', 'root', `png:${file}`]);
 
+// The render the plugin printed to Studio's log (Studio started at or after
+// `since`): { w, h, file } with the raw RGBA in file, 'fallback' if the plugin had
+// to use markers instead, or null while it isn't complete yet.
+function clicked(since, key) {
+  const dir = `${LOCAL}/logs`;
+  let logs = [];
+  try { logs = fs.readdirSync(dir).filter((f) => f.endsWith('.log')).map((f) => path.join(dir, f)).filter((f) => fs.statSync(f).mtimeMs >= since - 5000); } catch {}
+  for (const f of logs) {
+    const text = fs.readFileSync(f, 'latin1');
+    if (text.includes('[LocalRender] in-engine capture unavailable')) return 'fallback';
+    const head = new RegExp(`\\[LocalRender\\] click ${key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} (\\d+) (\\d+) (\\d+)`).exec(text);
+    if (!head || !text.includes(`[LocalRender] ready ${key}`)) continue;
+    const [w, h, count] = head.slice(1).map(Number);
+    const parts = new Array(count);
+    for (const m of text.slice(head.index).matchAll(/\[LocalRender\] px (\d+) ([A-Za-z0-9+/=]+)/g)) if (+m[1] <= count && !parts[m[1] - 1]) parts[m[1] - 1] = m[2];
+    if (parts.includes(undefined) || parts.length !== count) throw new Error('incomplete render in the log');
+    const file = path.join(STAGE, `${key.replace(/[^A-Za-z0-9]+/g, '-')}.rgba`);
+    const px = Buffer.from(parts.join(''), 'base64');
+    if (px.length !== w * h * 4) throw new Error(`render is ${px.length} bytes, expected ${w * h * 4}`);
+    fs.writeFileSync(file, px);
+    return { w, h, file };
+  }
+  return null;
+}
+
 function finish(raw, rect, job, out) {
   const { w, h, x, y } = rect;
   if (job.kind === 'place') {
@@ -108,15 +133,28 @@ async function render(job) {
   ensureDisplay();
   const env = { ...process.env, DISPLAY, WINEPREFIX: PREFIX, WINEDEBUG: '-all', WINEDLLOVERRIDES: 'mscoree,mshtml=', LP_NUM_THREADS: '1',
     PATH: `${ROOT}/tools/studio/bin:${process.env.PATH}`, NO_PROXY: `${process.env.NO_PROXY || ''},.robloxlabs.com`, no_proxy: `${process.env.no_proxy || ''},.robloxlabs.com` };
+  const started = Date.now();
   const studio = spawn('taskset', ['-c', process.env.STUDIO_CPUS || '0,1', 'wine', 'RobloxStudioBeta.exe', '-task', 'EditFile',
     '-localPlaceFile', `C:/users/${WINUSER}/AppData/Local/Roblox/render/${file}`, '-baseUrl', BASE], { cwd: `${S}/app`, env, stdio: 'ignore' });
   const raw = path.join(STAGE, `${id}-capture.png`), out = path.join(STAGE, `${id}.png`);
   try {
-    let rect = null;
+    let rect = null, screen = false;
     const until = Date.now() + TIMEOUT_MS;
     while (Date.now() < until) {
       await sleep(1000);
       if (studio.exitCode !== null) throw new Error(`Studio exited (${studio.exitCode})`);
+      if (!screen) {
+        // The plugin's in-engine capture (RenderPlugin.lua's click), printed to the log.
+        const r = clicked(started, job.key);
+        if (r === 'fallback') { screen = true; log(`${job.key}: no in-engine capture, using the display`); }
+        else if (r) {
+          execFileSync('convert', ['-size', `${r.w}x${r.h}`, '-depth', '8', `rgba:${r.file}`, `png:${raw}`]);
+          fs.rmSync(r.file, { force: true });
+          finish(raw, { w: r.w, h: r.h, x: 0, y: 0 }, job, out);
+          return fs.readFileSync(out);
+        }
+        continue;
+      }
       try { capture(raw); } catch { continue; }
       const m = markers(raw);
       if (m) rect = m;

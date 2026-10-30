@@ -3,5 +3,6 @@
   "DFLogTeamTest": "7",
   "FLogStudioNotificationService": "6",
   "FLogFileOpenEventHandler": "6",
-  "FLogLoginController": "6"
+  "FLogLoginController": "6",
+  "FStringTextureTranscodeRollout": "0,[],[]"
 }

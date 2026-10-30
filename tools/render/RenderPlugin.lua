@@ -4,9 +4,10 @@
 -- the scene the way RCC's render scripts do (a local player whose
 -- CharacterAppearance is the platform's avatar-fetch, LoadCharacter), points the
 -- camera at it, waits for its content to load, then shows two
--- magenta markers in the viewport's corners for a moment. The worker finds the 3D
--- viewport from the markers and captures it once they are hidden again. (Studio
--- has no ThumbnailGenerator, RCC's Click(); the capture stands in for it only.)
+-- render is captured in the engine and printed to the log as base64, as RCC's
+-- ThumbnailGenerator:Click returns it (Studio has no ThumbnailGenerator). Where
+-- that is unavailable it falls back to magenta markers in the viewport's corners,
+-- from which the worker finds the 3D viewport and captures the display.
 local JOB = [==[__JOB__]==]
 
 local HttpService = game:GetService("HttpService")
@@ -171,6 +172,55 @@ pcall(function()
 	ContentProvider:PreloadAsync(loadTargets)
 end)
 task.wait(spec.settle or 10)
+
+-- Like RCC's ThumbnailGenerator:Click, which returns the render as base64: the
+-- engine captures its 3D view (CaptureService, no UI), the pixels are read back
+-- (EditableImage) and printed as base64 RGBA in chunks; the worker reads them from
+-- Studio's log. No screen capture, so nothing on the display can get in the way.
+local B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+local function base64(buf)
+	local n = buffer.len(buf)
+	local out = buffer.create(math.ceil(n / 3) * 4)
+	local alphabet = buffer.fromstring(B64)
+	local o = 0
+	for i = 0, n - 1, 3 do
+		local b0 = buffer.readu8(buf, i)
+		local b1 = i + 1 < n and buffer.readu8(buf, i + 1) or 0
+		local b2 = i + 2 < n and buffer.readu8(buf, i + 2) or 0
+		local v = bit32.bor(bit32.lshift(b0, 16), bit32.lshift(b1, 8), b2)
+		buffer.writeu8(out, o, buffer.readu8(alphabet, bit32.extract(v, 18, 6)))
+		buffer.writeu8(out, o + 1, buffer.readu8(alphabet, bit32.extract(v, 12, 6)))
+		buffer.writeu8(out, o + 2, i + 1 < n and buffer.readu8(alphabet, bit32.extract(v, 6, 6)) or 61)
+		buffer.writeu8(out, o + 3, i + 2 < n and buffer.readu8(alphabet, bit32.extract(v, 0, 6)) or 61)
+		o += 4
+	end
+	return buffer.tostring(out)
+end
+
+local function click()
+	local captured = Instance.new("BindableEvent")
+	game:GetService("CaptureService"):CaptureScreenshot(function(contentId)
+		captured:Fire(contentId)
+	end)
+	local contentId = captured.Event:Wait()
+	local image = game:GetService("AssetService"):CreateEditableImageAsync(Content.fromUri(contentId))
+	local size = image.Size
+	return size, image:ReadPixelsBuffer(Vector2.zero, size)
+end
+
+local ok, size, pixels = pcall(click)
+if ok then
+	local data = base64(pixels)
+	local CHUNK = 800 -- Studio cuts log lines at 1023 characters
+	local count = math.ceil(#data / CHUNK)
+	print(string.format("[LocalRender] click %s %d %d %d", spec.key, size.X, size.Y, count))
+	for i = 1, count do
+		print(string.format("[LocalRender] px %d %s", i, string.sub(data, (i - 1) * CHUNK + 1, i * CHUNK)))
+	end
+	print("[LocalRender] ready " .. spec.key)
+	return
+end
+print("[LocalRender] in-engine capture unavailable (" .. tostring(size) .. "); showing markers for a screen capture")
 
 local gui = Instance.new("ScreenGui")
 gui.Name = "LocalRenderMarkers"

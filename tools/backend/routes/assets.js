@@ -11,13 +11,15 @@ function svcUrl(req, svc) {
   return h ? `https://${h.replace(/^[^.]+\./, svc + '.')}` : `https://${svc}.roblox.com`;
 }
 
-// The store holds each asset's baseline ("source") representation. A request
+// The store holds each asset's baseline ("source") representation, which is also
+// the uploaded original ("Original"). Transcoded ones (ktx2 textures, Residual
+// meshes) aren't made here. A request
 // that lists only other representations and forbids falling back to the
 // baseline (doNotFallbackToBaselineRepresentation) can't be served from it.
 function representationRequest(list, noFallback) {
   let formats = [];
   try { formats = JSON.parse(Buffer.from(decodeURIComponent(list || ''), 'base64').toString()).map((r) => r.format); } catch {}
-  const baselineOk = !noFallback || formats.length === 0 || formats.some((f) => /^(source|baseline)$/i.test(f));
+  const baselineOk = !noFallback || formats.length === 0 || formats.some((f) => /^(source|baseline|original)$/i.test(f));
   return { formats, baselineOk };
 }
 
