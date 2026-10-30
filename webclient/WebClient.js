@@ -3169,6 +3169,13 @@ async function createWasm() {
         if (type == 'no-suggestions') el.setAttribute(a, a == 'spellcheck' ? 'false' : 'off'); else el.removeAttribute(a);
       }
     } else { el = Module.inputElement; el.type = type; }
+    // Roblox's player submits on Enter only in the single-line <input>; the engine
+    // also edits single-line boxes (the chat bar) in the <textarea>, so Enter
+    // without Shift submits there too.
+    if (el === Module.textAreaElement && !el.rbxEnterHandler) {
+      el.rbxEnterHandler = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); _on_return_pressed(); } };
+      el.addEventListener('keydown', el.rbxEnterHandler);
+    }
     el.style.display = 'block';
     Module.currentInput = el;
   };
@@ -7404,24 +7411,23 @@ async function createWasm() {
   };
 
   var _schedule_main_loop = () => {
-      var running = false;
-      var tick = async () => {
-        if (!running) {
-          running = true;
-          try {
-            await _main_loop_iteration();
-            Module._drainTx?.();
-          } catch (e) {
-            console.error('[rbx] main_loop_iteration threw', e);
-            throw e;
-          } finally {
-            running = false;
-          }
-        }
-        requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
+    if (Module._mainLoopChan) return;
+    var ch = new MessageChannel(), minGapMs = 1, last = 0;
+    Module._mainLoopChan = ch;
+    ch.port1.onmessage = async () => {
+      var dt = performance.now() - last;
+      if (dt < minGapMs) await new Promise((r) => setTimeout(r, minGapMs - dt));
+      last = performance.now();
+      try {
+        await _main_loop_iteration();
+        Module._drainTx?.();
+      } catch (e) {
+        console.error('[rbx] main_loop_iteration threw', e);
+      }
+      ch.port2.postMessage(0);
     };
+    ch.port2.postMessage(0);
+  };
 
   
   var _set_crash_attribute = (k, v) => console.log('[rbx] crash attribute', UTF8ToString(k), '=', UTF8ToString(v));

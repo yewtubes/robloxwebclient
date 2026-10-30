@@ -153,26 +153,28 @@ addToLibrary({
   fiber_destroy_js__deps: ['$rbxFibers'],
   fiber_destroy_js: (token) => { rbxFibers.destroyed++; rbxFibers.parked.delete(token); },
 
-  // main() calls this once; drive main_loop_iteration from rAF.
   schedule_main_loop__deps: ['$callUserCallback'],
+  // main() calls this once. As Roblox's own WebClient.js: run main_loop_iteration
+  // back to back over a MessageChannel (at most one per ms) and let the engine pace
+  // its frames, instead of one iteration per animation frame (which added rAF
+  // latency on top of every iteration's waits: ~3 fps with an idle main thread).
   schedule_main_loop: () => {
-    var running = false;
-    var tick = async () => {
-      if (!running) {
-        running = true;
-        try {
-          await _main_loop_iteration();
-          Module._drainTx?.();
-        } catch (e) {
-          console.error('[rbx] main_loop_iteration threw', e);
-          throw e;
-        } finally {
-          running = false;
-        }
+    if (Module._mainLoopChan) return;
+    var ch = new MessageChannel(), minGapMs = 1, last = 0;
+    Module._mainLoopChan = ch;
+    ch.port1.onmessage = async () => {
+      var dt = performance.now() - last;
+      if (dt < minGapMs) await new Promise((r) => setTimeout(r, minGapMs - dt));
+      last = performance.now();
+      try {
+        await _main_loop_iteration();
+        Module._drainTx?.();
+      } catch (e) {
+        console.error('[rbx] main_loop_iteration threw', e);
       }
-      requestAnimationFrame(tick);
+      ch.port2.postMessage(0);
     };
-    requestAnimationFrame(tick);
+    ch.port2.postMessage(0);
   },
 
   // msync on mmapped files: the engine has no Emscripten FS, nothing to flush.
@@ -233,6 +235,13 @@ addToLibrary({
         if (type == 'no-suggestions') el.setAttribute(a, a == 'spellcheck' ? 'false' : 'off'); else el.removeAttribute(a);
       }
     } else { el = Module.inputElement; el.type = type; }
+    // Roblox's player submits on Enter only in the single-line <input>; the engine
+    // also edits single-line boxes (the chat bar) in the <textarea>, so Enter
+    // without Shift submits there too.
+    if (el === Module.textAreaElement && !el.rbxEnterHandler) {
+      el.rbxEnterHandler = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); _on_return_pressed(); } };
+      el.addEventListener('keydown', el.rbxEnterHandler);
+    }
     el.style.display = 'block';
     Module.currentInput = el;
   },
