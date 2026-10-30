@@ -12,6 +12,12 @@ them, but the 2026 client also checks an integrity footer on all bytecode that
 Luau's compiler doesn't produce. This project doesn't forge or bypass that
 check. See `local_rcc_modern/README.md`. API work doesn't affect this.
 
+This applies to Roblox's unmodified build (`/games/start?placeId=…`). This
+repo's patched build (`/` or `/games/start?build=local`, with the Lua App
+bootstrap from `tools/build_playsolo.js --join`) loads them: controls, jumping
+and animation work there (docs/STUDIO_SERVER_JOIN.md,
+`screenshots/bootstrap-join-movement.mp4`).
+
 ## R15 characters have no head
 
 The default dynamic head uses mesh asset 123480233606534. Roblox serves it only

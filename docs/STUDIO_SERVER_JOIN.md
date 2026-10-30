@@ -16,7 +16,7 @@ record that survives context loss.
 | WebTransport handshake to Studio's RbxTransport | works when Studio and Chrome are on separate cores |
 | Replicator created, world and character replicate | works |
 | Studio sends compiled script bytecode (`LOCAL_RCC=1`, `local_rcc_modern/`) | works |
-| Game client scripts run (LocalScripts, Animate, PlayerModule) | **blocked: the client rejects the bytecode in `luau_load` ("bytecode corrupted", integrity footer)** |
+| Game client scripts run (LocalScripts, Animate, PlayerModule) | **blocked** with Roblox's unmodified build (`luau_load`: "bytecode corrupted", integrity footer); **runs** with this repo's patched build (`/` or `/games/start?build=local`): controls, jumping, animation |
 
 ## The join page is Roblox's own
 
@@ -63,9 +63,18 @@ RCC_HOST=127.0.0.1 RCC_PORT=53640 taskset -c 2,3 node tools/run_headless.js 75
   `bytecode corrupted` and no `CreatorError` for game scripts. This page serves
   `WebClient.patched.wasm` (7451142), whose `luau_load` change
   (`tools/patch_wasm.js`) also lets the server's local_rcc_modern bytecode
-  load. With `KEYS="w:4000"` the view moves relative to the spawn pad, so the
-  client's control scripts most likely run; the character's position wasn't
-  measured.
+  load. Confirmed with `places/ClientProbe.rbxlx` (Baseplate plus a
+  StarterPlayerScripts LocalScript that prints what it sees; run it with
+  `PLACE_ID=1818 tools/studio/run_server.sh places/ClientProbe.rbxlx`): the
+  LocalScript runs, PlayerScripts holds PlayerModule, PlayerScriptsLoader and
+  RbxCharacterSounds, `require(PlayerModule)` succeeds, the character has
+  `Animate` with animation tracks playing, keys arrive, and W/A/S/D/Space move
+  and jump the character (`screenshots/bootstrap-join-movement.mp4` and `.log`:
+  ~52 studs forward, strafes, jumps to y ≈ 9.8).
+- Headless, the simulation runs slowly while Studio and Chrome share 4 cores:
+  at full render scale 3 s of W moved the character ~4 studs and the first
+  recording looked frozen. `renderScale=0.5` (a WasmPlayer.js URL parameter)
+  makes it move at a visible pace.
 - The first attempt failed with `ERR_QUIC_PROTOCOL_ERROR.QUIC_NETWORK_IDLE_TIMEOUT`
   and then RakNet handshake error 6. Studio was at 200% on its two pinned
   cores (main thread + llvmpipe), and the app DataModel was loading World HQ
@@ -99,9 +108,8 @@ RCC_HOST=127.0.0.1 RCC_PORT=53640 taskset -c 2,3 node tools/run_headless.js 60 '
   `__onExperienceLoaded`, i.e. the joined game, then lets WasmPlayer's own fade
   finish (90 s cap if no game loads).
 - Result (`screenshots/bootstrap-join-roblox-page-sheet.png`, 2 s steps): Roblox's
-  loading screen at 2-4 s, then the Baseplate with Player1; between frames the
-  character's arms move (idle animation), which suggests the game's `Animate`
-  LocalScript runs on the client.
+  loading screen at 2-4 s, then the Baseplate with Player1. Movement video:
+  `screenshots/bootstrap-join-movement.mp4` (`games/start?build=local&renderScale=0.5`).
 - Not the same as a direct join: the loading card shows the default "Roblox"
   title and an empty icon, because WasmPlayer only loads the experience's name
   and icon when `placeId` is in the URL.

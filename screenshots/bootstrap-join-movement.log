@@ -1,0 +1,88 @@
+[8.6] log: [6] 2083-08-29T03:36:10.000Z,1793368064.000000,30711f0,6,Info [DFLog::NetworkClient] Connection accepted from 127.0.0.1|51584
+[12.4] log: [6] 2083-08-29T03:36:10.000Z,1793368064.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] LocalScript running
+[12.4] log: [LocalPlatform] loading screen released: joined game loaded
+[15.4] log: [6] 2083-08-29T03:36:10.000Z,1793368064.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] PlayerScripts: PlayerScriptsLoader LocalScript
+[15.4] log: [6] 2083-08-29T03:36:10.000Z,1793368064.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] PlayerScripts: ClientProbe LocalScript
+[15.4] log: [6] 2083-08-29T03:36:10.000Z,1793368064.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] PlayerScripts: PlayerModule ModuleScript
+[15.4] log: [6] 2083-08-29T03:36:10.000Z,1793368064.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] PlayerScripts: RbxCharacterSounds LocalScript
+[15.4] log: [6] 2083-08-29T03:36:10.000Z,1793368064.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] require PlayerModule: true table: 0x000000002125be19
+[15.4] log: [6] 2083-08-29T03:36:10.000Z,1793368064.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] character script: Health Script
+[15.4] log: [6] 2083-08-29T03:36:10.000Z,1793368064.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] character script: Animate LocalScript
+[16.6] log: [6] 2083-08-29T03:36:10.000Z,1793368064.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 3.999999761581421, 0.6358532905578613 move 0, 0, 0 state Running t
+[18.2] log: [6] 2083-08-29T03:36:10.000Z,1793368064.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 3.999999761581421, 0.6358532905578613 move 0, 0, 0 state Running t
+[19.4] log: [6] 2083-08-29T03:36:10.000Z,1793368064.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 3.999999761581421, 0.6358532905578613 move 0, 0, 0 state Running t
+[20.7] log: [6] 2083-08-29T03:36:10.000Z,1793368064.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 3.999999761581421, 0.6358532905578613 move 0, 0, 0 state Running t
+[21.8] log: [6] 2083-08-29T03:36:10.000Z,1793368064.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 3.999999761581421, 0.6358532905578613 move 0, 0, 0 state Running t
+[23.0] log: [6] 2083-08-29T03:36:10.000Z,1793368064.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 3.999999761581421, 0.6358532905578613 move 0, 0, 0 state Running t
+[24.1] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 3.999999761581421, 0.6358532905578613 move 0, 0, 0 state Running t
+[25.2] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 3.999999761581421, 0.6358532905578613 move 0, 0, 0 state Running t
+[26.2] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 3.999999761581421, 0.6358532905578613 move 0, 0, 0 state Running t
+[28.9] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 3.999999761581421, 0.6358532905578613 move 0, 0, 0 state Running t
+[28.9] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] input None Focus false
+[28.9] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] input None MouseButton1 false
+[30.1] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 3.999999761581421, 0.6358532905578613 move 0, 0, 0 state Running t
+[30.1] input: KeyW for 6000ms
+[30.5] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] input W Keyboard false
+[31.1] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 3.999999761581421, -0.8628069162368774 move 0, 0, -1 state Running
+[32.4] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 3.999999761581421, -4.862807750701904 move 0, 0, -1 state Running 
+[33.6] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 2.9919991493225098, -8.862804412841797 move 0, 0, -1 state Running
+[34.8] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 2.999999761581421, -13.662799835205078 move 0, 0, -1 state Running
+[35.9] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 2.999999761581421, -16.862796783447266 move 0, 0, -1 state Running
+[36.1] input: Space for 400ms
+[36.4] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] input Space Keyboard false
+[37.1] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 8.804061889648438, -20.65134620666504 move 0, 0, 0 state Freefall 
+[38.3] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 5.1793694496154785, -20.659332275390625 move 0, 0, 0 state Freefal
+[39.1] input: KeyW for 3000ms
+[39.1] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] input W Keyboard false
+[39.7] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 2.9998960494995117, -21.357994079589844 move 0, 0, -1 state Runnin
+[40.9] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 2.999999761581421, -26.95798683166504 move 0, 0, -1 state Running 
+[42.1] input: Space for 400ms
+[42.3] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 2.999999761581421, -30.157983779907227 move 0, 0, -1 state Running
+[42.3] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] input Space Keyboard false
+[43.4] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 9.851245880126953, -31.621185302734375 move 0, 0, 0 state Freefall
+[44.4] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -4.987487316131592, 2.9995579719543457, -31.621185302734375 move 0, 0, 0 state Running
+[45.0] input: KeyD for 4000ms
+[45.0] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] input D Keyboard false
+[45.5] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -1.3554950952529907, 2.999999761581421, -31.621185302734375 move 1, 0, 0 state Running
+[46.6] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos 1.844504952430725, 2.999999761581421, -31.621185302734375 move 1, 0, 0 state Running t
+[48.1] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos 4.511172771453857, 2.999999761581421, -31.621185302734375 move 1, 0, 0 state Running t
+[49.0] input: Space for 400ms
+[49.1] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] input Space Keyboard false
+[49.4] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos 6.911170482635498, 5.425187110900879, -31.621185302734375 move 0, 0, 0 state Jumping t
+[50.7] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos 7.7743682861328125, 9.7577486038208, -31.621185302734375 move 0, 0, 0 state Freefall t
+[51.9] input: KeyA for 4000ms
+[51.9] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos 7.7743682861328125, 8.667495727539062, -31.621185302734375 move 0, 0, 0 state Freefall
+[51.9] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] input A Keyboard false
+[53.1] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos 5.43756628036499, 2.8489160537719727, -31.621187210083008 move -1, 0, 0 state Landed t
+[54.3] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos 2.9709012508392334, 2.9995052814483643, -31.621185302734375 move -1, 0, 0 state Runnin
+[55.3] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -0.229098841547966, 2.999999761581421, -31.621185302734375 move -1, 0, 0 state Running
+[55.9] input: KeyE for 2000ms
+[55.9] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] input E Keyboard false
+[56.5] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -3.397106170654297, 2.999999761581421, -31.621185302734375 move 0, 0, 0 state Running 
+[57.5] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -3.397106170654297, 2.999999761581421, -31.621185302734375 move 0, 0, 0 state Running 
+[57.9] input: KeyW for 5000ms
+[58.3] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] input W Keyboard false
+[58.6] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -3.3971056938171387, 2.999999761581421, -32.31984329223633 move 0, 0, -1 state Running
+[59.6] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -3.3971049785614014, 2.999999761581421, -37.78657531738281 move 0, 0, -1 state Running
+[60.8] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -3.3971049785614014, 2.999999761581421, -41.78662872314453 move 0, 0, -1 state Running
+[62.0] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -3.3971049785614014, 2.999999761581421, -46.05335235595703 move 0, 0, -1 state Running
+[62.9] input: Space for 400ms
+[63.0] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -3.3971049785614014, 2.999999761581421, -50.05340576171875 move 0, 0, -1 state Running
+[63.0] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] input Space Keyboard false
+[64.2] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -3.3971049785614014, 8.770256042480469, -51.716590881347656 move 0, 0, 0 state Freefal
+[65.4] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -3.3971049785614014, 2.997870922088623, -51.716590881347656 move 0, 0, 0 state Running
+[66.3] input: KeyS for 4000ms
+[66.4] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] input S Keyboard false
+[66.5] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -3.397106409072876, 2.999999761581421, -51.04890060424805 move 0, 0, 1 state Running t
+[67.5] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -3.3971035480499268, 2.999999761581421, -45.24891662597656 move 0, 0, 1 state Running 
+[68.6] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -3.3971035480499268, 2.999999761581421, -38.9821662902832 move 0, 0, 1 state Running t
+[69.9] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -3.3971035480499268, 2.999999761581421, -33.3820915222168 move 0, 0, 1 state Running t
+[70.3] input: Space for 400ms
+[70.4] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] input Space Keyboard false
+[70.9] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -3.3971035480499268, 9.697009086608887, -29.38553810119629 move 0, 0, 0 state Freefall
+[72.0] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -3.3971035480499268, 3.3654942512512207, -29.38553810119629 move 0, 0, 0 state Freefal
+[73.1] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -3.3971035480499268, 2.9999983310699463, -29.38553810119629 move 0, 0, 0 state Running
+[74.3] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -3.3971035480499268, 2.999999761581421, -29.38553810119629 move 0, 0, 0 state Running 
+[75.5] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -3.3971035480499268, 2.999999761581421, -29.38553810119629 move 0, 0, 0 state Running 
+[76.5] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -3.3971035480499268, 2.999999761581421, -29.38553810119629 move 0, 0, 0 state Running 
+[77.5] log: [6] 2083-08-29T03:38:18.000Z,1793368192.000000,30711f0,6,Info [FLog::CreatorOutput] [ClientProbe] pos -3.3971035480499268, 2.999999761581421, -29.38553810119629 move 0, 0, 0 state Running 
