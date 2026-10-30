@@ -90,7 +90,29 @@ if (fs.existsSync(repDir)) {
 console.log(`${HOST} -> LuaAppStarterScript (${joinPlace ? `join place ${joinPlace}` : 'Play Solo'}, ${bytecode.length} bytes of bytecode)`);
 const outModel = path.join(OV, 'ExtraContent/models/UniversalApp/UniversalApp.rbxm');
 fs.mkdirSync(path.dirname(outModel), { recursive: true });
+// The join bootstrap only needs itself in the app DataModel (the joined game loads
+// the in-experience patch on its own). Loading and verifying the full 75 MB patch
+// took ~2.5 s of every join, so in join mode every other script's Source is
+// emptied; the patch keeps its structure, digests and signatures, as it does
+// with the bootstrap's own changed Source.
+if (joinPlace) emptyOtherSources(target);
 R.write(m, outModel);
+
+function emptyOtherSources(keep) {
+  const cls = idx.classes.get(keep.classId);
+  const pos = cls.refs.indexOf(keep.ref);
+  for (const c of m.chunks) {
+    if (c.name !== 'PROP' || c.data.readUInt32LE(0) !== cls.id || R.rdStr(c.data, 4)[0] !== 'Source') continue;
+    let p = R.rdStr(c.data, 4)[1] + 1;
+    const parts = [c.data.subarray(0, p)];
+    for (let i = 0; i < cls.refs.length; i++) {
+      const n = c.data.readUInt32LE(p);
+      parts.push(i === pos ? c.data.subarray(p, p + 4 + n) : Buffer.alloc(4));
+      p += 4 + n;
+    }
+    c.data = Buffer.concat([...parts, c.data.subarray(p)]);
+  }
+}
 
 // 3. the place
 const outPlace = path.join(OV, 'ExtraContent/places/Mobile.rbxl');

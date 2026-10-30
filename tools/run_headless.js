@@ -146,6 +146,9 @@ fs.mkdirSync(path.dirname(shot), { recursive: true });
         continue;
       }
       if (step.startsWith('wait:')) { await page.waitForTimeout(+step.split(':')[1]); continue; }
+      // type:<text> types text (e.g. a chat message after "/"); "enter" presses Enter.
+      if (step.startsWith('type:')) { w(`input: type ${step.slice(5)}`); await page.keyboard.type(step.slice(5), { delay: 60 }); continue; }
+      if (step === 'enter') { w('input: Enter'); await page.keyboard.press('Enter'); continue; }
       const [k, ms] = step.split(':');
       const key = { space: 'Space', w: 'KeyW', a: 'KeyA', s: 'KeyS', d: 'KeyD', q: 'KeyQ', e: 'KeyE' }[k] || k;
       w(`input: ${key} for ${ms}ms`);

@@ -770,6 +770,7 @@ async function createWasm() {
 
     // We now have the Wasm module loaded up, keep a reference to the compiled module so we can post it to the workers.
     wasmModule = module;
+    if (!ENVIRONMENT_IS_PTHREAD) for (var i = 0; i < 8; i++) PThread.loadWasmModuleToWorker(PThread.allocateUnusedWorker());
     return wasmExports;
   }
 

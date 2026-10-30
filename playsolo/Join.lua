@@ -31,9 +31,11 @@ local function launch(attempt)
 end
 
 task.spawn(function()
-	-- Give the app DataModel a moment to finish starting up (the engine is still
-	-- in InitializedLuaApp while the entry script begins running).
-	task.wait(1)
+	-- Launching while the engine is still starting up (this script runs inside its
+	-- initialize(), before the browser main loop exists) stalls the join: the
+	-- game's scripts start ~5 s late and it never completes. The first rendered
+	-- frame comes from the main loop, so wait for that.
+	game:GetService("RunService").RenderStepped:Wait()
 	for attempt = 1, 3 do
 		if launch(attempt) then
 			return

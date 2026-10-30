@@ -20,6 +20,13 @@ js = js.replace('var ASM_CONSTS = {', fallback + 'var ASM_CONSTS = {');
 // WasmPlayer passes a few Module properties this build does not consume.
 js = js.replace(/abort\(`\\`Module\.\$\{prop\}\\` was supplied but/, (m) => (n++, m.replace('abort(', 'console.warn(')));
 // Desktop GLSL -> GLSL ES conversion (see rbxConvertShader in rbxlib.js).
+// Pre-start 8 pthread workers once the module is compiled, as Roblox's own
+// WebClient.js does (PTHREAD_POOL_SIZE 8). With an empty pool every engine thread
+// waits for a new worker, which can only start when the main thread yields; a
+// main-thread futex wait meanwhile stalled game joins by ~4 s.
+js = js.replace('    wasmModule = module;\n    return wasmExports;', (m) => (n++, `    wasmModule = module;
+    if (!ENVIRONMENT_IS_PTHREAD) for (var i = 0; i < 8; i++) PThread.loadWasmModuleToWorker(PThread.allocateUnusedWorker());
+    return wasmExports;`));
 js = js.replace('GLctx.shaderSource(GL.shaders[shader], source);', (m) => (n++, 'GLctx.shaderSource(GL.shaders[shader], rbxConvertShader(source));'));
 // Route roblox.com / rbxcdn.com requests (main thread and pthread workers)
 // through the local server's /proxy/: the page is cross-origin isolated, so

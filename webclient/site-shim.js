@@ -72,6 +72,24 @@
         root.classList.replace('local-join-hold', 'local-join-fade');
         setTimeout(() => root.classList.remove('local-join-fade'), 600);
       };
+      // With placeId in the URL WasmPlayer shows the experience's name, creator and
+      // icon, but it also hands the place to the engine (set_place_id), which then
+      // joins by itself instead of starting the Lua App. Keep the URL's placeId for
+      // the loading screen and leave the join to the bootstrap: wrap the engine's
+      // module factory (webclient/WebClient.js) so set_place_id is not passed on.
+      let factory;
+      Object.defineProperty(self, 'createWebClient', {
+        configurable: true,
+        get: () => factory && ((m) => {
+          const init = m.onRuntimeInitialized;
+          m.onRuntimeInitialized = function (...a) {
+            if (typeof m.set_place_id === 'function') m.set_place_id = (id) => console.log(`[LocalPlatform] place ${id} is for the loading screen; the bootstrap joins`);
+            return init?.apply(this, a);
+          };
+          return factory(m);
+        }),
+        set: (f) => { factory = f; },
+      });
       // A join that never completes would otherwise leave the screen up for good.
       setTimeout(() => release('no game loaded after 90 s'), 90e3);
       let onLoaded = null, loads = 0;
