@@ -171,7 +171,7 @@ end
 pcall(function()
 	ContentProvider:PreloadAsync(loadTargets)
 end)
-task.wait(spec.settle or 10)
+task.wait(spec.settle or 3) -- PreloadAsync has waited for the content; this lets the frame settle
 
 -- Like RCC's ThumbnailGenerator:Click, which returns the render as base64: the
 -- engine captures its 3D view (CaptureService, no UI), the pixels are read back

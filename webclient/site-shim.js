@@ -45,6 +45,10 @@
     // package's copy, so its signature does not verify.
     self.__rbxLocalFlagOverrides = { FFlagDebugSkipPostTtiSignatureVerification: 'True',
       DFFlagDebugSkipPostTtiSignatureVerification: 'True', ...(self.__rbxLocalFlagOverrides || {}) };
+    // ?quality=1..21 pins the graphics quality level. Automatic quality drops to
+    // its lowest level (no shadows, flat lighting) when the frame rate is low.
+    const quality = +new URLSearchParams(self.location.search).get('quality');
+    if (quality >= 1 && quality <= 21) self.__rbxLocalFlagOverrides.DFIntDebugFRMQualityLevelOverride = String(quality);
     // WasmPlayer.js hardcodes wss://localhost/local-relay for local RCC mode.
     const NativeWebSocket = self.WebSocket;
     self.WebSocket = function (url, protocols) {

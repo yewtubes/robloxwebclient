@@ -661,6 +661,7 @@ var FS = {
 
 function createExportWrapper(name, func, nargs) {
   assert(func);
+  return func;
   return (...args) => {
     assert(runtimeInitialized, `native function \`${name}\` called before runtime initialization`);
     // Only assert for too many arguments. Too few can be valid since the missing arguments will be zero filled.

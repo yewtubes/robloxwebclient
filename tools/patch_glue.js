@@ -28,6 +28,9 @@ js = js.replace('    wasmModule = module;\n    return wasmExports;', (m) => (n++
     if (!ENVIRONMENT_IS_PTHREAD) for (var i = 0; i < 8; i++) PThread.loadWasmModuleToWorker(PThread.allocateUnusedWorker());
     return wasmExports;`));
 js = js.replace('GLctx.shaderSource(GL.shaders[shader], source);', (m) => (n++, 'GLctx.shaderSource(GL.shaders[shader], rbxConvertShader(source));'));
+// -sASSERTIONS wraps every wasm export in a closure that checks (and formats
+// two messages) on every call; call the exports directly instead.
+js = js.replace(/function createExportWrapper\(name, func, nargs\) \{\n  assert\(func\);\n/, (m) => (n++, m + '  return func;\n'));
 // Route roblox.com / rbxcdn.com requests (main thread and pthread workers)
 // through the local server's /proxy/: the page is cross-origin isolated, so
 // direct cross-origin responses without CORP headers are blocked.

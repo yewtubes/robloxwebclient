@@ -77,14 +77,18 @@ ktx2 textures only (turned off with `FStringTextureTranscodeRollout` in
 `webclient/flags/PCStudioApp.local.json`).
 
 Open: one Studio launch per job (about 80 s here, mostly Studio start-up). A
-worker that keeps one Studio open across jobs would be much faster.
+worker that keeps one Studio open across jobs would be much faster; its plugin
+would need to fetch jobs over HTTP, which needs Studio's plugin HTTP permissions
+(`studio-user-settings/plugin-permissions`, not implemented). The fixed wait
+after preloading is down from 10 s to 3 s.
 
 ## Chat (patched build)
 
 Typing and sending work (TextBox functions ported from Roblox's WebClient.js
 into `webclient/glue/rbxlib.js`; Enter in the textarea submits). Open: speech
-bubbles show without text. Bubble chat sizes its text with `TextService`, and
-`TextService:GetTextSize` did not return in a client probe.
+bubbles show without text. Bubble chat sizes its text with `TextService`. A
+client probe suggested `GetTextSize` never returns, but the same probe also lost
+plain `print` output, so that isn't established.
 
 ## Lag and lighting (all devices)
 
@@ -93,7 +97,10 @@ Reported as very laggy on every device. The main loop now runs like Roblox's
 WebClient.js is an `-O0 -sASSERTIONS=1` post-link (tools/build_glue.sh), unlike
 Roblox's optimized glue. Lighting is reported flat (no shadows). Automatic
 graphics quality drops to its lowest level when the frame rate is low, which
-turns shadows off, so this may follow from the lag. Not confirmed yet.
+turns shadows off, so this may follow from the lag. Not confirmed yet: open the
+game with `&quality=21` (site-shim.js sets `DFIntDebugFRMQualityLevelOverride`)
+on a device with a GPU and compare. Wasm exports are now called directly rather
+than through -sASSERTIONS' per-call checking wrapper.
 
 ## Studio test server dies or can't sign in (cloud container)
 
