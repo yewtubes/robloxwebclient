@@ -7,7 +7,8 @@ const http = require('http'), fs = require('fs'), path = require('path');
 const ROOT = path.resolve(__dirname, '..', 'webclient');
 const PORT = +process.env.PORT || 8080;
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.wasm': 'application/wasm', '.json': 'application/json',
-  '.png': 'image/png', '.ttf': 'font/ttf', '.otf': 'font/otf', '.css': 'text/css', '.svg': 'image/svg+xml' };
+  '.png': 'image/png', '.ttf': 'font/ttf', '.otf': 'font/otf', '.css': 'text/css', '.svg': 'image/svg+xml',
+  '.woff2': 'font/woff2', '.jpg': 'image/jpeg' };
 
 function send(res, code, body, type = 'text/plain') {
   res.writeHead(code, { 'Content-Type': type });

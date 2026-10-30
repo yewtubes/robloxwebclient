@@ -3,61 +3,249 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sign in</title>
+<title>Log in</title>
+<link rel="preload" as="image" href="/pages/assets/games.jpg">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/pages/assets/BuilderSans-Regular.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/pages/assets/BuilderExtended-ExtraBold.woff2">
 <style>
-  :root { color-scheme: light dark; --bg: #f2f4f5; --card: #fff; --fg: #1b1d1f; --muted: #606770; --accent: #335fff; --err: #d03030; }
-  @media (prefers-color-scheme: dark) { :root { --bg: #1b1d1f; --card: #26282b; --fg: #eceeef; --muted: #a0a6ad; --err: #ff7070; } }
-  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--fg); font: 15px/1.4 system-ui, sans-serif; }
-  main { width: min(360px, calc(100vw - 32px)); background: var(--card); border-radius: 12px; padding: 24px; box-sizing: border-box; }
-  h1 { margin: 0 0 4px; font-size: 22px; }
-  p.note { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
-  label { display: block; margin: 10px 0 4px; font-size: 13px; color: var(--muted); }
-  input { width: 100%; box-sizing: border-box; padding: 9px 10px; border: 1px solid #8884; border-radius: 8px; background: transparent; color: inherit; font: inherit; }
-  button { margin-top: 18px; width: 100%; padding: 10px; border: 0; border-radius: 8px; background: var(--accent); color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
-  #err { color: var(--err); min-height: 1.4em; margin-top: 10px; font-size: 13px; }
-  .switch { margin-top: 14px; text-align: center; font-size: 13px; }
-  .switch a { color: var(--accent); }
-  .signup-only[hidden] { display: none; }
+  /* Fonts and background: tools/fetch_login_assets.sh. */
+  @font-face { font-family: "Builder Sans"; src: url(/pages/assets/BuilderSans-Regular.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "Builder Sans"; src: url(/pages/assets/BuilderSans-Medium.woff2) format("woff2"); font-weight: 500; font-display: swap; }
+  @font-face { font-family: "Builder Sans"; src: url(/pages/assets/BuilderSans-SemiBold.woff2) format("woff2"); font-weight: 600; font-display: swap; }
+  @font-face { font-family: "Builder Sans"; src: url(/pages/assets/BuilderSans-Bold.woff2) format("woff2"); font-weight: 700; font-display: swap; }
+  @font-face { font-family: "Builder Extended"; src: url(/pages/assets/BuilderExtended-ExtraBold.woff2) format("woff2"); font-weight: 800; font-display: swap; }
+
+  :root {
+    color-scheme: dark;
+    --bg: #111214; --card: rgba(22, 23, 26, .78); --line: rgba(208, 217, 251, .14); --line-strong: rgba(208, 217, 251, .32);
+    --fg: #f7f7f8; --soft: #d5d7dd; --muted: #9a9ca6; --field: rgba(255, 255, 255, .04);
+    --accent: #335fff; --accent-hover: #4a72ff; --link: #6e95ff; --err: #ff5a52; --warn-bg: rgba(255, 186, 73, .1); --warn: #ffcf7a;
+    --sans: "Builder Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --display: "Builder Extended", "Builder Sans", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { min-height: 100vh; background: var(--bg); color: var(--fg); font: 400 15px/1.45 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+
+  /* Background: the games collage, drifting slowly along its own tilt. */
+  .art { position: fixed; inset: 0; overflow: hidden; z-index: 0; }
+  .art::before { content: ""; position: absolute; inset: -8%; background: var(--bg) url(/pages/assets/games.jpg) center / cover no-repeat;
+    animation: drift 40s ease-in-out infinite alternate; filter: saturate(1.08); }
+  .art::after { content: ""; position: absolute; inset: 0;
+    background:
+      radial-gradient(120% 90% at 30% 40%, rgba(17, 18, 20, 0) 0%, rgba(17, 18, 20, .55) 70%, rgba(17, 18, 20, .9) 100%),
+      linear-gradient(270deg, rgba(17, 18, 20, .92) 0%, rgba(17, 18, 20, .6) 34%, rgba(17, 18, 20, 0) 62%),
+      linear-gradient(0deg, rgba(17, 18, 20, .85) 0%, rgba(17, 18, 20, 0) 35%); }
+  @keyframes drift { from { transform: translate(-2%, 1.5%) scale(1.04); } to { transform: translate(2%, -1.5%) scale(1.1); } }
+  @media (prefers-reduced-motion: reduce) { .art::before { animation: none; } }
+
+  .layout { position: relative; z-index: 1; min-height: 100vh; display: grid; grid-template-columns: 1fr minmax(360px, 440px); gap: 48px;
+    padding: 32px clamp(20px, 5vw, 72px); align-items: center; }
+
+  .hero { align-self: end; padding-bottom: 8px; max-width: 560px; text-shadow: 0 2px 18px rgba(0, 0, 0, .65); }
+  .hero h2 { margin: 0; font: 800 clamp(30px, 4vw, 52px)/1.04 var(--display); letter-spacing: -.01em; }
+  .hero p { margin: 14px 0 0; color: var(--soft); font-size: 17px; max-width: 420px; }
+
+  /* The card. */
+  .card { position: relative; width: 100%; padding: 28px; border: 1px solid var(--line); border-radius: 20px; background: var(--card);
+    backdrop-filter: blur(22px) saturate(1.3); -webkit-backdrop-filter: blur(22px) saturate(1.3);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .05); }
+
+  .tabs { position: relative; display: grid; grid-template-columns: 1fr 1fr; padding: 4px; margin-bottom: 24px; border-radius: 12px; background: rgba(255, 255, 255, .06); }
+  .tabs a { position: relative; z-index: 1; padding: 9px 0; text-align: center; border-radius: 9px; color: var(--muted); font-weight: 600; font-size: 14px; text-decoration: none; transition: color .2s; }
+  .tabs a[aria-current="page"] { color: var(--fg); }
+  .tabs a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .tabs .pill { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); border-radius: 9px; background: rgba(255, 255, 255, .12);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .4); transition: transform .35s cubic-bezier(.22, 1, .36, 1); }
+  .signup .tabs .pill { transform: translateX(100%); }
+
+  h1 { margin: 0; font: 800 28px/1.1 var(--display); }
+  .sub { margin: 8px 0 20px; color: var(--soft); font-size: 15px; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .field > label, .legend { font-weight: 600; font-size: 13px; color: var(--soft); }
+  .field .opt { font-weight: 400; color: var(--muted); }
+  .input { display: flex; align-items: center; height: 44px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--field); transition: border-color .15s, box-shadow .15s; }
+  .input:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(51, 95, 255, .3); }
+  .input input, .input select { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0; background: none; color: var(--fg); font: 400 15px var(--sans); }
+  .input input::placeholder { color: var(--muted); }
+  .input select { appearance: none; cursor: pointer; }
+  .input select option { background: #1e1f23; color: var(--fg); }
+  .input.select { position: relative; padding-right: 30px; }
+  .input.select::after { content: ""; position: absolute; right: 13px; top: 50%; width: 7px; height: 7px; margin-top: -6px; border: solid var(--muted); border-width: 0 2px 2px 0; transform: rotate(45deg); pointer-events: none; }
+  .birthday { display: grid; grid-template-columns: 1.3fr .8fr 1fr; gap: 8px; }
+  .hint { color: var(--muted); font-size: 12px; }
+  .reveal { flex: none; display: grid; place-items: center; width: 30px; height: 30px; margin-right: -6px; border: 0; border-radius: 8px; background: none; color: var(--muted); cursor: pointer; }
+  .reveal:hover, .reveal.on { color: var(--fg); background: rgba(255, 255, 255, .08); }
+
+  /* Sign-up-only fields fold open. */
+  .extra { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .45s cubic-bezier(.22, 1, .36, 1), opacity .3s; }
+  .extra > div { overflow: hidden; }
+  .signup .extra { grid-template-rows: 1fr; opacity: 1; }
+
+  .notice { display: flex; gap: 10px; margin: 4px 0 16px; padding: 10px 12px; border-radius: 10px; background: var(--warn-bg); color: var(--warn); font-size: 13px; line-height: 1.4; }
+  .notice svg { flex: none; margin-top: 1px; }
+
+  .go { width: 100%; height: 46px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; font: 700 16px var(--sans); cursor: pointer; transition: background .15s, transform .1s; }
+  .go:hover:not(:disabled) { background: var(--accent-hover); }
+  .go:active:not(:disabled) { transform: scale(.985); }
+  .go:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .go:disabled { opacity: .6; cursor: default; }
+  #err { min-height: 20px; margin: 10px 0 0; color: var(--err); font-size: 13px; }
+  .switch { margin-top: 6px; text-align: center; color: var(--muted); font-size: 14px; }
+  .switch a { color: var(--link); font-weight: 600; text-decoration: none; }
+  .switch a:hover { text-decoration: underline; }
+
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; gap: 24px; padding: 20px 16px 32px; align-content: start; }
+    .hero { align-self: auto; order: -1; padding-top: 24px; }
+    .hero h2 { font-size: 30px; }
+    .hero p { font-size: 15px; }
+    .card { padding: 22px 18px; }
+    .art::after { background: linear-gradient(0deg, rgba(17, 18, 20, .95) 30%, rgba(17, 18, 20, .55) 75%, rgba(17, 18, 20, .3) 100%); }
+  }
 </style>
 </head>
 <body>
-<main>
-  <h1 id="title">Sign in</h1>
-  <p class="note">An account on this self-hosted platform. It is not a Roblox account.</p>
-  <form id="form">
-    <label for="username">Username</label>
-    <input id="username" name="username" autocomplete="username" required>
-    <div class="signup-only" hidden>
-      <label for="displayName">Display name</label>
-      <input id="displayName" name="displayName">
-      <label for="birthdate">Birthdate</label>
-      <input id="birthdate" name="birthdate" type="date">
-    </div>
-    <label for="password">Password</label>
-    <input id="password" name="password" type="password" autocomplete="current-password" required minlength="8">
-    <button id="submit">Sign in</button>
-    <div id="err" role="alert"></div>
-  </form>
-  <div class="switch" id="switch"></div>
-</main>
+<div class="art" aria-hidden="true"></div>
+<div class="layout">
+  <section class="hero" aria-hidden="true">
+    <h2>Millions of worlds.<br>One login away.</h2>
+    <p>Hop into your favorite experiences with friends on this self-hosted platform.</p>
+  </section>
+
+  <main class="card">
+    <nav class="tabs" aria-label="Account">
+      <span class="pill" aria-hidden="true"></span>
+      <a id="tab-login" href="/login">Log in</a>
+      <a id="tab-signup" href="/signup">Sign up</a>
+    </nav>
+
+    <h1 id="title">Welcome back</h1>
+    <p class="sub" id="sub">Log in to jump back into the game.</p>
+
+    <form id="form" novalidate>
+      <div class="field">
+        <label for="username">Username</label>
+        <div class="input"><input id="username" name="username" autocomplete="username" spellcheck="false" autocapitalize="none" maxlength="20" required></div>
+      </div>
+
+      <div class="extra"><div>
+        <div class="field">
+          <label for="displayName">Display name <span class="opt">optional</span></label>
+          <div class="input"><input id="displayName" name="displayName" maxlength="20" autocomplete="nickname" placeholder="What your friends see"></div>
+        </div>
+        <div class="field" role="group" aria-labelledby="bday-label">
+          <span class="legend" id="bday-label">Birthday</span>
+          <div class="birthday">
+            <div class="input select"><select id="month" aria-label="Month"><option value="">Month</option></select></div>
+            <div class="input select"><select id="day" aria-label="Day"><option value="">Day</option></select></div>
+            <div class="input select"><select id="year" aria-label="Year"><option value="">Year</option></select></div>
+          </div>
+        </div>
+      </div></div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="input">
+          <input id="password" name="password" type="password" autocomplete="current-password" maxlength="200" required>
+          <button class="reveal" id="reveal" type="button" aria-label="Show password" aria-pressed="false">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 5c5.5 0 9.3 4.4 10.6 6.3.3.4.3 1 0 1.4C21.3 14.6 17.5 19 12 19S2.7 14.6 1.4 12.7a1.2 1.2 0 0 1 0-1.4C2.7 9.4 6.5 5 12 5Zm0 2c-4.2 0-7.4 3.2-8.6 5 1.2 1.8 4.4 5 8.6 5s7.4-3.2 8.6-5c-1.2-1.8-4.4-5-8.6-5Zm0 1.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7Z"/></svg>
+          </button>
+        </div>
+        <span class="hint" id="pw-hint" hidden>At least 8 characters.</span>
+      </div>
+
+      <div class="notice">
+        <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10 1.5a8.5 8.5 0 1 1 0 17 8.5 8.5 0 0 1 0-17Zm0 11.75a1 1 0 1 0 0 2 1 1 0 0 0 0-2ZM10 5a.9.9 0 0 0-.9.95l.25 5.1a.65.65 0 0 0 1.3 0l.25-5.1A.9.9 0 0 0 10 5Z"/></svg>
+        <span>This is a local account, not a Roblox account. Never use your Roblox password here.</span>
+      </div>
+
+      <button class="go" id="submit">Log in</button>
+      <div id="err" role="alert"></div>
+    </form>
+    <div class="switch" id="switch"></div>
+  </main>
+</div>
 <script>
+  const $ = (id) => document.getElementById(id);
   const params = new URLSearchParams(location.search);
   const returnUrl = /^\/(?!\/)/.test(params.get('returnUrl') || '') ? params.get('returnUrl') : '/games/start?placeId=1818';
-  const signup = location.pathname === '/signup';
-  document.getElementById('title').textContent = document.title = signup ? 'Create an account' : 'Sign in';
-  document.getElementById('submit').textContent = signup ? 'Sign up' : 'Sign in';
-  document.querySelector('.signup-only').hidden = !signup;
-  document.getElementById('birthdate').required = signup;
-  const other = `${signup ? '/login' : '/signup'}?returnUrl=${encodeURIComponent(returnUrl)}`;
-  document.getElementById('switch').innerHTML = signup ? `Have an account? <a href="${other}">Sign in</a>` : `New here? <a href="${other}">Create an account</a>`;
-  document.getElementById('form').addEventListener('submit', async (e) => {
+  const qs = `?returnUrl=${encodeURIComponent(returnUrl)}`;
+  $('tab-login').href = `/login${qs}`;
+  $('tab-signup').href = `/signup${qs}`;
+
+  // Birthday dropdowns, Roblox-style (month / day / year).
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  months.forEach((m, i) => $('month').add(new Option(m, i + 1)));
+  for (let d = 1; d <= 31; d++) $('day').add(new Option(d, d));
+  for (let y = new Date().getFullYear(), end = y - 100; y >= end; y--) $('year').add(new Option(y, y));
+  const birthdate = () => {
+    const y = +$('year').value, m = +$('month').value, d = +$('day').value;
+    if (!y || !m || !d) return null;
+    const dt = new Date(Date.UTC(y, m - 1, d));
+    if (dt.getUTCMonth() !== m - 1) return null; // e.g. February 30
+    return dt.toISOString().slice(0, 10);
+  };
+
+  // Log in and sign up are one page; the tabs switch in place.
+  let signup;
+  function setMode(s, push) {
+    signup = s;
+    document.body.classList.toggle('signup', s);
+    $(s ? 'tab-signup' : 'tab-login').setAttribute('aria-current', 'page');
+    $(s ? 'tab-login' : 'tab-signup').removeAttribute('aria-current');
+    document.title = s ? 'Sign up' : 'Log in';
+    $('title').textContent = s ? 'Create an account' : 'Welcome back';
+    $('sub').textContent = s ? 'Pick a username and start playing in seconds.' : 'Log in to jump back into the game.';
+    $('submit').textContent = s ? 'Sign up' : 'Log in';
+    $('password').autocomplete = s ? 'new-password' : 'current-password';
+    $('pw-hint').hidden = !s;
+    for (const el of document.querySelectorAll('.extra input, .extra select')) el.tabIndex = s ? 0 : -1;
+    $('switch').innerHTML = s ? `Already have an account? <a href="/login${qs}" data-mode="login">Log in</a>`
+                              : `New here? <a href="/signup${qs}" data-mode="signup">Create an account</a>`;
+    $('err').textContent = '';
+    if (push) history.pushState(null, '', `/${s ? 'signup' : 'login'}${location.search}`);
+  }
+  setMode(location.pathname === '/signup');
+  addEventListener('popstate', () => setMode(location.pathname === '/signup'));
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('#tab-login, #tab-signup, #switch a');
+    if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
     e.preventDefault();
-    const body = Object.fromEntries(new FormData(e.target));
-    if (!signup) { delete body.displayName; delete body.birthdate; }
-    const r = await fetch(`/api/local/auth/${signup ? 'signup' : 'login'}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    if (r.ok) return location.assign(returnUrl);
-    const j = await r.json().catch(() => ({}));
-    document.getElementById('err').textContent = (j.errors && j.errors[0] && j.errors[0].message) || `Request failed (HTTP ${r.status})`;
+    const s = a.id === 'tab-signup' || a.dataset.mode === 'signup';
+    if (s !== signup) setMode(s, true);
+  });
+
+  $('reveal').addEventListener('click', () => {
+    const show = $('password').type === 'password';
+    $('password').type = show ? 'text' : 'password';
+    $('reveal').classList.toggle('on', show);
+    $('reveal').setAttribute('aria-pressed', show);
+    $('reveal').setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+  });
+
+  $('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const err = $('err');
+    const body = { username: $('username').value.trim(), password: $('password').value };
+    if (!body.username || !body.password) return (err.textContent = 'Enter your username and password.');
+    if (signup) {
+      body.birthdate = birthdate();
+      if (!body.birthdate) return (err.textContent = 'Enter a valid birthday.');
+      if ($('displayName').value.trim()) body.displayName = $('displayName').value.trim();
+    }
+    err.textContent = '';
+    $('submit').disabled = true;
+    try {
+      const r = await fetch(`/api/local/auth/${signup ? 'signup' : 'login'}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      if (r.ok) return location.assign(returnUrl);
+      const j = await r.json().catch(() => ({}));
+      err.textContent = (j.errors && j.errors[0] && j.errors[0].message) || `Request failed (HTTP ${r.status})`;
+    } catch (x) {
+      err.textContent = 'Could not reach the server.';
+    }
+    $('submit').disabled = false;
   });
 </script>
 </body>

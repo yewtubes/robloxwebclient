@@ -77,6 +77,11 @@ sha256sum webclient/live/*/WebClient.wasm webclient/live/*/WebClient.js webclien
 
 Nothing in these files is changed. Keep the hashes to compare later.
 
+The sign-in / sign-up page (`/login`, `/signup`) uses the Builder Sans fonts
+roblox.com/login serves and a games collage from the DevForum as its background;
+they are committed in `webclient/pages/assets/`, and `tools/fetch_login_assets.sh`
+downloads them again.
+
 ## 3. Database
 
 Created on first start: migrations in `tools/backend/migrations/` run in order
