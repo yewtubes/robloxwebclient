@@ -68,10 +68,11 @@ function policyFor(user) {
 const blocks = (a, b) => !!open().prepare('SELECT 1 FROM user_blocks WHERE user_id = ? AND blocked_id = ?').get(a, b);
 // One entry per account the user blocks or is blocked by, as the game server's
 // SocialCounterpartyManager reads it: isBlocked (user blocks them), isBlockingViewer (they block user).
-function blockingData(userId) {
+function blockingData(userId, alsoIds = []) {
   const rows = open().prepare(`SELECT blocked_id other FROM user_blocks WHERE user_id = ? UNION SELECT user_id FROM user_blocks WHERE blocked_id = ?`).all(userId, userId);
+  const ids = [...new Set([...rows.map((r) => r.other), ...alsoIds.filter((x) => x && x !== userId)])];
   return { blockedUsersListIsComplete: true, blockedByUsersListIsComplete: true,
-    reciprocalUserData: rows.map(({ other }) => ({ userId: other, isBlocked: blocks(userId, other), isBlockingViewer: blocks(other, userId) })) };
+    reciprocalUserData: ids.map((other) => ({ userId: other, isBlocked: blocks(userId, other), isBlockingViewer: blocks(other, userId) })) };
 }
 
 // ---- friends (mutual rows = friends; a single row = a pending request) ------------
@@ -134,9 +135,10 @@ const ROUTES = [
   // Game server (RCC) social checks. Text chat drops a player's messages while
   // their blocking data is missing, so this has to answer.
   ['POST', /^apis\.roblox\.com$/, /^\/user-blocking-api\/v1\/users\/rcc\/get-user-blocking-data$/, (req, res, u, body) => {
-    const id = +(parseJson(body).userId || u.searchParams.get('userId'));
+    // The 2026 game server sends {requesterUserId, userIds}; older callers {userId}.
+    const b = parseJson(body), id = +(b.requesterUserId || b.userId || u.searchParams.get('userId'));
     if (!M.user(id)) return badRequest(res, 'Invalid userId');
-    json(res, 200, blockingData(id));
+    json(res, 200, blockingData(id, (b.userIds || []).map(Number)));
   }],
   ['POST', /^apis\.roblox\.com$/, /^\/user-blocking-api\/v1\/users\/rcc\/batch-check-reciprocal-block$/, (req, res, u, body) => {
     const b = parseJson(body), id = +b.userId;
