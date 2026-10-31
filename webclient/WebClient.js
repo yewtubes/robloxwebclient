@@ -771,7 +771,24 @@ async function createWasm() {
 
     // We now have the Wasm module loaded up, keep a reference to the compiled module so we can post it to the workers.
     wasmModule = module;
-    if (!ENVIRONMENT_IS_PTHREAD) for (var i = 0; i < 8; i++) PThread.loadWasmModuleToWorker(PThread.allocateUnusedWorker());
+    if (!ENVIRONMENT_IS_PTHREAD) {
+      // New pthread workers load the wasm asynchronously. Initialize the
+      // pool before main() so a synchronous pthread_create can use ready workers.
+      var poolSetting = Number(globalThis.__rbxPthreadPoolSize);
+      var memoryGB = Number(globalThis.navigator?.deviceMemory) || 0;
+      var poolSize = Number.isFinite(poolSetting) && poolSetting >= 4
+        ? Math.min(24, Math.floor(poolSetting))
+        : (memoryGB > 0 && memoryGB <= 4 ? 12 : 16);
+      var ready = [];
+      for (var i = 0; i < poolSize; i++) {
+        ready.push(PThread.loadWasmModuleToWorker(PThread.allocateUnusedWorker()));
+      }
+      console.info('[rbx] warming ' + poolSize + ' pthread workers');
+      return Promise.all(ready).then(() => {
+        console.info('[rbx] pthread pool ready: ' + poolSize);
+        return wasmExports;
+      });
+    }
     return wasmExports;
   }
 

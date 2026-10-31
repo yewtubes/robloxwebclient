@@ -105,13 +105,24 @@ than through -sASSERTIONS' per-call checking wrapper.
 ## Crash after loading on some devices ("SIGTRAP")
 
 Reported on Chromebooks and other devices that otherwise run the client: the
-game loads, then the engine crashes with "SIGTRAP" (a wasm trap: `unreachable`,
-an out-of-bounds access, or an engine fatal error). Not reproduced here. The page
-now sends crashes with the last 120 console lines to the backend
-(`<data>/logs/client-report.log`, `"kind":"crash"`); that report shows where it
-trapped. Ruled out: the heap size. It is fixed at `FIntWasmMemoryPages` (2 GiB),
-and a device that can't reserve it fails at start, not after loading. Our glue
-isn't built for more than 2 GiB.
+game loads, the player can move briefly, then Chrome reports "SIGTRAP".
+The exact cause is not confirmed: Chrome may crash the renderer process without
+throwing a catchable wasm exception.
+
+Thread-pool mitigation (local patched build only): generated glue formerly
+pre-allocated 8 workers without waiting for their wasm initialization. The pool
+already grows on demand, but a worker created during synchronous pthread
+startup may still be loading while the engine waits on a futex. The local build
+now preloads and awaits a configurable pool: 12 workers for devices reporting
+4 GiB or less, 16 otherwise, with `?build=local&threads=4..24` to override.
+Both `webclient/WebClient.js` and `tools/patch_glue.js` carry this change.
+This is a hypothesis to test, NOT a confirmed SIGTRAP fix; compare a run with
+the unchanged production engine before attributing a Chrome crash to pthreads.
+
+Catchable crashes are reported to `<data>/logs/client-report.log` with
+`"kind":"crash"`. A renderer-process SIGTRAP may terminate before the handler
+runs. The wasm heap is fixed at 2 GiB and the glue is not configured for
+larger heaps.
 
 ## Verified and admin badges
 

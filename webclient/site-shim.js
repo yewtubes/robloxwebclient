@@ -35,6 +35,16 @@
   const LOCAL_BUILD = 'version-0000000000000745';
   const localBuild = !!self.document && new URLSearchParams(self.location.search).get('build') === 'local';
   if (localBuild) {
+    // Warm enough pthread workers before gameplay to avoid creating one while
+    // the main thread waits. Keep a smaller default on 4 GiB Chromebooks.
+    // ?threads=4..24 explicitly overrides the pool size for troubleshooting.
+    const params = new URLSearchParams(self.location.search);
+    const requestedThreads = params.get('threads');
+    const memoryGB = Number(self.navigator?.deviceMemory) || 0;
+    const defaultThreads = memoryGB > 0 && memoryGB <= 4 ? 12 : 16;
+    self.__rbxPthreadPoolSize = requestedThreads !== null && /^\d+$/.test(requestedThreads)
+      ? Math.max(4, Math.min(24, Number(requestedThreads)))
+      : defaultThreads;
     let host;
     Object.defineProperty(self, 'robloxWasmHostConfig', {
       configurable: true,

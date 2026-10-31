@@ -20,12 +20,31 @@ js = js.replace('var ASM_CONSTS = {', fallback + 'var ASM_CONSTS = {');
 // WasmPlayer passes a few Module properties this build does not consume.
 js = js.replace(/abort\(`\\`Module\.\$\{prop\}\\` was supplied but/, (m) => (n++, m.replace('abort(', 'console.warn(')));
 // Desktop GLSL -> GLSL ES conversion (see rbxConvertShader in rbxlib.js).
-// Pre-start 8 pthread workers once the module is compiled, as Roblox's own
-// WebClient.js does (PTHREAD_POOL_SIZE 8). With an empty pool every engine thread
-// waits for a new worker, which can only start when the main thread yields; a
-// main-thread futex wait meanwhile stalled game joins by ~4 s.
-js = js.replace('    wasmModule = module;\n    return wasmExports;', (m) => (n++, `    wasmModule = module;
-    if (!ENVIRONMENT_IS_PTHREAD) for (var i = 0; i < 8; i++) PThread.loadWasmModuleToWorker(PThread.allocateUnusedWorker());
+// Preload a configurable pthread pool before main() can create threads.
+// Creating a new worker is already supported by the Emscripten glue, but an
+// on-demand worker is not immediately ready to run a pthread. Ensure the warm
+// workers have sent CMD_LOADED (3) before completing wasm initialization.
+const pthreadAnchor = '    wasmModule = module;\n    return wasmExports;';
+if (!js.includes(pthreadAnchor)) throw new Error('pthread warmup anchor missing from generated glue');
+js = js.replace(pthreadAnchor, (m) => (n++, `    wasmModule = module;
+    if (!ENVIRONMENT_IS_PTHREAD) {
+      // New pthread workers load the wasm asynchronously. Initialize the
+      // pool before main() so a synchronous pthread_create can use ready workers.
+      var poolSetting = Number(globalThis.__rbxPthreadPoolSize);
+      var memoryGB = Number(globalThis.navigator?.deviceMemory) || 0;
+      var poolSize = Number.isFinite(poolSetting) && poolSetting >= 4
+        ? Math.min(24, Math.floor(poolSetting))
+        : (memoryGB > 0 && memoryGB <= 4 ? 12 : 16);
+      var ready = [];
+      for (var i = 0; i < poolSize; i++) {
+        ready.push(PThread.loadWasmModuleToWorker(PThread.allocateUnusedWorker()));
+      }
+      console.info('[rbx] warming ' + poolSize + ' pthread workers');
+      return Promise.all(ready).then(() => {
+        console.info('[rbx] pthread pool ready: ' + poolSize);
+        return wasmExports;
+      });
+    }
     return wasmExports;`));
 js = js.replace('GLctx.shaderSource(GL.shaders[shader], source);', (m) => (n++, 'GLctx.shaderSource(GL.shaders[shader], rbxConvertShader(source));'));
 // -sASSERTIONS wraps every wasm export in a closure that checks (and formats
