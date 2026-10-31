@@ -34,6 +34,73 @@
   // starts the Lua App, so the bootstrap runs (Play Solo, or --join).
   const LOCAL_BUILD = 'version-0000000000000745';
   const localBuild = !!self.document && new URLSearchParams(self.location.search).get('build') === 'local';
+
+  // Opt-in crash diagnostics. Renderer SIGTRAP may terminate JS abruptly;
+  // one-second snapshots survive on the backend.
+  if (localBuild && new URLSearchParams(self.location.search).get('debugCrash') === '1') {
+    const stats = {
+      kind: 'runtime-diagnostic', created: 0, initialized: 0, started: 0,
+      finished: 0, active: 0, peakActive: 0, poolExhaustions: 0,
+      workerErrors: 0, lastError: null,
+    };
+    self.__rbxPthreadDiag = stats;
+    if (typeof self.Worker === 'function') {
+      const OriginalWorker = self.Worker;
+      self.Worker = class RbxDiagnosticWorker extends OriginalWorker {
+        constructor(...args) {
+          super(...args);
+          this.__rbxTracked = /^em-pthread-/.test(args[1]?.name || '');
+          if (!this.__rbxTracked) return;
+          stats.created++;
+          this.addEventListener('message', (event) => {
+            if (event.data?.cmd === 3) stats.initialized++;
+            if (event.data?.cmd === 6) {
+              stats.finished++;
+              stats.active = Math.max(0, stats.active - 1);
+            }
+          });
+          this.addEventListener('error', (event) => {
+            stats.workerErrors++;
+            stats.lastError = String(event.message || 'worker error').slice(0, 400);
+          });
+        }
+        postMessage(...args) {
+          const result = super.postMessage(...args);
+          if (this.__rbxTracked && args[0]?.cmd === 2) {
+            stats.started++;
+            stats.active++;
+            stats.peakActive = Math.max(stats.peakActive, stats.active);
+          }
+          return result;
+        }
+      };
+    }
+    const previousWarn = console.warn.bind(console);
+    console.warn = (...args) => {
+      if (args.some((x) => String(x).includes('thread pool is exhausted'))) stats.poolExhaustions++;
+      previousWarn(...args);
+    };
+    const previousError = console.error.bind(console);
+    console.error = (...args) => {
+      const message = args.map(String).join(' ');
+      if (/thread pool is exhausted/.test(message)) stats.poolExhaustions++;
+      if (/RuntimeError|SIGTRAP|Aborted|unreachable|out of bounds/i.test(message))
+        stats.lastError = message.slice(0, 400);
+      previousError(...args);
+    };
+    setInterval(() => {
+      const payload = { ...stats, sinceLoadMs: Math.round(performance.now()) };
+      try {
+        const data = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+        if (!navigator.sendBeacon?.('/api/local/client-report', data))
+          fetch('/api/local/client-report', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload), keepalive: true,
+          }).catch(() => {});
+      } catch (_) {}
+    }, 1000);
+    console.info('[rbx] crash diagnostics enabled (1 second snapshots)');
+  }
   if (localBuild) {
     // Warm enough pthread workers before gameplay to avoid creating one while
     // the main thread waits. Keep a smaller default on 4 GiB Chromebooks.

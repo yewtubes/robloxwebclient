@@ -104,10 +104,19 @@ than through -sASSERTIONS' per-call checking wrapper.
 
 ## Crash after loading on some devices ("SIGTRAP")
 
-Reported on Chromebooks and other devices that otherwise run the client: the
-game loads, the player can move briefly, then Chrome reports "SIGTRAP".
-The exact cause is not confirmed: Chrome may crash the renderer process without
-throwing a catchable wasm exception.
+Reported on **all tested devices**: the game fully loads, movement works
+for roughly three seconds, then Chrome reports "SIGTRAP". This points toward a
+common runtime issue rather than Chromebook-specific hardware. The cause has
+not been confirmed; Chrome can terminate a renderer without throwing a
+catchable JS exception.
+
+To capture evidence on the patched local build, append `&debugCrash=1`
+to its URL (for example, `/games/start?build=local&placeId=1818&debugCrash=1`).
+Every second it saves worker creation, ready/started/finished counts, current
+and peak activity, exhaustion warnings and errors to `<data>/logs/client-report.log`
+as `"kind":"runtime-diagnostic"`. Compare the final snapshots across devices
+to see whether pthread exhaustion preceded the crash. This is opt-in diagnostics,
+not a confirmed fix.
 
 Thread-pool mitigation (local patched build only): generated glue formerly
 pre-allocated 8 workers without waiting for their wasm initialization. The pool

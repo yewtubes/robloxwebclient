@@ -67,5 +67,10 @@ async function scenario(memoryGB, override, expected) {
     console: { info() {} },
   })({}, 123);
   assert.equal(result, 123, 'Worker threads must not start more workers');
-  console.log('pthread pool warmup tests passed');
+  assert(shim.includes("get('debugCrash') === '1'"));
+  assert(shim.includes("kind: 'runtime-diagnostic'"));
+  assert(shim.includes("stats.poolExhaustions++"));
+  assert(shim.includes("stats.peakActive"));
+  assert(shim.includes("navigator.sendBeacon?.('/api/local/client-report'"));
+  console.log('pthread warmup and diagnostics static checks passed');
 })().catch(e => { console.error(e); process.exitCode = 1; });
